@@ -245,7 +245,7 @@ def main():
 	totalocusnumber=len(newListgenes)
 	basepath=os.path.join(temppath,os.path.splitext(geneFile)[0])
 	
-	print ("Processing "+os.path.basename(geneFile)+".Start "+time.strftime("%H:%M:%S-%d/%m/%Y")+ "Locus "+str(locusnumber)+" of "+str(totalocusnumber)+". Done "+str(int(statusbar*100))+"%" )
+	print ("Processing "+os.path.basename(geneFile)+". Start "+time.strftime("%H:%M:%S-%d/%m/%Y")+ " Locus "+str(locusnumber)+" of "+str(totalocusnumber)+". Done "+str(int(statusbar*100))+"%." )
 	
 	
 	if not os.path.exists(basepath):
