@@ -193,7 +193,7 @@ def translateSeq(DNASeq):
 #            Allele calling and classification             #
 # ======================================================== #
 def main():
-	print ("Starting individual allele call at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	
 	try:
 		input_file = sys.argv[1]
 		temppath = sys.argv[2]
@@ -205,8 +205,10 @@ def main():
 			verbose=False
 		
 	except IndexError:
-		print "usage: list_pickle_obj"
-
+		print "Error starting the callAlleleles_protein3 script. usage: list_pickle_obj"
+	
+	
+	
 	argumentList=[]
 	with open(input_file,'rb') as f:
 		argumentList = pickle.load(f)
@@ -224,6 +226,7 @@ def main():
 	
 	
 	geneFile = argumentList[0]
+
 	verboseprint( "Using gene: "+str(geneFile))
 	shortgeneFile= os.path.join(os.path.dirname(argumentList[0]),"short",os.path.basename(argumentList[0]))
 	shortgeneFile= shortgeneFile.replace(".fasta","_short.fasta")
@@ -237,12 +240,12 @@ def main():
 			gene = gene.rstrip('\r')
 			newListgenes.append(gene)
 
-	loadingbar=float(newListgenes.index(str(geneFile)))/len(newListgenes)
-	print(str(int(loadingbar*100))+"%")
-	print (str(newListgenes.index(str(geneFile)))+"/"+str(len(newListgenes)))
+	statusbar=float(newListgenes.index(str(geneFile)))/len(newListgenes)
+	locusnumber=(newListgenes.index(str(geneFile)))
+	totalocusnumber=len(newListgenes)
 	basepath=os.path.join(temppath,os.path.splitext(geneFile)[0])
 	
-	
+	print ("Processing "+os.path.basename(geneFile)+".Start "+time.strftime("%H:%M:%S-%d/%m/%Y")+ "Locus "+str(locusnumber)+" of "+str(totalocusnumber)+". Done "+str(int(statusbar*100))+"%" )
 	
 	
 	if not os.path.exists(basepath):
