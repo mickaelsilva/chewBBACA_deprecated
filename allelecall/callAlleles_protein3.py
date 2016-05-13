@@ -239,6 +239,7 @@ def main():
 
 	loadingbar=float(newListgenes.index(str(geneFile)))/len(newListgenes)
 	print(str(int(loadingbar*100))+"%")
+	print (str(newListgenes.index(str(geneFile)))+"/"+str(len(newListgenes)))
 	basepath=os.path.join(temppath,os.path.splitext(geneFile)[0])
 	
 	
