@@ -86,7 +86,7 @@ def loci_translation (genesList,listOfGenomes2):
 				os.makedirs(basepath)
 			filepath=os.path.join(basepath,str(os.path.basename(gene))+"_argList.txt")
 			with open(filepath, 'wb') as f:
-				var = [gene, listOfGenomes2]
+				var = [gene, listOfGenomes2,genesList]
 				pickle.dump(var, f)
 			argumentsList.append(filepath)
 
@@ -110,18 +110,23 @@ def main():
 	parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
 	parser.add_argument('-p', nargs='?', type=str, help="Path to prodigal exec file", required=True)
+	parser.add_argument("-v", "--verbose", help="increase output verbosity",dest='verbose', action="store_true")
 	
-
+	
+	
 	args = parser.parse_args()
 	
 	genomeFiles = args.i
 	genes = args.g
 	prodigalPath = args.p
 	
-	
+	try:
+		verbose
+	except:
+		verbose=False
+		
 	scripts_path=os.path.dirname(os.path.realpath(__file__))
 	
-	print scripts_path
 
 	print ("Starting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
@@ -247,14 +252,12 @@ def main():
 	
 
 	# Run the allele call, one gene per core using n-2 cores (n number of cores)
-	totloci= len(argumentsList)
 	
-
 	
 	pool = multiprocessing.Pool(multiprocessing.cpu_count()-2)
 	for argList in argumentsList:
 		
-		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"callAlleles_protein3.py"),str(argList),basepath],))
+		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"callAlleles_protein3.py"),str(argList),basepath,str(verbose)],))
 
 	pool.close()
 	pool.join()

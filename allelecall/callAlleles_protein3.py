@@ -2,7 +2,6 @@
 import HTSeq
 import sys
 from Bio.Seq import Seq
-from Bio.Blast.Applications import NcbiblastnCommandline
 from Bio.Blast.Applications import NcbiblastpCommandline
 from Counter import Counter 
 import os
@@ -13,7 +12,8 @@ import time
 import pickle
 import shutil
 
-def getBlastScoreRatios(genefile,basepath,doAll):
+
+def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 	
 	gene_fp = HTSeq.FastaReader(genefile)
 	allelescores=[]
@@ -32,7 +32,7 @@ def getBlastScoreRatios(genefile,basepath,doAll):
 
 		genome=-1
 		alleleList.append(allele.seq)
-		translatedSequence,x,y=translateSeq(allele.seq)
+		translatedSequence,x,y=translateSeq(allele.seq,verbose)
 		
 		if translatedSequence =='':
 			pass
@@ -48,7 +48,7 @@ def getBlastScoreRatios(genefile,basepath,doAll):
 			if doAll:
 				
 				blast_out_file = os.path.join(basepath,'blastdbs/temp.xml')
-				print ("Starting Blast alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+				verboseprint ("Starting Blast alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 				
 
 				# --- get BLAST score ratio --- #
@@ -57,7 +57,7 @@ def getBlastScoreRatios(genefile,basepath,doAll):
 			
 				blast_records = runBlastParser(cline,blast_out_file, alleleProt)
 			
-				print ("Blasted alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+				verboseprint ("Blasted alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 			
 				for blast_record in blast_records:
 
@@ -68,7 +68,7 @@ def getBlastScoreRatios(genefile,basepath,doAll):
 							allelescores.append(int(match.score))
 							
 				geneScorePickle=os.path.abspath(genefile)+'_bsr.txt'
-				print "________"
+				verboseprint ("________")
 				var=[alleleI,allelescores]
 				with open(geneScorePickle,'wb') as f:
 					pickle.dump(var, f)			
@@ -90,7 +90,7 @@ def getBlastScoreRatios(genefile,basepath,doAll):
 	
 	return allelescores,alleleList
 	
-def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blast_DB_name,alleleList2,picklepath):
+def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blast_DB_name,alleleList2,picklepath,verbose):
 	
 	gene_fp = HTSeq.FastaReader(genefile)
 
@@ -99,7 +99,7 @@ def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blas
 		
 	proteinfastaPath=genefile
 	
-	print ("Re-starting Blast alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	verboseprint ("Re-starting Blast alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	blast_out_file2 = os.path.join(basepath,'blastdbs/temp.xml')
 
@@ -107,7 +107,7 @@ def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blas
 	allelescore=0
 	blast_records = runBlastParser(cline,blast_out_file2, proteinfastaPath)
 	
-	print ("Blasted alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	verboseprint ("Blasted alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	found =False
 	for blast_record in blast_records:
@@ -135,7 +135,7 @@ def reverseComplement(strDNA):
 
         return strDNArevC[::-1]
 
-def translateSeq(DNASeq):
+def translateSeq(DNASeq,verbose):
 	seq=DNASeq
 	reversedSeq=False
 	tableid=11
@@ -162,8 +162,7 @@ def translateSeq(DNASeq):
 					myseq= Seq(seq)
 					protseq=Seq.translate(myseq, table=tableid,cds=True)
 				except Exception as e:
-					print "translated error"
-					print e
+					verboseprint ("translated error",e)
 					protseq=""
 	return protseq,seq,reversedSeq
 
@@ -172,10 +171,17 @@ def translateSeq(DNASeq):
 #            Allele calling and classification             #
 # ======================================================== #
 def main():
-	print ("Starting script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	print ("Starting individual allele call at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	try:
 		input_file = sys.argv[1]
 		temppath = sys.argv[2]
+		verbose= sys.argv[3]
+		
+		if verbose == 'True':
+			verbose=True
+		else:
+			verbose=False
+		
 	except IndexError:
 		print "usage: list_pickle_obj"
 
@@ -183,13 +189,40 @@ def main():
 	with open(input_file,'rb') as f:
 		argumentList = pickle.load(f)
 	
+	
+	if verbose:
+		def verboseprint(*args):
+			# Print each argument separately so caller doesn't need to
+			# stuff everything to be printed into a single string
+			for arg in args:
+			   print arg,
+			print
+	else:   
+		verboseprint = lambda *a: None      # do-nothing function
+	
+	
 	geneFile = argumentList[0]
-	print "Using gene: "+str(geneFile)
+	verboseprint( "Using gene: "+str(geneFile))
 	shortgeneFile= os.path.join(os.path.dirname(argumentList[0]),"short",os.path.basename(argumentList[0]))
 	shortgeneFile= shortgeneFile.replace(".fasta","_short.fasta")
 	genomesList = argumentList[1]
+	genesList = argumentList[2]
 	
+	newListgenes=[]
+	with open(genesList,'r') as gene_fp:
+		for gene in gene_fp:
+			gene = gene.rstrip('\n')
+			gene = gene.rstrip('\r')
+			newListgenes.append(gene)
+
+	loadingbar=float(newListgenes.index(str(geneFile)))/len(newListgenes)
+	print(str(int(loadingbar*100))+"%")
+
 	basepath=os.path.join(temppath,os.path.splitext(geneFile)[0])
+	
+	
+	
+	
 	if not os.path.exists(basepath):
 			os.makedirs(basepath)
 
@@ -212,7 +245,7 @@ def main():
 	perfectMatchIdAllele2=[]
 	allelescores=[]
 	
-	print ("Getting BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	verboseprint ("Getting BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
 	geneScorePickle=os.path.abspath(shortgeneFile)+'_bsr.txt'
 	
@@ -220,21 +253,21 @@ def main():
 
 	if os.path.isfile(geneScorePickle) :
 		
-		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,False)
+		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,False,verbose)
 		
 	else:	
 		#alleleI,allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,True)
-		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,True)
+		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,True,verbose)
 		
 			
 			
-	print ("Finished BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	verboseprint ("Finished BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	genome=-1	
 	
 	genomeDict = {}
-	print ("starting allele call at: "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	verboseprint ("starting allele call blast at: "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	for genomeFile in genomesList:
-		print genomeFile
+		verboseprint(genomeFile)
 		bestmatch=[0,0,False,'',0] #score, score ratio, perfectmatch, key name of the DNA sequence string, allele ID
 		currentGenomeDict={}
 		currentCDSDict={}
@@ -256,7 +289,7 @@ def main():
 		listOfCDS=currentCDSDict
 		genomeProteinfastaPath=os.path.join(temppath,str(os.path.basename(genomeFile)+'_Protein.fasta'))
 		
-		print ("Blasting alleles on genome at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+		verboseprint("Blasting alleles on genome at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 		
 		blast_out_file = os.path.join(basepath,"blastdbs/"+os.path.basename(geneFile)+ '_List.xml')
 
@@ -269,7 +302,7 @@ def main():
 		cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5)
 			
 		blast_records = runBlastParser(cline, blast_out_file, proteinfastaPath)
-		print ("Blasted alleles on genome at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+		verboseprint("Blasted alleles on genome at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 		
 		alleleSizes=[]
 		for allele in fullAlleleList:
@@ -329,7 +362,7 @@ def main():
 						
 						notCDS=False
 						try:
-							protseq=translateSeq(DNAstr)
+							protseq=translateSeq(DNAstr,verbose)
 						except:
 							notCDS=True
 						if notCDS:
@@ -354,7 +387,7 @@ def main():
 							bestmatch=[match.score,scoreRatio,False,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
 							
 										
-			print ("Classifying the match at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))		
+			verboseprint("Classifying the match at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))		
 			
 			#if no best match was found it's a Locus Not Found
 			if bestmatch[0]==0 or "N" in AlleleDNAstr or "K" in AlleleDNAstr or "R" in AlleleDNAstr :
@@ -366,20 +399,21 @@ def main():
 					resultsList.append('LNF3:-1')
 					perfectMatchIdAllele.append('LNF')
 					perfectMatchIdAllele2.append('LNF')
-					print "Locus not found, no matches \n"
+					verboseprint( "Locus not found, no matches \n")
 				else:
 					resultsList.append('LNFN:-1')
 					perfectMatchIdAllele.append('LNF')
 					perfectMatchIdAllele2.append('LNF')
-					print "Locus has strange base (N, K or R) \n"
+					verboseprint( "Locus has strange base (N, K or R) \n")
 			
 			#if more than one BSR >0.6 in two different CDSs it's a Non Paralog Locus
 			elif len(list(set(locationcontigs)))>1:
+				verboseprint("NIPL","")
 				resultsList.append('NIPL')            
 				perfectMatchIdAllele.append('NIPL')
 				perfectMatchIdAllele2.append('NIPL')
 				for elem in locationcontigs:
-					print elem
+					verboseprint(elem)
 				
 			
 			#in case the DNA match sequence equal to the DNA sequence of the comparing allele
@@ -389,9 +423,8 @@ def main():
 				contigname=contigname.split("&")
 				matchLocation=contigname[2]	
 				contigname=contigname[0]	
-				print contigname
 				alleleStr=listOfCDS[">"+bestmatch[3]]
-				protSeq,alleleStr,Reversed=translateSeq(alleleStr)
+				protSeq,alleleStr,Reversed=translateSeq(alleleStr,verbose)
 				
 
 				#check for possible locus on tip
@@ -434,13 +467,15 @@ def main():
 						perfectMatchIdAllele.append('PLOTSC')
 						perfectMatchIdAllele2.append('PLOTSC')
 
-						print match
+						verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly bigger than the contig \n")
+						
+						"""print match
 						print "contig extras (l,r)"
 						print leftmatchContig,rightmatchContig
 						print "allele extras (l,r)"
 						print leftmatchAllele,rightmatchAllele
 						
-						print "Locus is possibly bigger than the contig \n"
+						print "Locus is possibly bigger than the contig \n"""
 					
 					elif leftmatchContig<leftmatchAllele:
 						
@@ -449,14 +484,9 @@ def main():
 						perfectMatchIdAllele.append('PLOT3')
 						perfectMatchIdAllele2.append('PLOT3')
 						
-						print match
-						print "contig extras (l,r)"
-						print leftmatchContig,rightmatchContig
-						print "allele extras (l,r)"
-						print leftmatchAllele,rightmatchAllele
+						verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly on the 3' tip of the contig \n")
 						
-						print "Locus is possibly on the 3' tip of the contig \n"
-					
+						
 					
 					elif 	rightmatchContig < rightmatchAllele:
 						
@@ -464,13 +494,8 @@ def main():
 						perfectMatchIdAllele.append('PLOT5')
 						perfectMatchIdAllele2.append('PLOT5')
 						
-						print match
-						print "contig extras (l,r)"
-						print leftmatchContig,rightmatchContig
-						print "allele extras (l,r)"
-						print leftmatchAllele,rightmatchAllele
-
-						print "Locus is possibly on the 5' tip of the contig \n"
+						verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly on the 5' tip of the contig \n")
+		
 				
 					else:
 						#if a perfect match was found
@@ -504,7 +529,7 @@ def main():
 				bestMatchContigLen=len(seq)
 				
 				alleleStr=listOfCDS[">"+bestmatch[3]]
-				protSeq,alleleStr,Reversed=translateSeq(alleleStr)
+				protSeq,alleleStr,Reversed=translateSeq(alleleStr,verbose)
 				
 				
 				rightmatchContig=bestMatchContigLen-int(matchLocation[1])	
@@ -515,9 +540,7 @@ def main():
 					rightmatchContig=leftmatchContig
 					leftmatchContig=aux
 				
-				
-				print rightmatchContig,leftmatchContig
-				
+								
 				
 				# get extra space to the right and left between the allele and match and check if it's still inside the contig
 				
@@ -536,11 +559,15 @@ def main():
 					resultsList.append('LOTSC:-1')
 					perfectMatchIdAllele.append('LOTSC')
 					perfectMatchIdAllele2.append('LOTSC')
-					print match
+					
+					
+					verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is bigger than the contig \n")
+					
+					"""print match
 					print contigname
 					print geneFile
 					print leftmatchAllele,rightmatchAllele
-					print "Locus is bigger than the contig \n"
+					print "Locus is bigger than the contig \n"""
 				
 				elif leftmatchContig<leftmatchAllele:
 					
@@ -548,11 +575,10 @@ def main():
 					resultsList.append('LOT3:-1')
 					perfectMatchIdAllele.append('LOT3')
 					perfectMatchIdAllele2.append('LOT3')
-					print match
-					print contigname
-					print geneFile
-					print leftmatchAllele,rightmatchAllele
-					print "Locus is on the 3' tip of the contig \n"
+					
+					verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 3' tip of the contig \n")
+					
+			
 				
 				
 				elif 	rightmatchContig < rightmatchAllele:
@@ -560,26 +586,23 @@ def main():
 					resultsList.append('LOT5:-1')
 					perfectMatchIdAllele.append('LOT5')
 					perfectMatchIdAllele2.append('LOT5')
-					print match
-					print contigname
-					print geneFile
-					print leftmatchAllele,rightmatchAllele
-					print "Locus is on the 5' tip of the contig \n"
-				
-				
+					
+					verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 5' tip of the contig \n")
+					
+			
 							
 				elif len(alleleStr) > moda+(moda*0.2) :
 					
-					print moda
-					print alleleStr
+					verboseprint("Locus is larger than mode", moda, alleleStr)
+	
 					resultsList.append('ALM')
 					perfectMatchIdAllele.append('ALM')
 					perfectMatchIdAllele2.append('ALM')
 				
 				elif len(alleleStr) < moda-(moda*0.2):
 					
-					print moda
-					print alleleStr
+					verboseprint("Locus is smaller than mode", moda, alleleStr)
+		
 					resultsList.append('ASM')
 					perfectMatchIdAllele.append('ASM')
 					perfectMatchIdAllele2.append('ASM')
@@ -600,7 +623,7 @@ def main():
 						perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
 					
 					
-					print "New allele! Adding allele "+ tagAux + str(alleleI+1) +" to the database\n"
+					verboseprint( "New allele! Adding allele "+ tagAux + str(alleleI+1) +" to the database\n")
 																						
 					resultsList.append( tagAux + str(alleleI+1) )
 
@@ -638,14 +661,15 @@ def main():
 
 						genefile2= geneTransalatedPath2
 						Gene_Blast_DB_name2 = Create_Blastdb( genefile2, 1, True )
-						print ("Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-						allelescores,alleleList=reDogetBlastScoreRatios(genefile2,basepath,alleleI,allelescores,Gene_Blast_DB_name2,alleleList,geneScorePickle)
-						print "allele id " + str(alleleI)
-						print ("Done Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+						verboseprint("Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+						allelescores,alleleList=reDogetBlastScoreRatios(genefile2,basepath,alleleI,allelescores,Gene_Blast_DB_name2,alleleList,geneScorePickle,verbose)
+						#print "allele id " + str(alleleI)
+						verboseprint("Done Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 		
 		except Exception as e:
 			print "some error occurred"
 			print e
+
 			#print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
 			perfectMatchIdAllele2.append("ERROR")
 			perfectMatchIdAllele.append("ERROR")
@@ -653,7 +677,7 @@ def main():
 		
 	
 	final =	(resultsList,perfectMatchIdAllele)	
-	print ("Finished allele calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	verboseprint("Finished allele calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	filepath=os.path.join(temppath , os.path.basename(geneFile)+"_result.txt")
 	filepath2=os.path.join(temppath , os.path.basename(geneFile)+"_result2.txt")
 	with open(filepath, 'wb') as f:
