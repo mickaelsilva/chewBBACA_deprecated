@@ -34,7 +34,7 @@ How to perform a complete wgMLST:
 
 1. Concatenate gene sequences in a single fasta file. You can use the .ffn files as source of genes sequences available [here] (http://ftp.ncbi.nih.gov/genomes/archive/old_genbank/Bacteria/)
 2. Run CreateSchema.py over the concatenated single fasta file
-3. Go to the schema_seed and run the init_bacca_schema.sh. Use the listGenes.txt for the allele call.
+3. Go to the schema_seed and run the init_bbaca_schema.sh. Use the listGenes.txt for the allele call.
 4. Create a list .txt file containing one draft genome file per line with full paths (similar to 3.)
 5. Run the allelecall script (local or cluster version) using the list files created at 3. and 4.
 6. Run the whichRepeatedLoci.py over the contigsInfo.txt output from step 5.
@@ -90,7 +90,7 @@ Performing a **SLURM cluster** allele call short version (uses the maximum numbe
 
 `-p` Prodigal path to execution file (included) 
 
-`-v`,`-verbose`  verbose mode(included) 
+`-v`,`--verbose`  verbose mode(included) 
 
 short example statistics file:
 
@@ -152,7 +152,7 @@ Basic usage:
 	
 `-i` raw output file from an allele calling
 
-`-g` name of the clean file
+`-g` path/name of the clean file
 
 `-r` (optional) list of genes to remove, one per line, advised to use the detected overrepresented genes from whichRepeatedLoci.py
 
