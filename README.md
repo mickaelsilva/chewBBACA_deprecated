@@ -75,22 +75,17 @@ Output:
 
 Performing a **SLURM cluster** allele call short version (uses the maximum number of local cores minus 2, one per gene):
 
-	% srun -c 32 --mem-per-cpu 4G  alleleCalling_ORFbased_protein_main3_local.py -i listGenomes.txt -g listGenes.txt -o outputFileName.txt -p /home/user/prodigal/Prodigal-2.60/prodigal
+	% alleleCalling_ORFbased_protein_main3_local.py -i listGenomes.txt -g listGenes.txt -o outputFileName.txt -p /home/user/prodigal/Prodigal-2.60/prodigal
 
-
-`-c` number of CPU (for SLURM runs only)
-
-`--mem-per-cpu` memory available per CPU in Gb (for SLURM runs only)
-	
 `-i` path to the list of genomes file
 
 `-g` path to the list of alleles file
 
 `-o` output file name
 
-`-p` Prodigal path to execution file (included) 
+`-p` Prodigal path to execution file (type prodigal if already on ENV variable) 
 
-`-v`,`--verbose`  verbose mode(included) 
+`-v`,`--verbose`  verbose mode(optional) 
 
 short example statistics file:
 
