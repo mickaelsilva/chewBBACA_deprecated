@@ -15,6 +15,16 @@ import shutil
 
 def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 	
+	if verbose:
+		def verboseprint(*args):
+			# Print each argument separately so caller doesn't need to
+			# stuff everything to be printed into a single string
+			for arg in args:
+			   print arg,
+			print
+	else:   
+		verboseprint = lambda *a: None      # do-nothing function
+	
 	gene_fp = HTSeq.FastaReader(genefile)
 	allelescores=[]
 	alleleProt=''
@@ -32,7 +42,7 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 
 		genome=-1
 		alleleList.append(allele.seq)
-		translatedSequence,x,y=translateSeq(allele.seq,verbose)
+		translatedSequence,x,y=translateSeq(allele.seq)
 		
 		if translatedSequence =='':
 			pass
@@ -92,6 +102,16 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 	
 def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blast_DB_name,alleleList2,picklepath,verbose):
 	
+	if verbose:
+		def verboseprint(*args):
+			# Print each argument separately so caller doesn't need to
+			# stuff everything to be printed into a single string
+			for arg in args:
+			   print arg,
+			print
+	else:   
+		verboseprint = lambda *a: None      # do-nothing function
+	
 	gene_fp = HTSeq.FastaReader(genefile)
 
 	alleleProt=''
@@ -135,7 +155,7 @@ def reverseComplement(strDNA):
 
         return strDNArevC[::-1]
 
-def translateSeq(DNASeq,verbose):
+def translateSeq(DNASeq):
 	seq=DNASeq
 	reversedSeq=False
 	tableid=11
@@ -162,7 +182,8 @@ def translateSeq(DNASeq,verbose):
 					myseq= Seq(seq)
 					protseq=Seq.translate(myseq, table=tableid,cds=True)
 				except Exception as e:
-					verboseprint ("translated error",e)
+					print "translated error"
+					print e
 					protseq=""
 	return protseq,seq,reversedSeq
 
@@ -217,7 +238,6 @@ def main():
 
 	loadingbar=float(newListgenes.index(str(geneFile)))/len(newListgenes)
 	print(str(int(loadingbar*100))+"%")
-
 	basepath=os.path.join(temppath,os.path.splitext(geneFile)[0])
 	
 	
@@ -362,7 +382,7 @@ def main():
 						
 						notCDS=False
 						try:
-							protseq=translateSeq(DNAstr,verbose)
+							protseq=translateSeq(DNAstr)
 						except:
 							notCDS=True
 						if notCDS:
@@ -424,7 +444,7 @@ def main():
 				matchLocation=contigname[2]	
 				contigname=contigname[0]	
 				alleleStr=listOfCDS[">"+bestmatch[3]]
-				protSeq,alleleStr,Reversed=translateSeq(alleleStr,verbose)
+				protSeq,alleleStr,Reversed=translateSeq(alleleStr)
 				
 
 				#check for possible locus on tip
@@ -529,7 +549,7 @@ def main():
 				bestMatchContigLen=len(seq)
 				
 				alleleStr=listOfCDS[">"+bestmatch[3]]
-				protSeq,alleleStr,Reversed=translateSeq(alleleStr,verbose)
+				protSeq,alleleStr,Reversed=translateSeq(alleleStr)
 				
 				
 				rightmatchContig=bestMatchContigLen-int(matchLocation[1])	

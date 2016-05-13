@@ -1,6 +1,7 @@
-# wgMLST
-tools developed to perform a bacterial wgMLST
+# chewBBACA 
+BSR-Based Allele Calling Algorithm
 
+chewBBACA stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be said as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name
 Dependencies:
 * [biopython] (http://biopython.org/wiki/Main_Page)
 * [HTSeq] (http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
@@ -88,6 +89,8 @@ Performing a **SLURM cluster** allele call short version (uses the maximum numbe
 `-o` output file name
 
 `-p` Prodigal path to execution file (included) 
+
+`-v`,`-verbose`  verbose mode(included) 
 
 short example statistics file:
 

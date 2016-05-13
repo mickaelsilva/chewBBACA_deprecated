@@ -121,10 +121,10 @@ def main():
 	prodigalPath = args.p
 	
 	try:
-		verbose
+		verbose=args.verbose
 	except:
 		verbose=False
-		
+
 	scripts_path=os.path.dirname(os.path.realpath(__file__))
 	
 
