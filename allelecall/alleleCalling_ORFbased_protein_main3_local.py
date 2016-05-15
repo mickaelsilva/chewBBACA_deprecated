@@ -388,7 +388,7 @@ def main():
 			
 		
 		gOutFile = args.o
-		statswrite='Stats:\tEXC\tINF\tLNF\tLOT\tPLOT\tNIPL\tALM\tASM'
+		statswrite='Genome\tEXC\tINF\tLNF\tLOT\tPLOT\tNIPL\tALM\tASM'
 		i=0
 		genome=0
 		while genome<len(listOfGenomes):
@@ -406,7 +406,7 @@ def main():
 			f.write(finalphylovinput)
 			
 		print statswrite	
-		with open(os.path.join(outputpath,"stastics.txt"), 'wb') as f:
+		with open(os.path.join(outputpath,"statistics.txt"), 'wb') as f:
 			f.write(str(statswrite))
 		
 		with open(os.path.join(outputpath,"contigsInfo.txt"), 'wb') as f:
