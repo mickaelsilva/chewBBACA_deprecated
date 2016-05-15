@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import sys
 import csv
 import numpy as np
@@ -5,7 +6,6 @@ from numpy import array
 import argparse
 import collections
 from collections import OrderedDict
-#import HTSeq
 
 def presence (d3):	
 
