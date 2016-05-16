@@ -5,6 +5,7 @@ from numpy import array
 import argparse
 import collections
 import operator
+import Counter
 
 def main():
 
@@ -43,7 +44,7 @@ def main():
 		#per each line(genome) get the contigs+positions that are repeated
 		#remove the repeated elements that are not contigs+positions
 		
-		equalelem=[x for x, y in collections.Counter(genomeSchema).items() if y > 1]
+		equalelem=[x for x, y in Counter.Counter(genomeSchema).items() if y > 1]
 		
 		if "LNF" in equalelem:
 			equalelem.remove("LNF")
