@@ -1,5 +1,4 @@
-#!/usr/bin/bash
-
+#!/usr/bin/env bash
 mkdir short
 cp -r *.fasta short/
 cd short/
