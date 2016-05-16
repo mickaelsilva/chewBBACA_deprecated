@@ -5,6 +5,7 @@ from numpy import array
 import argparse
 import collections
 import operator
+import Counter
 
 def main():
 
