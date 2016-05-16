@@ -3,10 +3,10 @@ BSR-Based Allele Calling Algorithm
 
 chewBBACA stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be said as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name
 Dependencies:
-* [biopython] (http://biopython.org/wiki/Main_Page)
-* [HTSeq] (http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
-* BLAST
-* [Prodigal] (https://github.com/hyattpd/prodigal/releases/) (tested with v. 2.6.0)
+* [biopython] (http://biopython.org/wiki/Main_Page)(v. 1.66)
+* [HTSeq] (http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)(v. 0.6.1p1)
+* BLAST (v. 2.2.28+)
+* [Prodigal] (https://github.com/hyattpd/prodigal/releases/) (v. 2.6.0)
 
 
 **Notice :**
