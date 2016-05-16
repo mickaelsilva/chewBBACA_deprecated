@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import csv
 import numpy as np
 from numpy import array
