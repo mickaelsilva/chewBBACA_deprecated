@@ -21,7 +21,7 @@ def reverseComplement(strDNA):
 
         return strDNArevC[::-1]
 
-def translateSeq(DNASeq):
+def translateSeq(DNASeq,genename):
 	seq=DNASeq
 	reversedSeq=False
 	try:
@@ -47,8 +47,8 @@ def translateSeq(DNASeq):
 					myseq= Seq(seq)
 					protseq=Seq.translate(myseq, table=11,cds=True)
 				except Exception as e:
-					print "translated error"
-					print e
+					print "translating error :",e," on locus "+str(genename)
+
 					protseq=""
 	return protseq,seq,reversedSeq
 
@@ -77,17 +77,19 @@ def main():
 	totalgenes=0
 	repeatedgenes=0
 	smallgenes=0
+	nottranslatable=0
 	
-	print "Checking if repeated DNA sequences"
+	print "Checking translatability of the loci:\n"
 	
 	if not passSteps:
 		#print "not passing steps"
 		with open(proteinfile, "wb") as f:
 			g_fp = HTSeq.FastaReader( genes )
-			totalgenes+=1
+			
 			for gene in g_fp:
 				dnaseq=	str(gene.seq)
-				protseq,x,y=translateSeq(dnaseq)
+				protseq,x,y=translateSeq(dnaseq,gene.name)
+				totalgenes+=1
 				if len(protseq)>1:
 					
 					if str(protseq) in alreadyIn:
@@ -104,8 +106,13 @@ def main():
 						protDict[protname] = str(protseq)
 						geneDict[str(gene.name)] = gene.seq
 				else:
-
-					print gene.name
+					nottranslatable+=1
+					continue
+			
+			print (str(nottranslatable)+" not translatable out of "+ str(totalgenes))
+			
+			print
+			print "Checking if repeated protein sequences:\n"
 			
 			orderedprotList=[]
 			orderedprotList=sorted(protDict.items(), key=lambda x: len(x[1]), reverse=True)
@@ -116,11 +123,11 @@ def main():
 				elem=orderedprotList[i]
 				orderedprotDict[elem[0]] = elem[1]
 				i+=1
-				
-			#print orderedprotDict
-		print str(repeatedgenes) + " repeated genes out of "+ str(totalgenes)
-		print str(smallgenes) + " small genes out of "+ str(totalgenes)
-		print "protein file created"
+		
+
+		print (str(repeatedgenes) + " repeated loci out of "+ str(totalgenes))
+		print (str(smallgenes) + " loci out of "+ str(totalgenes)+ " smaller than "+str(sizethresh)+"bp")
+		print "\nprotein file created\n"
 				
 		# first step -  remove genes contained in other genes or 100% equal genes
 		
@@ -132,7 +139,7 @@ def main():
 		g=0
 		j=0
 		
-		print "Checking if proteins are equal or substring of others..."
+		print "Checking if protein sequences are contained in others..."
 		
 		# for each gene from all the annotated genes - starting with an empty dictionary, only add a new gene if the "to be added gene" is not contained or equal to a gene already added to the dictionary
 		auxprot=[]
@@ -154,7 +161,7 @@ def main():
 				
 			j+=1
 			#print "____" +str(j)
-		print "%s genes are contained in other genes" %  (g)
+		print "%s loci are contained in other genes\n" %  (g)
 		
 		#overwrite the original file, obtaining a new file with unique genes
 		
@@ -169,7 +176,7 @@ def main():
 		totalgenes=0
 		smallgenes=0
 		g_fp = HTSeq.FastaReader( genes )
-		totalgenes+=1
+		
 		for gene in g_fp:
 			dnaseq=	str(gene.seq)
 			protseq,x,y=translateSeq(dnaseq)
@@ -195,6 +202,7 @@ def main():
 				print gene.name
 	
 	
+	print "Blasting the total of "+ str(len(auxDict.keys())) + " loci"
 	
 	geneFile = os.path.abspath( proteinfile )
 	#print proteinfile
@@ -276,7 +284,7 @@ def main():
 				for align in blast_record.alignments:
 					if not (str(align.hit_def) == str(blast_record.query)):
 						selfblastscore=((align.hsps)[0]).score
-						print "gene "+str(align.hit_def)+" is larger than gene "+str(blast_record.query)
+						#print "gene "+str(align.hit_def)+" is larger than gene "+str(blast_record.query)
 						raise
 				
 				while i<len(blast_record.alignments):
@@ -286,7 +294,7 @@ def main():
 					
 					if align.hit_def not in genesToKeep and not str(align.hit_def) == str(blast_record.query) and scoreRatio>0.6 :
 						toRemove.append(align.hit_def)
-						log.append(str(align.hit_def)+"\t"+str(blast_record.query)+"\t"+"2 was on the removed list and bsr >0.6")
+						#log.append(str(align.hit_def)+"\t"+str(blast_record.query)+"\t"+"2 was on the removed list and bsr >0.6")
 							
 					else:
 						pass
@@ -346,11 +354,8 @@ def main():
 
 			removedparalogs+=1
 		
-	print "%s genes are contained in other genes" %  (g)
-	print "Removed %s same Locus genes" % str(removedparalogs)
-	print "Removed %s because of size " % str(removedsize)
-	print "%s Scheme genes " % str(rest)
-	print "total genes:" + str(totalgenes)
+	print "\nRemoved %s with a high similarity (BSR>0.6)" % str(removedparalogs)
+	print "Total of %s loci that constitute the schema" % str(rest)
 	
 	#with open (pathfiles+"concatenated.fasta","wb") as f:
 	#	f.write (concatenatedFile)
