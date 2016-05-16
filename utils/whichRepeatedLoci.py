@@ -104,7 +104,7 @@ def main():
 	ordered = sorted(pontuationDict.items(), key=operator.itemgetter(1))
 
 	paralogs=set(paralogs)	
-	print len(paralogs)
+	print "Detected number of paralog loci: "+ str(len(paralogs))
 
 	
 	#write file with a overrepresented locus per line, the number of times the locus is overrepresented, problems and total of overrepresentation+problems
