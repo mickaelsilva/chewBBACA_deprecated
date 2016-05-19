@@ -110,6 +110,7 @@ def main():
 	parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
 	parser.add_argument('-p', nargs='?', type=str, help="Path to prodigal exec file", required=True)
+	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=True)
 	parser.add_argument("-v", "--verbose", help="increase output verbosity",dest='verbose', action="store_true")
 	
 	
@@ -119,6 +120,10 @@ def main():
 	genomeFiles = args.i
 	genes = args.g
 	prodigalPath = args.p
+	cpuToUse=args.cpu
+	
+	if cpuToUse >= multiprocessing.cpu_count()-2:
+		cpuToUse=multiprocessing.cpu_count()-2
 	
 	try:
 		verbose=args.verbose
@@ -169,7 +174,7 @@ def main():
 	results = []
 	#Prodigal run on the genomes, one genome per core using n-2 cores (n number of cores)
 	
-	pool = multiprocessing.Pool(multiprocessing.cpu_count()-2)
+	pool = multiprocessing.Pool(cpuToUse)
 	for genome in listOfGenomes:
 		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,prodigalPath],))
 		
@@ -234,7 +239,7 @@ def main():
 
 	#creation of the Databases for each genome, one genome per core using n-2 cores (n number of cores)
 	
-	pool = multiprocessing.Pool(multiprocessing.cpu_count()-2)
+	pool = multiprocessing.Pool(cpuToUse)
 	for genomeFile in listOfGenomes:
 		filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
 		os.makedirs(os.path.join(basepath,str(os.path.basename(genomeFile)) ))
@@ -254,7 +259,7 @@ def main():
 	# Run the allele call, one gene per core using n-2 cores (n number of cores)
 	
 	
-	pool = multiprocessing.Pool(multiprocessing.cpu_count()-2)
+	pool = multiprocessing.Pool(cpuToUse)
 	for argList in argumentsList:
 		
 		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"callAlleles_protein3.py"),str(argList),basepath,str(verbose)],))
