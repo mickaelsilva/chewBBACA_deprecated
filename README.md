@@ -85,7 +85,7 @@ Performing a **SLURM cluster** allele call short version (paralellized by gene):
 
 `-p` Prodigal path to execution file (type prodigal if already on ENV variable) 
 
-`--cpu` Number of cpus to use (if over the maximum uses maximum -2)
+`--cpu` Number of cpus to use (if greater than existing cpus-2 uses cpus-2)
 
 `-v`,`--verbose`  verbose mode(optional) 
 
