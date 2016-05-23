@@ -10,6 +10,25 @@ import shutil
 import multiprocessing
 import subprocess
 
+def which(program):
+    import os
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return True
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return True
+
+    return "Not found"
+
+
 def reverseComplement(strDNA):
 
 	basecomplement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'R':'R', 'N':'N', 'K':'K'}
@@ -132,8 +151,14 @@ def main():
 
 	scripts_path=os.path.dirname(os.path.realpath(__file__))
 	
+	print ("Checking all programs are installed and usable")
+	
+	print ("Checking Blast... "+str(which('blastp')))
+	print ("Checking Prodigal... "+str(which(prodigalPath)))
+		
+	
 
-	print ("Starting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	print ("\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	
 	
