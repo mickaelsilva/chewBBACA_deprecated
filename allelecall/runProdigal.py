@@ -1,13 +1,9 @@
 #!/usr/bin/python
 import sys
 import os
-import os.path
 import string
 import subprocess
 import pickle
-
-
-
 
 def main():
 	

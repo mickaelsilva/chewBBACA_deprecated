@@ -312,7 +312,6 @@ def main():
 
 		genome+=1
 		listOfCDS=currentCDSDict
-		genomeProteinfastaPath=os.path.join(temppath,str(os.path.basename(genomeFile)+'_Protein.fasta'))
 		
 		verboseprint("Blasting alleles on genome at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 		
@@ -394,7 +393,7 @@ def main():
 							pass
 						
 						elif(compare is True):
-							bestmatch=[match.score,1,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
+							bestmatch=[match.score,1,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr),AlleleDNAstr]
 						
 						elif(scoreRatio == 1 and bestmatch[2] is False and compare is True):
 							bestmatch=[match.score,scoreRatio,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
@@ -415,7 +414,16 @@ def main():
 			verboseprint("Classifying the match at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))		
 			
 			#if no best match was found it's a Locus Not Found
-			if bestmatch[0]==0 or "N" in AlleleDNAstr or "K" in AlleleDNAstr or "R" in AlleleDNAstr :
+			
+			#check for ambiguious bases
+			if not bestmatch[0]==0:
+			
+				alleleStr=listOfCDS[">"+bestmatch[3]]
+				listFoundAmbiguities=[]
+				listambiguousBases=['K','M','R','Y','S','W','B','V','H','D','X','N','-','.']
+				listFoundAmbiguities=[e for e in listambiguousBases if e in AlleleDNAstr]
+			
+			if bestmatch[0]==0 or len(listFoundAmbiguities)>0 :
 						
 						###################
 						# LOCUS NOT FOUND #
@@ -426,10 +434,11 @@ def main():
 					perfectMatchIdAllele2.append('LNF')
 					verboseprint( "Locus not found, no matches \n")
 				else:
+
 					resultsList.append('LNFN:-1')
 					perfectMatchIdAllele.append('LNF')
 					perfectMatchIdAllele2.append('LNF')
-					verboseprint( "Locus has strange base (N, K or R) \n")
+					verboseprint( "Locus has strange base \n")
 			
 			#if more than one BSR >0.6 in two different CDSs it's a Non Paralog Locus
 			elif len(list(set(locationcontigs)))>1:
@@ -448,7 +457,6 @@ def main():
 				contigname=contigname.split("&")
 				matchLocation=contigname[2]	
 				contigname=contigname[0]	
-				alleleStr=listOfCDS[">"+bestmatch[3]]
 				protSeq,alleleStr,Reversed=translateSeq(alleleStr)
 				
 
@@ -494,13 +502,6 @@ def main():
 
 						verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly bigger than the contig \n")
 						
-						"""print match
-						print "contig extras (l,r)"
-						print leftmatchContig,rightmatchContig
-						print "allele extras (l,r)"
-						print leftmatchAllele,rightmatchAllele
-						
-						print "Locus is possibly bigger than the contig \n"""
 					
 					elif leftmatchContig<leftmatchAllele:
 						
@@ -553,7 +554,6 @@ def main():
 				seq=currentGenomeDict[ contigname ]
 				bestMatchContigLen=len(seq)
 				
-				alleleStr=listOfCDS[">"+bestmatch[3]]
 				protSeq,alleleStr,Reversed=translateSeq(alleleStr)
 				
 				
@@ -588,11 +588,7 @@ def main():
 					
 					verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is bigger than the contig \n")
 					
-					"""print match
-					print contigname
-					print geneFile
-					print leftmatchAllele,rightmatchAllele
-					print "Locus is bigger than the contig \n"""
+
 				
 				elif leftmatchContig<leftmatchAllele:
 					
@@ -603,8 +599,6 @@ def main():
 					
 					verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 3' tip of the contig \n")
 					
-			
-				
 				
 				elif 	rightmatchContig < rightmatchAllele:
 					

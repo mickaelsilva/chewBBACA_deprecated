@@ -31,7 +31,7 @@ def which(program):
 
 def reverseComplement(strDNA):
 
-	basecomplement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'R':'R', 'N':'N', 'K':'K'}
+	basecomplement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
         strDNArevC = ''
         for l in strDNA:
 
@@ -76,6 +76,7 @@ def loci_translation (genesList,listOfGenomes2):
 	basepath=''
 	lGenesFiles = []
 	argumentsList = []
+	noshortgeneFile=[]
 	
 	for gene in gene_fp:
 		k=0
@@ -83,6 +84,10 @@ def loci_translation (genesList,listOfGenomes2):
 		multiple=True
 		shortgene= os.path.join(os.path.dirname(gene),"short",os.path.basename(gene))
 		shortgene= shortgene.replace(".fasta","_short.fasta")
+		if not os.path.isfile(shortgene):
+			noshortgeneFile.append(gene)
+			break
+			
 		gene_fp2 = HTSeq.FastaReader(shortgene)
 		for allele in gene_fp2: 
 			k+=1
@@ -112,7 +117,7 @@ def loci_translation (genesList,listOfGenomes2):
 	
 
 	gene_fp.close()	
-	return	genepath,basepath,lGenesFiles,argumentsList
+	return	genepath,basepath,lGenesFiles,argumentsList,noshortgeneFile
 
 def call_proc(cmd):
 	
@@ -178,11 +183,15 @@ def main():
 	fp.close()
 	
 	#translate the loci
-	genepath,basepath,lGenesFiles,argumentsList=loci_translation (genes,listOfGenomes)
+	genepath,basepath,lGenesFiles,argumentsList, noShort=loci_translation (genes,listOfGenomes)
 	
 	if len(argumentsList) ==0:
+		shutil.rmtree(basepath)
 		raise ValueError('ERROR! AT LEAST ONE GENE FILE MUST CONTAIN AN ALLELE REPRESENTING A CDS')
 	
+	if len(noShort)>0:
+		shutil.rmtree(basepath)
+		raise ValueError('ERROR! These loci have no short gene file: '+str(noShort))
 		
 	# ------------------------------------------------- #
 	#           RUN PRODIGAL OVER ALL GENOMES           #
@@ -191,7 +200,7 @@ def main():
 
 
 
-	print ("Starting Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	print ("\nStarting Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
 	totgenomes= len(listOfGenomes)
 	
@@ -206,7 +215,21 @@ def main():
 	pool.close()
 	pool.join()
 	
-
+	
+	print "\nChecking all prodigal processes created the necessary files..."
+	
+	listOfORFCreated=[]
+	for orffile in os.listdir(basepath):
+		if orffile.endswith("_ORF.txt"):
+			listOfORFCreated.append(orffile)
+			
+	if len(listOfGenomes) >len(listOfORFCreated):
+		message="Missing some files from prodigal. "+str((len(listOfGenomes))-(len(listOfORFCreated)))+" missing files out of "+str(len(listOfGenomes))
+		shutil.rmtree(basepath)
+		raise ValueError(message)
+	else:
+		print "All prodigal files necessary were created\n"
+		
 	print ("Finishing Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	
@@ -293,7 +316,7 @@ def main():
 	pool.join()
 	
 
-	
+	print ("Finished Allele Calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	output=[]
 	for gene in lGenesFiles:
@@ -310,7 +333,7 @@ def main():
 			output2.append(var)
 
 
-	print ("Finished Allele Calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	print ("Wrapping up the results")
 
 	#delete all temp files
 	shutil.rmtree(basepath)
