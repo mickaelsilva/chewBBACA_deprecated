@@ -162,7 +162,7 @@ def main():
 	print ("Checking Prodigal... "+str(which(prodigalPath)))
 		
 	
-
+	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
 	print ("\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	
@@ -474,7 +474,7 @@ def main():
 		print lineno
 			
 	
-
+	print (starttime)
 	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
 if __name__ == "__main__":
