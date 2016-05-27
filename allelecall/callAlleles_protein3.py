@@ -11,7 +11,6 @@ from CommonFastaFunctions import runBlastParser
 import time
 import pickle
 import shutil
-import warnings
 
 
 def getBlastScoreRatios(genefile,basepath,doAll,verbose):
@@ -55,8 +54,10 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 			
 			with open(proteinfastaPath, "wb") as f:
 				f.write(alleleProt)
+				
+			if doAll:	
 			Gene_Blast_DB_name = Create_Blastdb( proteinfastaPath, 1, True )
-			if doAll:
+			
 				
 				blast_out_file = os.path.join(basepath,'blastdbs/temp.xml')
 				verboseprint ("Starting Blast alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
@@ -212,7 +213,6 @@ def main():
 	argumentList=[]
 	with open(input_file,'rb') as f:
 		argumentList = pickle.load(f)
-	warnings.filterwarnings('ignore')
 	
 	if verbose:
 		def verboseprint(*args):
@@ -474,9 +474,7 @@ def main():
 					rightmatchContig=leftmatchContig
 					leftmatchContig=aux
 				
-				
-				
-				
+								
 				
 				# get extra space to the right and left between the allele and match
 				
@@ -541,9 +539,10 @@ def main():
 			# if match with BSR >0.6 and not equal DNA sequences
 			else:
 				
+				alleleStr=listOfCDS[">"+bestmatch[3]]
 				match=bestmatch[5]
 				geneLen=bestmatch[6]
-
+				
 				contigname=bestmatch[3]	
 				
 				contigname=contigname.split("&")
@@ -578,13 +577,11 @@ def main():
 						###########################
 				
 				
-				
 				if leftmatchContig<leftmatchAllele and 	rightmatchContig < rightmatchAllele:
 				
 					resultsList.append('LOTSC:-1')
 					perfectMatchIdAllele.append('LOTSC')
 					perfectMatchIdAllele2.append('LOTSC')
-					
 					
 					verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is bigger than the contig \n")
 					
