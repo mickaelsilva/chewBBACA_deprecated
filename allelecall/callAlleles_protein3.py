@@ -404,10 +404,14 @@ def main():
 									alleleMatchid=(int(fullAlleleList.index(DNAstr)))+1
 								
 								else:
-									DNAstr=reverseComplement(DNAstr)
-									if DNAstr in fullAlleleList:
-										compare=True
-										alleleMatchid=(int(fullAlleleList.index(DNAstr)))+1
+									try:
+										DNAstr=reverseComplement(DNAstr)
+										if DNAstr in fullAlleleList:
+											compare=True
+											alleleMatchid=(int(fullAlleleList.index(DNAstr)))+1
+									except:
+										#some ambiguous base found cant reversecomplement it
+										continue
 								
 							
 							notCDS=False
