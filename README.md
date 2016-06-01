@@ -1,24 +1,29 @@
-# chewBBACA 
-BSR-Based Allele Calling Algorithm
+#chewBBACA: BSR-Based Allele Calling Algorithm
+---------
+**chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be said as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. 
 
-chewBBACA stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be said as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name
-Dependencies:
-* [biopython] (http://biopython.org/wiki/Main_Page)(v. 1.66)
-* [HTSeq] (http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)(v. 0.6.1p1)
-* BLAST (v. 2.2.28+)
-* [Prodigal] (https://github.com/hyattpd/prodigal/releases/) (v. 2.6.0)
+chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, and also providing an allele calling algorithm, that can be run in multiprocessor settings.
 
+##Dependencies:
+* [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
+* [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
+* [BLAST 2.2.28+](ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.2.28/)
+* [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/)
+
+##Tutorial contents
+ 1. wgMLST schema creation
+ 2. Selecting a cgMLST schema from the wgMLST schema
+ 3. Validating the cgMLST schema 
+ 4. Allele calling using the cgMLST schema
 
 **Notice :**
-
 Previous versions used the full allele list to make a BLAST search over the genomes, increasing exponentially the time cost necessary to perform the allele call with the growing allele database. 
 To address this issue the allele call script has been modified using now 2 files per locus. One file will store all allelic sequence forms found, while a "short" version of the allele will store only
-new alleles with a significant difference to the closest allele (0.6<BSR<0.7). The short gene form will be used to perform the BLAST search, allowing a better time performance allele call, while not losing
-the wider diversity range search.
+new alleles with a significant difference to the closest allele (0.6<BSR<0.7). The short gene form will be used to perform the BLAST search, allowing a better time performance allele call, while not losing the wider diversity range search.
 
 **Important Notes :**
 - lists of files MUST contain FULL PATH!
-- be sure your fasta files are formated in UNIX, for quick conversion use [dos2unix] (http://linuxcommand.org/man_pages/dos2unix1.html)
+- be sure your fasta files are formatted in UNIX, for quick conversion use [dos2unix] (http://linuxcommand.org/man_pages/dos2unix1.html)
 - allele sequence of the gene files must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI table 11] (http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi)
 - gene folder must have a subfolder cointaning duplicated gene files for the short form
 
@@ -28,7 +33,6 @@ suggested folder structure:
  1. sub folder - genomes - all genomes fasta files
  2. sub folder - genes - all genes fasta files
   1. sub folder - short - all genes short form, extension ends with "_short.fasta"
-
 
 How to perform a complete wgMLST:
 
