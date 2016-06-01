@@ -1,5 +1,5 @@
 #chewBBACA: BSR-Based Allele Calling Algorithm
----------
+
 **chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be said as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. 
 
 chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, and also providing an allele calling algorithm, that can be run in multiprocessor settings.
@@ -16,16 +16,12 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
  3. Validating the cgMLST schema 
  4. Allele calling using the cgMLST schema
 
-**Notice :**
-Previous versions used the full allele list to make a BLAST search over the genomes, increasing exponentially the time cost necessary to perform the allele call with the growing allele database. 
-To address this issue the allele call script has been modified using now 2 files per locus. One file will store all allelic sequence forms found, while a "short" version of the allele will store only
-new alleles with a significant difference to the closest allele (0.6<BSR<0.7). The short gene form will be used to perform the BLAST search, allowing a better time performance allele call, while not losing the wider diversity range search.
+**Important Notes before starting:**
 
-**Important Notes :**
-- lists of files MUST contain FULL PATH!
-- be sure your fasta files are formatted in UNIX, for quick conversion use [dos2unix] (http://linuxcommand.org/man_pages/dos2unix1.html)
-- allele sequence of the gene files must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI table 11] (http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi)
-- gene folder must have a subfolder cointaning duplicated gene files for the short form
+- All the referenced lists of files *must contain full path* for the files.
+- Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
+- For **chewBBACA**, the definition of an allele is that each allele must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automaticaly exclude any allele which DNA sequence that does not contain start or stop codon and that it's length is not multiple of three.
+- gene folder must have a subfolder containing duplicated gene files for the short form
 
 suggested folder structure:
 
@@ -183,3 +179,10 @@ Usage:
 The output consists in a set of plots per iteration and a removedGenomes.txt file where its informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
 
 Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
+
+
+
+**Notice :**
+Previous versions used the full allele list to make a BLAST search over the genomes, increasing exponentially the time cost necessary to perform the allele call with the growing allele database. 
+To address this issue the allele call script has been modified using now 2 files per locus. One file will store all allelic sequence forms found, while a "short" version of the allele will store only
+new alleles with a significant difference to the closest allele (0.6 < BSR < 0.7). The short gene form will be used to perform the BLAST search, allowing a better time performance allele call, while not losing the wider diversity range search.
