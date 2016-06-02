@@ -11,24 +11,48 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 * [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/)
 
 ##Tutorial contents
- 1. wgMLST schema creation
+ 
+
+ 0. Suggested folder structure  
+ 2. wgMLST schema creation  
  2. Selecting a cgMLST schema from the wgMLST schema
- 3. Validating the cgMLST schema 
+ 3. Validating the cgMLST schema
  4. Allele calling using the cgMLST schema
 
 **Important Notes before starting:**
 
-- All the referenced lists of files *must contain full path* for the files.
-- Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
-- For **chewBBACA**, the definition of an allele is that each allele must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automaticaly exclude any allele which DNA sequence that does not contain start or stop codon and that it's length is not multiple of three.
-- gene folder must have a subfolder containing duplicated gene files for the short form
+ - For **chewBBACA**, the definition of an allele is that each allele
+   must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automaticaly exclude any allele which DNA sequence that does not contain start or stop codon and that it's length is not multiple of three.
+ - All the referenced lists of files *must contain full path* for the files.
+ - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
-suggested folder structure:
+ ### 0. Suggested folder structure:
+We suggest that chewBBACA should be run in a directory (chewbacca_wrkDIR) containing the following directory structure and organization: 
 
-1. main folder - scripts and txt files
- 1. sub folder - genomes - all genomes fasta files
- 2. sub folder - genes - all genes fasta files
+    .../chewbacca_wrkDIR/
+    .../ chewbacca_wrkDIR/genomes 
+    .../chewbacca_wrkDIR/genes
+
   1. sub folder - short - all genes short form, extension ends with "_short.fasta"
+
+ ###1. wgMLST schema creation  
+
+Command:
+    `% CreateSchema.py -i allffnfile.fasta -g 200`
+
+`-i` file with concatenated gene sequences
+
+`-g` minimum locus lenght (removes any loci with length equal or less the specified value
+
+**Input** : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema
+
+**Output:**
+
+ x.fasta large set of .fasta files, 1 file per gene inside the folder schema_seed
+
+
+, removes genes that are substring of bigger genes and genes with DNA sequences smaller than chosen in the -g parameter. Blasts all the genes against each other and saves the bigger genes, removing the smaller genes with a 0.6>BSR (BSR calculated according to the original [paper](https://peerj.com/articles/332/) )
+
 
 How to perform a complete wgMLST:
 
@@ -41,27 +65,6 @@ How to perform a complete wgMLST:
 7. Run the XpressGetCleanLoci4Phyloviz.py using the outputs from 5. and 6.
 8. Use [phyloviz software] (http://www.phyloviz.net/) to build trees based on the profiles generated or the [online tool] (https://node.phyloviz.net/)
 9. (optional) Use the testQualityGenomes3.py script to reach/analyze the core genome and re-do step 7
-
-=============
-#Create Schema
-
-dependencies:
-* biopython
-* HTSeq
-* BLAST
-
-Given a concatenated ffn file, removes genes that are substring of bigger genes and genes with DNA sequences smaller than chosen in the -g parameter. Blasts all the genes against each other and saves the bigger genes, removing the smaller genes with a 0.6>BSR (BSR calculated according to the original [paper](https://peerj.com/articles/332/) )
-
-	% CreateSchema.py -i allffnfile.fasta -g 200
-
-`-i` file with concatenated gene sequences
-
-`-g` minimum DNA sequence size
-
-
-Output:
-
-* x.fasta large set of .fasta files, 1 file per gene inside the folder schema_seed
 
 
 
