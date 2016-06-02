@@ -680,7 +680,8 @@ def main():
 						
 						alleleI+=1
 						#appendAllele='>allele_' + str(alleleI) + '_' + tagAux[:-1] +"_" + str(os.path.basename(genomesList[genome])) + '\n'
-						appendAllele='>'+str(((os.path.basename(geneFile)).split("."))[0])+"_" + str(alleleI) + "_" + str(os.path.basename(genomesList[genome])) + '\n'
+						appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-")+"_" + str(alleleI) + "_" + str(os.path.basename(genomesList[genome])) + '\n'
+						#appendAllele='>'+str(((os.path.basename(geneFile)).split("."))[0])+"_" + str(alleleI) + "_" + str(os.path.basename(genomesList[genome])) + '\n'
 						fG = open( geneFile, 'a' )
 						fG.write(appendAllele)
 						fG.write( alleleStr + '\n')
