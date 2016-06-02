@@ -5,6 +5,7 @@
 chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, and also providing an allele calling algorithm, that can be run in multiprocessor settings.
 
 ##Dependencies:
+* [git](https://git-scm.com/)
 * [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
 * [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
 * BLAST 2.2.28+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.2.28/
@@ -12,7 +13,7 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 
 ##Tutorial contents
  
- 1. Suggested folder structure  
+ 1. Setting up the analysis  
  2. wgMLST schema creation  
  3. Selecting a cgMLST schema from the wgMLST schema
  4. Validating the cgMLST schema
@@ -25,20 +26,45 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
  - All the referenced lists of files *must contain full path* for the files.
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
- ### 0. Suggested folder structure:
-We suggest that  for each analysis for a given schema, chewBBACA should be run in a directory (chewbacca_wrkDIR) containing the following directory structure and organization: 
+ ### 0. Setting up the analysis  :
 
+**Installing chewBACCA**
+
+To install chewBACCA, simply select the directory where you want it to be installed and run the following command:
+
+```
+ git clone https://github.com/mickaelsilva/chewBBACA.git
+``` 
+
+This will create the chewBBACA dir in the present directory with all the needed scripts. 
+
+to update chewBBACA you simply 
+
+```
+ git pull
+ ```
+
+You will also need to install all the dependencies indicated above and make sure they are on the PATH.
+
+**PATH settings for chewBBACA**
+
+All the subdirectories in the chewBBACA dir  
+export PATH 
+
+**Folder structure**
+*This step is optional and is directed to users without much experience in running scripts.*
+We suggest that  for each analysis for a given schema, chewBBACA should be run in a directory (chewbacca_wrkDIR) containing the following directory structure: 
 ```
 	.../chewbacca_wrkDIR/
     .../chewbacca_wrkDIR/genomes 
     .../chewbacca_wrkDIR/genes
 ```
 the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
-In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for each loci. it will also contain a subdir ` .../chewbacca_wrkDIR/genes/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/genes `
-
- ###1. wgMLST schema creation  
-
-Command:
+In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for each loci. it will also contain a subdir ` .../chewbacca_wrkDIR/genes/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/genes`.
+ 
+### 1. wgMLST schema creation 
+ 
+**Command:**
     `% CreateSchema.py -i allffnfile.fasta -g 200`
 
 `-i` file with concatenated gene sequences
