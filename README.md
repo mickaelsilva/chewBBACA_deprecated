@@ -28,12 +28,14 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 
  ### 0. Suggested folder structure:
 We suggest that  for each analysis for a given schema, chewBBACA should be run in a directory (chewbacca_wrkDIR) containing the following directory structure and organization: 
-<code>.../chewbacca_wrkDIR/
+
+```
+	.../chewbacca_wrkDIR/
     .../chewbacca_wrkDIR/genomes 
     .../chewbacca_wrkDIR/genes
-</code>
-the<code>.../chewbacca_wrkDIR/genomes</code> dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
-In <code>.../chewbacca_wrkDIR/genes </code> will contain a fasta file with the alleles for each loci. it will also contain a subdir <code> .../chewbacca_wrkDIR/genes/short </code> with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in <code>.../chewbacca_wrkDIR/genes </code>.
+```
+the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
+In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for each loci. it will also contain a subdir ` .../chewbacca_wrkDIR/genes/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/genes `
 
  ###1. wgMLST schema creation  
 
