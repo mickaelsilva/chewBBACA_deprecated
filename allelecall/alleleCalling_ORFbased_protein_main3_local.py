@@ -182,123 +182,176 @@ def main():
 
 	fp.close()
 	
-	#translate the loci
-	genepath,basepath,lGenesFiles,argumentsList, noShort=loci_translation (genes,listOfGenomes)
+	#check if remnant files from previous run exist, prompt user if exists to know if it's his run and want to continue or start a new one
+
+	with open(genes, 'r') as f:
+		first_gene = f.readline()
 	
-	if len(argumentsList) ==0:
-		shutil.rmtree(basepath)
-		raise ValueError('ERROR! AT LEAST ONE GENE FILE MUST CONTAIN AN ALLELE REPRESENTING A CDS')
+	lGenesFiles = []
+	with open(genes, 'r') as gene_fp:
+		for gene in gene_fp:
+			gene = gene.rstrip('\n')
+			gene = gene.rstrip('\r')
+			lGenesFiles.append( gene )
 	
-	if len(noShort)>0:
-		shutil.rmtree(basepath)
-		raise ValueError('ERROR! These loci have no short gene file: '+str(noShort))
+	first_gene = first_gene.rstrip('\n')
+	first_gene = first_gene.rstrip('\r')
+	genepath=os.path.dirname(first_gene)
+	basepath=os.path.join(genepath, "temp")
+	testVar=""
+	if os.path.isdir(basepath):
+		testVar = raw_input("We found files belonging to a previous run not finished, If they are yours and want to continue were it stopped type Y or yes")
+	continueRun=False
+	
+	if testVar.lower()== "yes" or testVar.lower()== "y":
+		continueRun=True
 		
-	# ------------------------------------------------- #
-	#           RUN PRODIGAL OVER ALL GENOMES           #
-	# ------------------------------------------------- #
-
-
-
-
-	print ("\nStarting Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-
-	totgenomes= len(listOfGenomes)
+	if continueRun:
+		argumentsList=[]
+		resultsList=[]
+		for file in os.listdir(basepath):
+			if file.endswith("_argList.txt"):
+				argumentsList.append(os.path.join(basepath,str(file)))
+			elif file.endswith("_result.txt"):
+				resultsList.append((os.path.basename(os.path.join(basepath,str(file)))).replace("_result.txt","_argList.txt"))
+		
+		#remove unfinished directories
+		todelFolders=next(os.walk(genepath))[1]
+		for foldertodel in todelFolders:
+			if "short" in foldertodel or "temp" in foldertodel:
+				pass
+			else:
+				shutil.rmtree(os.path.join(genepath,str(foldertodel)))
+		
+	else:
+		if os.path.isdir(basepath):
+			print ("removing existing files...")
+			shutil.rmtree(basepath)
 	
+		#translate the loci
+		genepath,basepath,lGenesFiles,argumentsList, noShort=loci_translation (genes,listOfGenomes)
+	
+	
+	totgenomes= len(listOfGenomes)
+		
 	joblist =[]
 	results = []
-	#Prodigal run on the genomes, one genome per core using n-2 cores (n number of cores)
 	
-	pool = multiprocessing.Pool(cpuToUse)
-	for genome in listOfGenomes:
-		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,prodigalPath],))
+	if not continueRun:
+		if len(argumentsList) ==0:
+			shutil.rmtree(basepath)
+			raise ValueError('ERROR! AT LEAST ONE GENE FILE MUST CONTAIN AN ALLELE REPRESENTING A CDS')
 		
-	pool.close()
-	pool.join()
-	
-	
-	print "\nChecking all prodigal processes created the necessary files..."
-	
-	listOfORFCreated=[]
-	for orffile in os.listdir(basepath):
-		if orffile.endswith("_ORF.txt"):
-			listOfORFCreated.append(orffile)
+		if len(noShort)>0:
+			shutil.rmtree(basepath)
+			raise ValueError('ERROR! These loci have no short gene file: '+str(noShort))
 			
-	if len(listOfGenomes) >len(listOfORFCreated):
-		message="Missing some files from prodigal. "+str((len(listOfGenomes))-(len(listOfORFCreated)))+" missing files out of "+str(len(listOfGenomes))
-		shutil.rmtree(basepath)
-		raise ValueError(message)
+		# ------------------------------------------------- #
+		#           RUN PRODIGAL OVER ALL GENOMES           #
+		# ------------------------------------------------- #
+
+
+
+
+		print ("\nStarting Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+
+		
+		#Prodigal run on the genomes, one genome per core using n-2 cores (n number of cores)
+	
+		pool = multiprocessing.Pool(cpuToUse)
+		for genome in listOfGenomes:
+			pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,prodigalPath],))
+			
+		pool.close()
+		pool.join()
+	
+	
+		print "\nChecking all prodigal processes created the necessary files..."
+		
+		listOfORFCreated=[]
+		for orffile in os.listdir(basepath):
+			if orffile.endswith("_ORF.txt"):
+				listOfORFCreated.append(orffile)
+				
+		if len(listOfGenomes) >len(listOfORFCreated):
+			message="Missing some files from prodigal. "+str((len(listOfGenomes))-(len(listOfORFCreated)))+" missing files out of "+str(len(listOfGenomes))
+			shutil.rmtree(basepath)
+			raise ValueError(message)
+		else:
+			print "All prodigal files necessary were created\n"
+			
+		print ("Finishing Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	
+	
+		#---CDS to protein---#
+		listOFProt=[]
+		listAllCDS=[]
+		
+		i = 0
+		j=0
+		
+		#translate the genome CDSs, load them into dictionaries and fasta files to be used further ahead
+		for genomeFile in listOfGenomes:
+			listOfCDS={}
+			genomeProts=""
+			currentCDSDict = {}
+			currentGenomeDict = {}
+			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF.txt")
+			with open(filepath,'rb') as f:
+				currentCDSDict = pickle.load(f)
+				
+			g_fp = HTSeq.FastaReader( genomeFile )
+			for contig in g_fp:
+				sequence=str(contig.seq)
+				genomeDict[ contig.name ] = sequence
+			
+			currentGenomeDict = genomeDict
+			
+			i+=1
+			for contigTag,value in currentCDSDict.iteritems():
+
+				for protein in value:
+					try:
+						seq= currentGenomeDict[ contigTag ][ protein[0]:protein[1] ].upper()
+						protseq=translateSeq(seq)
+						idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[0])+"-"+str(protein[1])
+						genomeProts+=idstr+"\n"
+						listOfCDS[idstr]=seq
+						genomeProts+=str(protseq)+"\n"
+						
+					except Exception as e:
+						print str(e)+" "+str(genomeFile)
+						pass
+					j+=1
+			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
+			with open(filepath, 'wb') as f:
+				var = listOfCDS
+				pickle.dump(var, f)
+
+			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
+			with open(filepath, 'wb') as f:
+				f.write(genomeProts)
+				
+		
+		print ("Starting Genome Blast Db creation at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+
+		#creation of the Databases for each genome, one genome per core using n-2 cores (n number of cores)
+		
+		pool = multiprocessing.Pool(cpuToUse)
+		for genomeFile in listOfGenomes:
+			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
+			os.makedirs(os.path.join(basepath,str(os.path.basename(genomeFile)) ))
+			
+			pool.apply_async(call_proc, args=([os.path.join(scripts_path,"Create_Genome_Blastdb.py"),filepath,os.path.join(basepath,str(os.path.basename(genomeFile)) ),str(os.path.basename(genomeFile))],))
+			
+			
+		pool.close()
+		pool.join()
+	
 	else:
-		print "All prodigal files necessary were created\n"
-		
-	print ("Finishing Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-	
-	
-	#---CDS to protein---#
-	listOFProt=[]
-	listAllCDS=[]
-	
-	i = 0
-	j=0
-	
-	#translate the genome CDSs, load them into dictionaries and fasta files to be used further ahead
-	for genomeFile in listOfGenomes:
-		listOfCDS={}
-		genomeProts=""
-		currentCDSDict = {}
-		currentGenomeDict = {}
-		filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF.txt")
-		with open(filepath,'rb') as f:
-			currentCDSDict = pickle.load(f)
-			
-		g_fp = HTSeq.FastaReader( genomeFile )
-		for contig in g_fp:
-			sequence=str(contig.seq)
-			genomeDict[ contig.name ] = sequence
-		
-		currentGenomeDict = genomeDict
-		
-		i+=1
-		for contigTag,value in currentCDSDict.iteritems():
-
-			for protein in value:
-				try:
-					seq= currentGenomeDict[ contigTag ][ protein[0]:protein[1] ].upper()
-					protseq=translateSeq(seq)
-					idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[0])+"-"+str(protein[1])
-					genomeProts+=idstr+"\n"
-					listOfCDS[idstr]=seq
-					genomeProts+=str(protseq)+"\n"
-					
-				except Exception as e:
-					print str(e)+" "+str(genomeFile)
-					pass
-				j+=1
-		filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
-		with open(filepath, 'wb') as f:
-			var = listOfCDS
-			pickle.dump(var, f)
-
-		filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
-		with open(filepath, 'wb') as f:
-			f.write(genomeProts)
-			
-	
-	print ("Starting Genome Blast Db creation at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-
-	#creation of the Databases for each genome, one genome per core using n-2 cores (n number of cores)
-	
-	pool = multiprocessing.Pool(cpuToUse)
-	for genomeFile in listOfGenomes:
-		filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
-		os.makedirs(os.path.join(basepath,str(os.path.basename(genomeFile)) ))
-		
-		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"Create_Genome_Blastdb.py"),filepath,os.path.join(basepath,str(os.path.basename(genomeFile)) ),str(os.path.basename(genomeFile))],))
-		
-		
-	pool.close()
-	pool.join()
-	
-
+		for argument in argumentsList:
+			if argument in resultsList:
+				argumentsList.remove(argument)
 	
 	print
 	print ("Starting Allele Calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
