@@ -12,7 +12,7 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 
 ##Tutorial contents
  
- 1 Suggested folder structure  
+ 1. Suggested folder structure  
  2. wgMLST schema creation  
  3. Selecting a cgMLST schema from the wgMLST schema
  4. Validating the cgMLST schema
