@@ -14,7 +14,7 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
  
 
  0. Suggested folder structure  
- 2. wgMLST schema creation  
+ 1. wgMLST schema creation  
  2. Selecting a cgMLST schema from the wgMLST schema
  3. Validating the cgMLST schema
  4. Allele calling using the cgMLST schema
