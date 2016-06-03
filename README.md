@@ -70,7 +70,7 @@ In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for 
 ### 2. wgMLST schema creation
 
 **Command:**
-    `% CreateSchema.py -i allffnfile.fasta -g 200`
+    `CreateSchema.py -i allffnfile.fasta -g 200`
 
 `-i` file with concatenated gene sequences
 
