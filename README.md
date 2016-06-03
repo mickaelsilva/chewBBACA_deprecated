@@ -26,7 +26,7 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
  - All the referenced lists of files *must contain full path* for the files.
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
- ### 0. Setting up the analysis  :
+### 1. Setting up the analysis
 
 **Installing chewBACCA**
 
@@ -67,7 +67,7 @@ We suggest that  for each analysis for a given schema, chewBBACA should be run i
 the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
 In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for each loci. it will also contain a subdir ` .../chewbacca_wrkDIR/genes/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/genes`.
  
-### 1. wgMLST schema creation 
+### 1. wgMLST schema creation
  
 **Command:**
     `% CreateSchema.py -i allffnfile.fasta -g 200`
