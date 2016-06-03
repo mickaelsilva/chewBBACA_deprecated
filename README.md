@@ -67,8 +67,8 @@ We suggest that  for each analysis for a given schema, chewBBACA should be run i
 the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
 In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for each loci. it will also contain a subdir ` .../chewbacca_wrkDIR/genes/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/genes`.
  
-### 1. wgMLST schema creation
- 
+### 2. wgMLST schema creation
+
 **Command:**
     `% CreateSchema.py -i allffnfile.fasta -g 200`
 
@@ -76,14 +76,18 @@ In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for 
 
 `-g` minimum locus lenght (removes any loci with length equal or less the specified value
 
-**Input** : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema
+**Input: ** : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema
 
-**Output:**
+**Output:** 1 fasta file per gene schema_seed. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
 
- x.fasta large set of .fasta files, 1 file per gene inside the folder schema_seed
+The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and
+ and genes with DNA sequences smaller than chosen in the -g parameter. 
+ The second step is grouping all the genes by BLASTIng all the genes against each other. Parwise comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene lenght is  ler genes with a 0.6>BSR 
 
-
-, removes genes that are substring of bigger genes and genes with DNA sequences smaller than chosen in the -g parameter. Blasts all the genes against each other and saves the bigger genes, removing the smaller genes with a 0.6>BSR (BSR calculated according to the original [paper](https://peerj.com/articles/332/) )
+*(BSR calculated according to the original [paper](https://peerj.com/articles/332/) )
+### 3. Selecting a cgMLST schema from the wgMLST schema
+### 4. Validating the cgMLST schema
+### 5. Allele calling using the cgMLST schema
 
 
 How to perform a complete wgMLST:
