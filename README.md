@@ -123,9 +123,7 @@ The output consists in a set of plots per iteration and a removedGenomes.txt fil
 
 Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
-
 ### 5. Allele calling using the cgMLST schema
-
 
 `alleleCalling_ORFbased_protein_main3_local.py` - short version of ORF based allele call to be run in a SLURM grid based cluster or a local machine. Uses 2 files per gene.
 
