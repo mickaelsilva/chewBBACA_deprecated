@@ -42,15 +42,20 @@ to update chewBBACA you simply
 
 ```
  git pull
- ```
+```
 
 You will also need to install all the dependencies indicated above and make sure they are on the PATH.
 
 **PATH settings for chewBBACA**
 
-All the subdirectories in the chewBBACA dir  
-export PATH 
+All the subdirectories in the chewBBACA dir  must be on the PATH if you want to be able to access the scripts from any dir. Replace the `<install_dir>` with the full path to chewBBACA instalation directory
 
+```
+export PATH="<install_dir>/chewBBACA/utils/:$PATH"
+export PATH="<install_dir>/chewBBACA/allelecall/:$PATH"
+export PATH="<install_dir>/chewBBACA/createschema/:$PATH"
+export PATH="<install_dir>/SchemaEvaluator/:$PATH"
+```
 **Folder structure**
 *This step is optional and is directed to users without much experience in running scripts.*
 We suggest that  for each analysis for a given schema, chewBBACA should be run in a directory (chewbacca_wrkDIR) containing the following directory structure: 
