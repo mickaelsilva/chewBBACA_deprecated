@@ -69,6 +69,7 @@ In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for 
  
 ### 2. wgMLST schema creation
 
+2.1.  
 **Command:**
     `CreateSchema.py -i allffnfile.fasta -g 200`
 
@@ -76,41 +77,57 @@ In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for 
 
 `-g` minimum locus lenght (removes any loci with length equal or less the specified value
 
-**Input: ** : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema
+**Input - **  `allffnfile.fasta` : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema
 
-**Output:** 1 fasta file per gene schema_seed. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
+**Output:** One fasta file per gene in the schema_seed/ directory. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
 
 The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and
  and genes with DNA sequences smaller than chosen in the -g parameter. 
- The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list
+ The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.face
+
+Finally  schema_seed and run the init_bbaca_schema.sh. Use the listGenes.txt for the allele call.
 
 *(BSR calculated according to the original [paper](https://peerj.com/articles/332/) )
-### 3. Selecting a cgMLST schema from the wgMLST schema
-### 4. Validating the cgMLST schema
-### 5. Allele calling using the cgMLST schema
+
+### 3. Selecting a cgMLST schema from the wgMLST schema 
 
 
-How to perform a complete wgMLST:
-
-1. Concatenate gene sequences in a single fasta file. You can use the .ffn files as source of genes sequences available [here] (http://ftp.ncbi.nih.gov/genomes/archive/old_genbank/Bacteria/)
-2. Run CreateSchema.py over the concatenated single fasta file
-3. Go to the schema_seed and run the init_bbaca_schema.sh. Use the listGenes.txt for the allele call.
 4. Create a list .txt file containing one draft genome file per line with full paths (similar to 3.)
 5. Run the allelecall script (local or cluster version) using the list files created at 3. and 4.
 6. Run the whichRepeatedLoci.py over the contigsInfo.txt output from step 5.
 7. Run the XpressGetCleanLoci4Phyloviz.py using the outputs from 5. and 6.
-8. Use [phyloviz software] (http://www.phyloviz.net/) to build trees based on the profiles generated or the [online tool] (https://node.phyloviz.net/)
-9. (optional) Use the testQualityGenomes3.py script to reach/analyze the core genome and re-do step 7
+
+### 4. Validating the cgMLST schema
+
+## Evaluate genome quality
 
 
+Usefull to determine a core genome and remove genomes that may have technical issues. The algorithm description is the following:
 
-=============
-##Allele Call
+1. For each allelic profile generated for a draft genome , let nl be the number of loci that are not present in the allelic profile but are present in 99% (97% if total number of genomes under 500 and 95% if under 200) or more of the remaining allelic profiles;
+2. For and exclusion threshold (et) remove all allelic profiles that have nml greater than et. If no allelic profiles are removed, proceed to Step 4;
+3. Return to Step 1.
+4. The locus present in all the draft genomes for the remaining allelic profiles, are defined as the cgMLST schema for the exclusion threshold (et)
+
+Usage:
+
+	% testQualityGenomes3.py -i out.txt -n 12 -t 250
+	
+`-i` raw output file from an allele calling
+
+`-n` maximum number of iterations, each iteration removes a set of genomes over the threshold and recalculates all variables
+
+`-t` maximum threshold, will start at 5 increasing in a step of 5 until t
+
+The output consists in a set of plots per iteration and a removedGenomes.txt file where its informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
+
+Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
+
+
+### 5. Allele calling using the cgMLST schema
 
 
 `alleleCalling_ORFbased_protein_main3_local.py` - short version of ORF based allele call to be run in a SLURM grid based cluster or a local machine. Uses 2 files per gene.
-
-
 
 Performing a **SLURM cluster** allele call short version (paralellized by gene):
 
@@ -153,8 +170,13 @@ NC_017162.fna	INF-2	LNF
 NC_011586.fna	INF-3	LNF
 NC_011595.fna	3	LNF
 ```
-=============
-## Evaluate overrepresented loci
+
+9. (optional) Use the testQualityGenomes3.py script to reach/analyze the core genome and re-do step 7
+
+
+
+
+#### Evaluate overrepresented loci
 
 Using the contigsInfo.txt output from the allele call, check if the same CDS is being called for different locus
 
@@ -193,31 +215,6 @@ Basic usage:
 `-r` (optional) list of genes to remove, one per line, advised to use the detected overrepresented genes from whichRepeatedLoci.py
 
 =============
-## Evaluate genome quality
-
-Dependencies:
-* [matplotlib](http://matplotlib.org/)
-
-Usefull to determine a core genome and remove genomes that may have technical issues. The algorithm description is the following:
-
-1. For each allelic profile generated for a draft genome , let nl be the number of loci that are not present in the allelic profile but are present in 99% (97% if total number of genomes under 500 and 95% if under 200) or more of the remaining allelic profiles;
-2. For and exclusion threshold (et) remove all allelic profiles that have nml greater than et. If no allelic profiles are removed, proceed to Step 4;
-3. Return to Step 1.
-4. The locus present in all the draft genomes for the remaining allelic profiles, are defined as the cgMLST schema for the exclusion threshold (et)
-
-Usage:
-
-	% testQualityGenomes3.py -i out.txt -n 12 -t 250
-	
-`-i` raw output file from an allele calling
-
-`-n` maximum number of iterations, each iteration removes a set of genomes over the threshold and recalculates all variables
-
-`-t` maximum threshold, will start at 5 increasing in a step of 5 until t
-
-The output consists in a set of plots per iteration and a removedGenomes.txt file where its informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
-
-Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
 
 
