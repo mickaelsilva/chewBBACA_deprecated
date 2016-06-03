@@ -82,7 +82,7 @@ In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for 
 
 The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and
  and genes with DNA sequences smaller than chosen in the -g parameter. 
- The second step is grouping all the genes by BLASTIng all the genes against each other. Parwise comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene lenght is  ler genes with a 0.6>BSR 
+ The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list
 
 *(BSR calculated according to the original [paper](https://peerj.com/articles/332/) )
 ### 3. Selecting a cgMLST schema from the wgMLST schema
