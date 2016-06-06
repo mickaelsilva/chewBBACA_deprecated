@@ -115,12 +115,18 @@ Having defined the wgMLST schema with one allele per locus, one can proceed to u
 TODO: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
 The outputs flies are:
-
+```
 < outPrefix >_< datestamp>/< outPrefix >_statistics.txt
 < outPrefix >__< datestamp>/< outPrefix >_contigsInfo.txt
 < outPrefix >_< datestamp>/< outPrefix >_Alleles.txt 
+```
+short example `< outPrefix >_statistics.txt` file:
 
-short example statistics file:
+```
+Stats:	EXC	INF	LNF	LOT	PLOT	NIPL	ALM	ASM
+NC_017162.fna	892	2319	1909	0	0	104	5	37	
+NC_011586.fna	1563	1697	1809	0	0	116	6	75	
+```
 
 * EXC - allele has exact match (100% identity)
 * INF - infered allele with prodigal
@@ -131,11 +137,7 @@ short example statistics file:
 * ALM - allele much larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
 * ASM - allele much smaller than gene size mode (match CDS lenght < gene mode length - gene mode length * 0.2)
 
-```
-Stats:	EXC	INF	LNF	LOT	PLOT	NIPL	ALM	ASM
-NC_017162.fna	892	2319	1909	0	0	104	5	37	
-NC_011586.fna	1563	1697	1809	0	0	116	6	75	
-```
+
 
 short example file output:
 
