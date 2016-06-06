@@ -63,10 +63,10 @@ We suggest that  for each analysis for a given schema, chewBBACA should be run i
 ```
 	.../chewbacca_wrkDIR/
     .../chewbacca_wrkDIR/genomes 
-    .../chewbacca_wrkDIR/genes
+    .../chewbacca_wrkDIR/schema
 ```
 the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
-In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for each loci. This directory will also contain a subdir named ` .../chewbacca_wrkDIR/genes/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/genes`.
+In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for each loci. This directory will also contain a subdir named ` .../chewbacca_wrkDIR/schema/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/schema`.
  
 ### 2. wgMLST schema creation
 
@@ -83,11 +83,11 @@ The parameters for the command are:
 
 **Input:**  `allffnfile.fasta` : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema. 
 
-**Output:** One fasta file per gene in the schema_seed/ directory. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
+**Output:** One fasta file per gene in the `schema_seed/`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
 
 The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and
  and genes with DNA sequences smaller than chosen in the -g parameter. 
- The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.face
+ The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.
 
 Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.sh` shellscript. This script will create the necessary files for the allele call, by creating the  directory named `short`. The contents of this dir is already explained in the **folder structure** subsection. It will also contain a  file named "listGenes.txt" These are the genes 
 
@@ -114,7 +114,11 @@ Having defined the wgMLST schema with one allele per locus, one can proceed to u
 
 TODO: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
-The outputs flies areare: 
+The outputs flies are:
+
+< outPrefix >_< datestamp>/< outPrefix >_statistics.txt
+< outPrefix >__< datestamp>/< outPrefix >_contigsInfo.txt
+< outPrefix >_< datestamp>/< outPrefix >_Alleles.txt 
 
 short example statistics file:
 
