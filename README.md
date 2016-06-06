@@ -15,9 +15,10 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
  
  1. Setting up the analysis  
  2. wgMLST schema creation  
- 3. Selecting a cgMLST schema from the wgMLST schema
- 4. Validating the cgMLST schema
- 5. Allele calling using the cgMLST schema
+ 3. Allele call using the wgMLST schema
+ 4. Selecting a cgMLST schema from the wgMLST schema
+ 5. Validating the cgMLST schema
+ 6. Allele calling using the cgMLST schema
 
 **Important Notes before starting:**
 
@@ -65,19 +66,22 @@ We suggest that  for each analysis for a given schema, chewBBACA should be run i
     .../chewbacca_wrkDIR/genes
 ```
 the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
-In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for each loci. it will also contain a subdir ` .../chewbacca_wrkDIR/genes/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/genes`.
+In `.../chewbacca_wrkDIR/genes ` will contain a fasta file with the alleles for each loci. This directory will also contain a subdir named ` .../chewbacca_wrkDIR/genes/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/genes`.
  
 ### 2. wgMLST schema creation
 
-2.1.  
-**Command:**
+To create a wgMLST schema for a set of pre-determined genomes, you can run the following command:
+
     `CreateSchema.py -i allffnfile.fasta -g 200`
+
+The parameters for the command are: 
 
 `-i` file with concatenated gene sequences
 
 `-g` minimum locus lenght (removes any loci with length equal or less the specified value
 
-**Input - **  `allffnfile.fasta` : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema
+
+**Input -**  `allffnfile.fasta` : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema. 
 
 **Output:** One fasta file per gene in the schema_seed/ directory. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
 
@@ -85,19 +89,47 @@ The script creates a selection of unique loci present in the input file. Firstly
  and genes with DNA sequences smaller than chosen in the -g parameter. 
  The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.face
 
-Finally  schema_seed and run the init_bbaca_schema.sh. Use the listGenes.txt for the allele call.
+Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.sh` shellscript. This script will create the necessary files for the allele call, by creating the  directory named `short`. The contents of this dir is already explained in the **folder structure** subsection. It will also contain a  file named "listGenes.txt" These are the genes 
 
 *(BSR calculated according to the original [paper](https://peerj.com/articles/332/) )
 
-### 3. Selecting a cgMLST schema from the wgMLST schema 
+### 3.  Allele call using the wgMLST schema 
+
+Use the listGenes.txt for the allele call.
+
+### 4. Selecting a cgMLST schema from the wgMLST schema 
 
 
 4. Create a list .txt file containing one draft genome file per line with full paths (similar to 3.)
+5
 5. Run the allelecall script (local or cluster version) using the list files created at 3. and 4.
+
 6. Run the whichRepeatedLoci.py over the contigsInfo.txt output from step 5.
+
+Using the contigsInfo.txt output from the allele call, check if the same CDS is being called for different locus
+
+	% whichRepeatedLoci.py -i contigsInfo.txt
+
+`-i` contigsInfo.txt file
+
+short example file output:
+
+* overrepresented - number of times a CDS on this locus as been found in another locus
+* problems - neither exact match or infered allele found
+
+```
+gene	overrepresented	problems	total
+gi_22536185_ref_NC_004116.1_:c2045049-2043157.fasta	1	2	3
+gi_406708523_ref_NC_018646.1_:c1944065-1941807.fasta	1	2	3
+
+```
+In this example the allele call was ran for 3 genomes.
+Both locus presented had an exact match or an infered allele for one genome, while 2 genomes had issues or didn't have the locus. The CDS returned for the first locus is present in another locus, while the same happens for the second locus, from which we may clearly infer that a locus is being overrepresented by this two locus, since both are catching the same CDS.
+
 7. Run the XpressGetCleanLoci4Phyloviz.py using the outputs from 5. and 6.
 
-### 4. Validating the cgMLST schema
+Change name:  XpressGetCleanLoci4Phyloviz.py -> ExtractAlleles.py
+### 5. Validating the cgMLST schema
 
 ## Evaluate genome quality
 
@@ -123,7 +155,7 @@ The output consists in a set of plots per iteration and a removedGenomes.txt fil
 
 Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
-### 5. Allele calling using the cgMLST schema
+### 6. Allele calling using the cgMLST schema
 
 `alleleCalling_ORFbased_protein_main3_local.py` - short version of ORF based allele call to be run in a SLURM grid based cluster or a local machine. Uses 2 files per gene.
 
@@ -176,25 +208,6 @@ NC_011595.fna	3	LNF
 
 #### Evaluate overrepresented loci
 
-Using the contigsInfo.txt output from the allele call, check if the same CDS is being called for different locus
-
-	% whichRepeatedLoci.py -i contigsInfo.txt
-
-`-i` contigsInfo.txt file
-
-short example file output:
-
-* overrepresented - number of times a CDS on this locus as been found in another locus
-* problems - neither exact match or infered allele found
-
-```
-gene	overrepresented	problems	total
-gi_22536185_ref_NC_004116.1_:c2045049-2043157.fasta	1	2	3
-gi_406708523_ref_NC_018646.1_:c1944065-1941807.fasta	1	2	3
-
-```
-In this example the allele call was ran for 3 genomes.
-Both locus presented had an exact match or an infered allele for one genome, while 2 genomes had issues or didn't have the locus. The CDS returned for the first locus is present in another locus, while the same happens for the second locus, from which we may clearly infer that a locus is being overrepresented by this two locus, since both are catching the same CDS.
 
 =============
 ## Clean raw output profiles from none exact matches/new alleles
