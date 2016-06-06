@@ -97,42 +97,24 @@ Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.
 
 Having defined the wgMLST schema with one allele per locus, one can proceed to use it to call alleles.  The command is the following
 
-	% BBACA.py -i listGenomes.txt -g listGenes.txt -o outputFileName.txt --cpu 3 -p /PathToProdigal/prodigal
+	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 -p /PathToProdigal/prodigal
 
 **Parameters** 
 `-i` path to the list of genomes file. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
 `-g` path to the list of alleles file i.e. the `listGenes.txt`in the `genes` directory
 
-`-o` output file name 
+`-o` prefix for the output files
 
 `-p` Prodigal path to execution file (type prodigal if already on PATH) 
 
 `--cpu` Number of cpus to use (if greater than existing cpus-2 uses cpus-2)
 
-`-v`,`--verbose`  verbose mode(optional) 
+`-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
-Use the listGenes.txt for the allele call.
-Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
+TODO: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
-
-`BBACA.py` - short version of ORF based allele call to be run in a SLURM grid based cluster or a local machine. Uses 2 files per gene.
-
-Performing a **SLURM cluster** allele call short version (paralellized by gene):
-
-	% BBACA.py -i listGenomes.txt -g listGenes.txt -o outputFileName.txt --cpu 3 -p /home/user/prodigal/Prodigal-2.60/prodigal
-
-`-i` path to the list of genomes file
-
-`-g` path to the list of alleles file
-
-`-o` output file name
-
-`-p` Prodigal path to execution file (type prodigal if already on PATH) 
-
-`--cpu` Number of cpus to use (if greater than existing cpus-2 uses cpus-2)
-
-`-v`,`--verbose`  verbose mode(optional) 
+The outputs flies areare: 
 
 short example statistics file:
 
