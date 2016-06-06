@@ -95,7 +95,70 @@ Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.
 
 ### 3.  Allele call using the wgMLST schema 
 
+Having defined the wgMLST schema with one allele per locus, one can proceed to use it to call alleles.  The command is the following
+
+	% BBACA.py -i listGenomes.txt -g listGenes.txt -o outputFileName.txt --cpu 3 -p /PathToProdigal/prodigal
+
+**Parameters** 
+`-i` path to the list of genomes file. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
+
+`-g` path to the list of alleles file i.e. the `listGenes.txt`in the `genes` directory
+
+`-o` output file name 
+
+`-p` Prodigal path to execution file (type prodigal if already on PATH) 
+
+`--cpu` Number of cpus to use (if greater than existing cpus-2 uses cpus-2)
+
+`-v`,`--verbose`  verbose mode(optional) 
+
 Use the listGenes.txt for the allele call.
+Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
+
+
+`BBACA.py` - short version of ORF based allele call to be run in a SLURM grid based cluster or a local machine. Uses 2 files per gene.
+
+Performing a **SLURM cluster** allele call short version (paralellized by gene):
+
+	% BBACA.py -i listGenomes.txt -g listGenes.txt -o outputFileName.txt --cpu 3 -p /home/user/prodigal/Prodigal-2.60/prodigal
+
+`-i` path to the list of genomes file
+
+`-g` path to the list of alleles file
+
+`-o` output file name
+
+`-p` Prodigal path to execution file (type prodigal if already on PATH) 
+
+`--cpu` Number of cpus to use (if greater than existing cpus-2 uses cpus-2)
+
+`-v`,`--verbose`  verbose mode(optional) 
+
+short example statistics file:
+
+* EXC - allele has exact match (100% identity)
+* INF - infered allele with prodigal
+* LNF - locus not found
+* LOT - locus on the tip of the contig (partial match)
+* PLOT - locus possibly on the tip of the contig (CDS match is on the tip of the contig - to be manualy curated)
+* NIPL - Non informative paralog locus (two or more good blast matches (bsr >0.6) for the protein)
+* ALM - allele much larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
+* ASM - allele much smaller than gene size mode (match CDS lenght < gene mode length - gene mode length * 0.2)
+
+```
+Stats:	EXC	INF	LNF	LOT	PLOT	NIPL	ALM	ASM
+NC_017162.fna	892	2319	1909	0	0	104	5	37	
+NC_011586.fna	1563	1697	1809	0	0	116	6	75	
+```
+
+short example file output:
+
+```
+FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	gi_126640115_ref_NC_009085.1_:1056402-1057004.fasta	gi_12664011510_S10_L001.fasta
+NC_017162.fna	INF-2	LNF
+NC_011586.fna	INF-3	LNF
+NC_011595.fna	3	LNF
+```
 
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
 
@@ -128,7 +191,8 @@ Both locus presented had an exact match or an infered allele for one genome, whi
 
 7. Run the XpressGetCleanLoci4Phyloviz.py using the outputs from 5. and 6.
 
-Change name:  XpressGetCleanLoci4Phyloviz.py -> ExtractAlleles.py
+Change name:  XpressGetCleanLoci4Phyloviz.py -> Extract_cgAlleles.py
+
 ### 5. Validating the cgMLST schema
 
 ## Evaluate genome quality
@@ -155,55 +219,12 @@ The output consists in a set of plots per iteration and a removedGenomes.txt fil
 
 Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
-### 6. Allele calling using the cgMLST schema
 
-`alleleCalling_ORFbased_protein_main3_local.py` - short version of ORF based allele call to be run in a SLURM grid based cluster or a local machine. Uses 2 files per gene.
-
-Performing a **SLURM cluster** allele call short version (paralellized by gene):
-
-	% alleleCalling_ORFbased_protein_main3_local.py -i listGenomes.txt -g listGenes.txt -o outputFileName.txt --cpu 3 -p /home/user/prodigal/Prodigal-2.60/prodigal
-
-`-i` path to the list of genomes file
-
-`-g` path to the list of alleles file
-
-`-o` output file name
-
-`-p` Prodigal path to execution file (type prodigal if already on ENV variable) 
-
-`--cpu` Number of cpus to use (if greater than existing cpus-2 uses cpus-2)
-
-`-v`,`--verbose`  verbose mode(optional) 
-
-short example statistics file:
-
-* EXC - allele has exact match (100% identity)
-* INF - infered allele with prodigal
-* LNF - locus not found
-* LOT - locus on the tip of the contig (partial match)
-* PLOT - locus possibly on the tip of the contig (CDS match is on the tip of the contig - to be manualy curated)
-* NIPL - Non informative paralog locus (two or more good blast matches (bsr >0.6) for the protein)
-* ALM - allele much larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
-* ASM - allele much smaller than gene size mode (match CDS lenght < gene mode length - gene mode length * 0.2)
-
-```
-Stats:	EXC	INF	LNF	LOT	PLOT	NIPL	ALM	ASM
-NC_017162.fna	892	2319	1909	0	0	104	5	37	
-NC_011586.fna	1563	1697	1809	0	0	116	6	75	
-```
-
-short example file output:
-
-```
-FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	gi_126640115_ref_NC_009085.1_:1056402-1057004.fasta	gi_12664011510_S10_L001.fasta
-NC_017162.fna	INF-2	LNF
-NC_011586.fna	INF-3	LNF
-NC_011595.fna	3	LNF
-```
 
 9. (optional) Use the testQualityGenomes3.py script to reach/analyze the core genome and re-do step 7
 
 
+### 6. Allele calling using the cgMLST schema
 
 
 #### Evaluate overrepresented loci
