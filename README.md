@@ -81,7 +81,7 @@ The parameters for the command are:
 `-g` minimum locus lenght (removes any loci with length equal or less the specified value
 
 
-**Input: **  `allffnfile.fasta` : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema. 
+**Input:**  `allffnfile.fasta` : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema. 
 
 **Output:** One fasta file per gene in the schema_seed/ directory. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
 
