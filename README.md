@@ -112,12 +112,16 @@ Having defined the wgMLST schema with one allele per locus, one can proceed to u
 
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
+
+This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (example Mickael) .
+If by some reason the process is interrupted, by running the same command line with the same inputs an option to resume the  allele call is provided to the user.   
+
 TODO: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
 The outputs flies are:
 ```
 < outPrefix >_< datestamp>/< outPrefix >_statistics.txt
-< outPrefix >__< datestamp>/< outPrefix >_contigsInfo.txt
+< outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt
 < outPrefix >_< datestamp>/< outPrefix >_Alleles.txt 
 ```
 short example `< outPrefix >_statistics.txt` file:
@@ -157,6 +161,8 @@ NC_011595.fna	3	LNF
 
 6. Run the whichRepeatedLoci.py over the contigsInfo.txt output from step 5.
 
+whichRepeatedLoci.py -> ParalogPrunning.py
+
 Using the contigsInfo.txt output from the allele call, check if the same CDS is being called for different locus
 
 	% whichRepeatedLoci.py -i contigsInfo.txt
@@ -165,13 +171,13 @@ Using the contigsInfo.txt output from the allele call, check if the same CDS is 
 
 short example file output:
 
-* overrepresented - number of times a CDS on this locus as been found in another locus
-* problems - neither exact match or infered allele found
+* PC -Paralog Count - number of times a CDS on this locus as been found in another locus
+* NDC - Non Determined Locus count -  Number of times the alleles the target locus was not exact match to an allele  (EXC) or a new inferred allele (INF). (i.e. locus can be a LNF,LOT, PLOT, NIPL, ASM, ALM). It helps to decide towards excluding the locus if this number is also large.  
 
 ```
-gene	overrepresented	problems	total
-gi_22536185_ref_NC_004116.1_:c2045049-2043157.fasta	1	2	3
-gi_406708523_ref_NC_018646.1_:c1944065-1941807.fasta	1	2	3
+gene	PC	NDC
+gi_22536185_ref_NC_004116.1_:c2045049-2043157.fasta	1	2
+gi_406708523_ref_NC_018646.1_:c1944065-1941807.fasta	1	2
 
 ```
 In this example the allele call was ran for 3 genomes.
@@ -194,6 +200,8 @@ Usefull to determine a core genome and remove genomes that may have technical is
 4. The locus present in all the draft genomes for the remaining allelic profiles, are defined as the cgMLST schema for the exclusion threshold (et)
 
 Usage:
+
+testQualityGenomes3 -> TestGenomeQuality
 
 	% testQualityGenomes3.py -i out.txt -n 12 -t 250
 	
