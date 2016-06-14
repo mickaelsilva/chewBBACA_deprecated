@@ -61,7 +61,9 @@ def main():
 	
 	genebasename=str(os.path.basename(genes))
 	genebasename=genebasename.split(".")
-	genebasename=genebasename[0]
+	genebasename.pop()
+	genebasename=".".join(genebasename)
+	#genebasename=genebasename[0]
 	
 		
 	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot,allelenumberplotMean,allelenumberplotMedian=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath)
@@ -168,14 +170,14 @@ li a {
 		f.write("""<button onclick = "openList1('ollist1')">Show/hide list</button><ol id='ollist1' style='display: none;'>""")
 		
 		for elem in notConservedgenes:
-			f.write("<li><a href = '"+str(elem)+"' target='_blank'>"+os.path.basename(elem)+"</a></li>")
+			f.write("<li><a href = '"+str(elem)+"' target='_blank'>"+(os.path.basename(elem)).replace(".html","")+"</a></li>")
 			
 		f.write("</ol>\n<h3>"+str(len(genesWOneAllele))+" loci with only one allele</h3>\n")
 		
 		f.write("""<button onclick = "openList1('ollist2')">Show/hide list</button><ol id='ollist2' style='display: none;'>""")
 		
 		for elem in genesWOneAllele:
-			f.write("<li><a href = '"+str(elem)+"' target='_blank'>"+os.path.basename(elem)+"</a></li>\n")
+			f.write("<li><a href = '"+str(elem)+"' target='_blank'>"+(os.path.basename(elem)).replace(".html","")+"</a></li>\n")
 		
 		f.write("</ol>\n")
 		
@@ -333,7 +335,10 @@ li a {
 		
 		f.write("var json06 ="+str(allelenumberplotMedian)+";mpld3.draw_figure('fig03', json06);")	
 	
-	os.remove("listGenes"+listbasename+".txt")
+	try:
+		os.remove("listGenes"+listbasename+".txt")
+	except:
+		pass
 	
 if __name__ == "__main__":
     main()

@@ -129,11 +129,16 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 						print err
 					print "allele "+str(k)+" is not translating"
 					pass
-		statsPerGene[gene]=listnotMultiple,listStopc,listnotStart,k
+		
+		relpath=os.path.relpath(gene,outputpath)
+		statsPerGene[relpath]=listnotMultiple,listStopc,listnotStart,k
 		totalalleles+=k
 		
 		#create html per gene
-		genename=((os.path.basename(gene)).split("."))[0]
+		#genename=((os.path.basename(gene)).split("."))[0]
+		genename=(os.path.basename(gene)).split(".")
+		genename.pop()
+		genename=".".join(genename)
 		with open(htmlgenespath+genename+".html", "wb") as f:
 			f.write("<!DOCTYPE html>\n<html>\n<head><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script><script type='text/javascript' src='https://mpld3.github.io/js/mpld3.v0.2.js'></script>\n")
 			f.write("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>")
@@ -143,7 +148,9 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">""")
 			
 			f.write("</head>\n<body><div id='histdiv'></div>\n")
-			f.write("<input type=button onClick=window.open('"+gene+"') value='click here to get fasta file'>\n""")
+			relpath=os.path.relpath(gene,htmlgenespath)
+			#print relpath
+			f.write("<input type=button onClick=window.open('"+relpath+"') value='click here to get fasta file'>\n""")
 			fig, ax = plt.subplots(figsize=(20,10))
 			bp=plt.scatter(list(range(1,len(alleleSizes)+1,1)),alleleSizes)
 			plt.ylabel('DNA bp allele length ')
@@ -158,7 +165,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 			
 			f.write("<script type='text/javascript'>var hist ="+str(histplothtml)+";mpld3.draw_figure('histdiv', hist);</script></body></html>")
 			plt.close('all')
-		
+			
 	print str(stopc) + " alleles have stop codons inside"
 	print str(notStart) + " alleles don't have start codons"
 	print "total of alleles : " + str(totalalleles)
