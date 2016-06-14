@@ -213,7 +213,7 @@ def main():
 			if file.endswith("_argList.txt"):
 				argumentsList.append(os.path.join(basepath,str(file)))
 			elif file.endswith("_result.txt"):
-				resultsList.append((os.path.join(basepath,str(file))).replace("_result.txt","_argList.txt"))
+				resultsList.append((os.path.basename(os.path.join(basepath,str(file)))).replace("_result.txt","_argList.txt"))
 		
 		#remove unfinished directories
 		todelFolders=next(os.walk(genepath))[1]
@@ -349,8 +349,9 @@ def main():
 		pool.join()
 	
 	else:
-		argumentsList= list(set(argumentsList) - set(resultsList))
-		argumentsList=sorted(argumentsList)
+		for argument in argumentsList:
+			if argument in resultsList:
+				argumentsList.remove(argument)
 	
 	print
 	print ("Starting Allele Calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
