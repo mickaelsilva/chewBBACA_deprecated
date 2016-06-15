@@ -222,6 +222,7 @@ def main():
 				pass
 			else:
 				shutil.rmtree(os.path.join(genepath,str(foldertodel)))
+
 		
 	else:
 		if os.path.isdir(basepath):
@@ -349,9 +350,15 @@ def main():
 		pool.join()
 	
 	else:
+		#print len (argumentsList)
+		#for argument in argumentsList:
+		#	if argument in resultsList:
+		#		argumentsList.remove(argument)
+
 		argumentsList= list(set(argumentsList) - set(resultsList))
 		argumentsList=sorted(argumentsList)
-	
+
+		
 	print
 	print ("Starting Allele Calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
