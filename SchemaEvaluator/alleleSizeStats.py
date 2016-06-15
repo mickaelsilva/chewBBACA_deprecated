@@ -159,7 +159,10 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 	allNumberAlleles=[]
 	allNumberAllelesMean=[]
 	allNumberAllelesMedian=[]
-
+	
+	htmlgenespath=os.path.join(outputpath,"genes_html/")
+	relpath=os.path.relpath(htmlgenespath,outputpath)
+	
 	for gene in gene_fp:
 
 		gene = gene.rstrip('\n')
@@ -218,7 +221,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		if not OneNotConserved and (rate>=1 or (len(sizes)-i)<2) :
 			if allelenumber==1:
 				z+=1
-				genesWoneAllele.append(os.path.join(outputpath,"genes_html/",(os.path.basename(gene)).replace(".fasta",".html")))
+				genesWoneAllele.append(os.path.join(relpath,(os.path.basename(gene)).replace(".fasta",".html")))
 				
 				print os.path.basename(gene)
 			conservedlengthgenes.append(os.path.basename(gene))
@@ -226,13 +229,13 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 			#print i,allelenumber
 			if allelenumber==1:
 				z+=1
-				genesWoneAllele.append(os.path.join(outputpath,"genes_html/",(os.path.basename(gene)).replace(".fasta",".html")))
+				genesWoneAllele.append(os.path.join(relpath,(os.path.basename(gene)).replace(".fasta",".html")))
 				
 				print os.path.basename(gene)
 			conservedlengthgenes.append(os.path.basename(gene))
 		else:
 			#notconservedlengthgenes.append(os.path.basename(gene))
-			notconservedlengthgenes.append(os.path.join(outputpath,"genes_html/",(os.path.basename(gene)).replace(".fasta",".html")))
+			notconservedlengthgenes.append(os.path.join(relpath,(os.path.basename(gene)).replace(".fasta",".html")))
 			
 
 
@@ -337,13 +340,13 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		i=0
 		for box in allboxes:
 			mpld3.plugins.connect(fig, plugins.LineLabelTooltip(box,label=os.path.basename(orderedlistgene[i]),voffset=50, hoffset=10))
-			mpld3.plugins.connect(fig, ClickInfo(box,(os.path.join(outputpath,"genes_html/",(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
+			mpld3.plugins.connect(fig, ClickInfo(box,(os.path.join(relpath,(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
 			i+=1
 		allmedians=bp.get('medians')
 		i=0
 		for median in allmedians:
 			mpld3.plugins.connect(fig, plugins.LineLabelTooltip(median,label=os.path.basename(orderedlistgene[i]),voffset=50, hoffset=10))
-			mpld3.plugins.connect(fig, ClickInfo(median,(os.path.join(outputpath,"genes_html/",(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
+			mpld3.plugins.connect(fig, ClickInfo(median,(os.path.join(relpath,(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
 			i+=1
 		
 		
@@ -363,7 +366,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		
 		orderedlistgene2_html=[]
 		for elem in orderedlistgene2:
-			orderedlistgene2_html.append(os.path.join(outputpath,"genes_html/",(os.path.basename(elem)).replace(".fasta",".html")))
+			orderedlistgene2_html.append(os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html")))
 		
 		
 		fig, ax= plt.subplots(figsize=(20,10))
@@ -391,7 +394,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		
 		orderedlistgene2_html=[]
 		for elem in orderedlistgene3:
-			orderedlistgene2_html.append(os.path.join(outputpath,"genes_html/",(os.path.basename(elem)).replace(".fasta",".html")))
+			orderedlistgene2_html.append(os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html")))
 		
 		
 		fig, ax= plt.subplots(figsize=(20,10))
@@ -419,7 +422,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		
 		orderedlistgene2_html=[]
 		for elem in orderedlistgene4:
-			orderedlistgene2_html.append(os.path.join(outputpath,"genes_html/",(os.path.basename(elem)).replace(".fasta",".html")))
+			orderedlistgene2_html.append(os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html")))
 		
 		
 		fig, ax= plt.subplots(figsize=(20,10))
