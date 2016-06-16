@@ -148,6 +148,9 @@ def main():
 	
 	if cpuToUse >= multiprocessing.cpu_count()-2:
 		cpuToUse=multiprocessing.cpu_count()-2
+		
+	if multiprocessing.cpu_count()<3:
+		cpuToUse=args.cpu
 	
 	try:
 		verbose=args.verbose
