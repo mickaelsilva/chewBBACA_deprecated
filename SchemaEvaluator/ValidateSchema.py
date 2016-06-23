@@ -66,13 +66,14 @@ def main():
 	#genebasename=genebasename[0]
 	
 		
-	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot,allelenumberplotMean,allelenumberplotMedian=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath)
+	#notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot,allelenumberplotMean,allelenumberplotMedian=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath)
+	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath)
 	
 	boxplot=str(json.dumps(boxplot))
 	histplot=str(json.dumps(histplot))
 	allelenumberplot=str(json.dumps(allelenumberplot))
-	allelenumberplotMean=str(json.dumps(allelenumberplotMean))
-	allelenumberplotMedian=str(json.dumps(allelenumberplotMedian))
+	#allelenumberplotMean=str(json.dumps(allelenumberplotMean))
+	#allelenumberplotMedian=str(json.dumps(allelenumberplotMedian))
 
 	statsPerGene=CheckCDS.analyzeCDS(genes,transTable,True,outputpath)
 	
@@ -156,6 +157,9 @@ li a {
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#444;background-color:#F7FDFA;}
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#fff;background-color:#26ADE4;}
 .tg .tg-vn4c{background-color:#D2E4FC;text-align:center}
+.tg .tg-qpvr{background-color:#009901;vertical-align:top}
+.tg .tg-14d4{background-color:#91df0a;text-align:center;vertical-align:top}
+
 </style>\n</head>\n<body>""")
 		
 		f.write("""<div class="jumbotron">
@@ -198,7 +202,7 @@ li a {
 					</div>
 				</div>""")
 		
-		f.write("""<div id="fig03" style="display:none"><h2>Distribution of number of alleles per gene by mode/mean/median</h2></div>
+		f.write("""<div id="fig03" style="display:none"><h2>Distribution of number of alleles per gene by mode/mean/median</h2><div id="plot1"></div></div>
 		<div id="fig01" style="display:none"><h2>Size boxplot for all loci</h2><p>Box plot for each locus on a descending order of the median allele sizes</p><p>Use the zoom button and hover the mouse over a box/median to see the gene name</p><p>-->Box represent the 25 and 75 percentiles (1st and 3rd quartile)</p><p>-->Box plot whiskers representing the 5 and 95 percentile</p><p>-->Red line represent the median (2nd quartile)</p><p>-->Notch are calculated using a bootstrap=1000 value </p><p>-->Green dots are outliers </p></div>
 		<div id="fig02" style="display:none"><h2>Distribution of allele mode sizes per gene</h2></div>""")
 		
@@ -216,7 +220,7 @@ li a {
 		f.write("""<script type="text/javascript">
 					$("#button3").click(function(){
 					if ($("#fig03 .mpld3-figure").length < 1){
-						$.getScript("json3.js");$.getScript("json5.js");$.getScript("json6.js");}
+						$.getScript("json3.js");}
 					  $("#fig03").css({"display":"block"});
 					  $("#fig02").css({"display":"none"});
 					  $("#fig01").css({"display":"none"});
@@ -250,7 +254,7 @@ li a {
     <th class="tg-031e">Number alleles not multiple of 3</th>
     <th class="tg-031e">Number alleles w/ >1 stop codons</th>
     <th class="tg-031e">Number alleles wo/ Start/Stop Codon</th>
-    <th class="tg-031e">Number of alleles (% alleles w/ issues) </th>
+    <th class="tg-qpvr" .background-color='#59b300'>Number of alleles (% alleles w/ issues) </th>
   </tr>""")
 		ordered=[]
 		for key, value in statsPerGene.iteritems():
@@ -286,7 +290,7 @@ li a {
 			name=name.split(".")
 			name=name[0]
 			if (numberMultip>0 or numberStop>0 or numberStart>0):
-				f.write("<tr id="+str(item[0])+""">\n<td class='tg-vn4c' onclick="window.open('"""+str(item[0])+"""')" style='cursor:pointer'>"""+name+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberMultip))+" ("+str('{0:.2f}'.format((numberMultip/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStop))+" ("+str('{0:.2f}'.format((numberStop/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStart))+" ("+str('{0:.2f}'.format((numberStart/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(total))+" ("+str('{0:.2f}'.format(((numberMultip+numberStart+numberStop)/total)*100))+"%)"+"</td>\n</tr>")
+				f.write("<tr id="+str(item[0])+""">\n<td class='tg-vn4c' onclick="window.open('"""+str(item[0])+"""')" style='cursor:pointer'>"""+name+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberMultip))+" ("+str('{0:.2f}'.format((numberMultip/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStop))+" ("+str('{0:.2f}'.format((numberStop/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStart))+" ("+str('{0:.2f}'.format((numberStart/total)*100))+"%)"+"</td>\n<td class='tg-14d4' onclick='a(this);'>"+str(int(total))+" ("+str('{0:.2f}'.format(((numberMultip+numberStart+numberStop)/total)*100))+"%)"+"</td>\n</tr>")
 		
 		
 		f.write("</table>")
@@ -326,14 +330,14 @@ li a {
 	
 	with open((os.path.join(outputpath,"json3.js")), "wb") as f:
 		
-		f.write("var json03 ="+str(allelenumberplot)+";mpld3.draw_figure('fig03', json03);")
+		f.write("var json03 ="+str(allelenumberplot)+";mpld3.draw_figure('plot1', json03);")
 
-	with open((os.path.join(outputpath,"json5.js")), "wb") as f:
+#	with open((os.path.join(outputpath,"json5.js")), "wb") as f:
 		
-		f.write("var json05 ="+str(allelenumberplotMean)+";mpld3.draw_figure('fig03', json05);")	
-	with open((os.path.join(outputpath,"json6.js")), "wb") as f:
+	#	f.write("var json05 ="+str(allelenumberplotMean)+";mpld3.draw_figure('plot2', json05);")	
+	#with open((os.path.join(outputpath,"json6.js")), "wb") as f:
 		
-		f.write("var json06 ="+str(allelenumberplotMedian)+";mpld3.draw_figure('fig03', json06);")	
+	#	f.write("var json06 ="+str(allelenumberplotMedian)+";mpld3.draw_figure('plot3', json06);")	
 	
 	try:
 		os.remove("listGenes"+listbasename+".txt")

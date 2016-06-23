@@ -3,11 +3,10 @@ import argparse
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 from matplotlib import colors
+import matplotlib.patches as mpatches
 import HTSeq
 from operator import itemgetter
 from collections import OrderedDict
-from copy import deepcopy
-from matplotlib.ticker import ScalarFormatter
 import mpld3
 from mpld3 import utils, plugins
 import numpy
@@ -163,6 +162,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 	htmlgenespath=os.path.join(outputpath,"genes_html/")
 	relpath=os.path.relpath(htmlgenespath,outputpath)
 	
+	#get stats for each locus file
 	for gene in gene_fp:
 
 		gene = gene.rstrip('\n')
@@ -211,13 +211,15 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		modaStats.append(moda)
 
 		
-		#check if the gene is conserved considering the threshold and the -p parameter
+		#get ratio between number of alleles outside conserved threshold
 		for size in sizes:
 
 			if (not float(size)> moda*(1+threshold) and not float(size)< moda*(1-threshold)):
 				i+=1
 		rate = i/float(allelenumber)
-
+		
+		#check if the gene is conserved considering the threshold and the -p parameter
+		#get locus with only 1 allele
 		if not OneNotConserved and (rate>=1 or (len(sizes)-i)<2) :
 			if allelenumber==1:
 				z+=1
@@ -370,23 +372,23 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		
 		
 		fig, ax= plt.subplots(figsize=(20,10))
-		points = ax.plot(sortbyNumberAllelesx,sortbyNumberAlleles,'o')
+		points1 = ax.plot(sortbyNumberAllelesx,sortbyNumberAlleles,'o',label='Mode')
 		
-		plt.ylabel('Number of alleles')
+		"""plt.ylabel('Number of alleles')
 		plt.xlabel('Allele mode size')
 		plt.grid(True)
-		ax.yaxis.labelpad = 40
+		ax.yaxis.labelpad = 40"""
 		
 
 		
-		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points[0],labels=orderedlistgene2_basename))
-
-		mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
+		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points1[0],labels=orderedlistgene2_basename))
+		
+		#mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
 		
 		
 		
-		numberallelesplothtml=mpld3.fig_to_dict(fig)
-		plt.close('all')
+		#numberallelesplothtml=mpld3.fig_to_dict(fig)
+		#plt.close('all')
 		
 		orderedlistgene2_basename=[]
 		for elem in orderedlistgene3:
@@ -397,24 +399,24 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 			orderedlistgene2_html.append(os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html")))
 		
 		
-		fig, ax= plt.subplots(figsize=(20,10))
-		points = ax.plot(sortbyNumberAllelesMeanx,sortbyNumberAllelesMean,'go')
+		#fig, ax= plt.subplots(figsize=(20,10))
+		points2 = ax.plot(sortbyNumberAllelesMeanx,sortbyNumberAllelesMean,'go',label='Mean')
 		
-		plt.ylabel('Number of alleles')
+		"""plt.ylabel('Number of alleles')
 		plt.xlabel('Allele mean size')
 		plt.grid(True)
-		ax.yaxis.labelpad = 40
+		ax.yaxis.labelpad = 40"""
 		
 
 		
-		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points[0],labels=orderedlistgene2_basename))
+		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points2[0],labels=orderedlistgene2_basename))
 
-		mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
+		#mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
 		
 		
 		
-		numberallelesplotMeanhtml=mpld3.fig_to_dict(fig)
-		plt.close('all')
+		#numberallelesplotMeanhtml=mpld3.fig_to_dict(fig)
+		#plt.close('all')
 		
 		orderedlistgene2_basename=[]
 		for elem in orderedlistgene4:
@@ -425,25 +427,24 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 			orderedlistgene2_html.append(os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html")))
 		
 		
-		fig, ax= plt.subplots(figsize=(20,10))
-		points = ax.plot(sortbyNumberAllelesMedianx,sortbyNumberAllelesMedian,'ro')
+		#fig, ax= plt.subplots(figsize=(20,10))
+		points3 = ax.plot(sortbyNumberAllelesMedianx,sortbyNumberAllelesMedian,'ro',label='Median')
 		
 		plt.ylabel('Number of alleles')
-		plt.xlabel('Allele median size')
+		plt.xlabel('Allele size in bp')
 		plt.grid(True)
 		ax.yaxis.labelpad = 40
 		
 
 		
-		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points[0],labels=orderedlistgene2_basename))
+		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points3[0],labels=orderedlistgene2_basename))
+		mpld3.plugins.connect(fig, ClickInfo2(points3[0], orderedlistgene2_html))
 
-		mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
-		
-		
-		
+		ax.legend(numpoints=1,title='')
+
 		numberallelesplotMedianhtml=mpld3.fig_to_dict(fig)
-		plt.close('all')
 		
+		plt.close('all')
 		
 	
 		
@@ -461,7 +462,8 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		histplothtml=mpld3.fig_to_dict(fig)
 
 
-		return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplothtml,numberallelesplotMeanhtml,numberallelesplotMedianhtml
+		#return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplothtml,numberallelesplotMeanhtml,numberallelesplotMedianhtml
+		return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplotMedianhtml
 
 if __name__ == "__main__":
     main()
