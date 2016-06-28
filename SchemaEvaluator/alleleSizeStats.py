@@ -109,7 +109,7 @@ def buildPlot(nparray,ReturnValues):
 		plt.figure()
 	else:
 		fig,ax = plt.subplots(figsize=(20,10))
-		#bp=plt.boxplot(nparray,patch_artist=True)
+
 		bp=plt.boxplot(nparray, 1,bootstrap=1000)
 	
 	#print cbook.boxplot_stats(nparray)
@@ -126,11 +126,7 @@ def buildPlot(nparray,ReturnValues):
 	plt.ylabel('nucleotide length of the gene')
 	plt.title("allele size comparison per gene for "+str(len(nparray))+"genes")
 	
-	#for box in bp['boxes']:
-		# change outline color
-	#	box.set( color='white', linewidth=2)
-    # change fill color
-	#	box.set( facecolor = 'black' )
+
 	
 	#plt.setp(bp['boxes'], color='blue')
 	plt.setp(bp['whiskers'], color='blue')
@@ -257,12 +253,6 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 			allNumberAllelesMean.append([gene,mean,allelenumber])
 			allNumberAllelesMedian.append([gene,median,allelenumber])
 
-	"""with open("tabStats.txt", "wb") as t:
-		t.write("gene\tmin\tmax\tmean\tstandard deviation")
-		for elem in tabStats:
-			for elem2 in elem:
-				t.write(str(elem2)+"\t")
-			t.write("\n")"""
 	print "\n"+str(z)+ " genes with only one allele\n"
 	
 	#order genes by median
@@ -353,11 +343,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		
 		
 		ax.yaxis.labelpad = 40
-		plt.grid(True)
-		#frame1 = plt.gca()
-		#frame1.axes.set_xlim([0,maxMode,(maxMode/10)])
-		#ticks=range(int(0),int(maxMode),(maxMode/10))
-		#plt.xticks(ticks)
+
 		boxplothtml=mpld3.fig_to_dict(fig)
 		
 				
@@ -374,10 +360,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		fig, ax= plt.subplots(figsize=(20,10))
 		points1 = ax.plot(sortbyNumberAllelesx,sortbyNumberAlleles,'o',label='Mode')
 		
-		"""plt.ylabel('Number of alleles')
-		plt.xlabel('Allele mode size')
-		plt.grid(True)
-		ax.yaxis.labelpad = 40"""
+
 		
 
 		
@@ -385,10 +368,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		
 		#mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
 		
-		
-		
-		#numberallelesplothtml=mpld3.fig_to_dict(fig)
-		#plt.close('all')
+	
 		
 		orderedlistgene2_basename=[]
 		for elem in orderedlistgene3:
@@ -402,21 +382,13 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		#fig, ax= plt.subplots(figsize=(20,10))
 		points2 = ax.plot(sortbyNumberAllelesMeanx,sortbyNumberAllelesMean,'go',label='Mean')
 		
-		"""plt.ylabel('Number of alleles')
-		plt.xlabel('Allele mean size')
-		plt.grid(True)
-		ax.yaxis.labelpad = 40"""
-		
+
 
 		
 		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points2[0],labels=orderedlistgene2_basename))
 
 		#mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
 		
-		
-		
-		#numberallelesplotMeanhtml=mpld3.fig_to_dict(fig)
-		#plt.close('all')
 		
 		orderedlistgene2_basename=[]
 		for elem in orderedlistgene4:
@@ -462,7 +434,6 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		histplothtml=mpld3.fig_to_dict(fig)
 
 
-		#return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplothtml,numberallelesplotMeanhtml,numberallelesplotMedianhtml
 		return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplotMedianhtml
 
 if __name__ == "__main__":

@@ -6,6 +6,8 @@ import argparse
 import mpld3
 import matplotlib.pyplot as plt
 import json
+from Bio.Align.Applications import MafftCommandline
+import multiprocessing
 
 def reverseComplement(strDNA):
 
@@ -48,6 +50,15 @@ def translateSeq(DNASeq,transTable):
 					raise ValueError(e)
 	return protseq,seq,reversedSeq
 
+def call_mafft(path_to_save,genefile):
+	
+	print "maffting "+os.path.basename(genefile)
+	mafft_cline = MafftCommandline(input=genefile)
+	stdout, stderr = mafft_cline()
+	with open(path_to_save, "w") as handle:
+		handle.write(stdout)
+	return true
+
 def main():
 	
 	parser = argparse.ArgumentParser(description="This program analyses cds")
@@ -84,7 +95,29 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 	
 	statsPerGene={}
 	
+	
+	pool = multiprocessing.Pool(6)
+	
 	for gene in gene_fp:
+		
+		gene = gene.rstrip('\n')
+		gene = gene.rstrip('\r')
+		
+		alignFileName=os.path.join(htmlgenespath,(os.path.basename(gene)).replace(".fasta","_aligned.fasta"))
+	
+		pool.apply_async(call_mafft,args=[alignFileName,gene])
+		
+	pool.close()
+	pool.join()	
+		
+	gene_fp = open( genes, 'r')
+	for gene in gene_fp:
+		
+		gene = gene.rstrip('\n')
+		gene = gene.rstrip('\r')
+		
+		alignFileName=os.path.join(htmlgenespath,(os.path.basename(gene)).replace(".fasta","_aligned.fasta"))
+		
 		
 		listStopc=[]
 		listnotStart=[]
@@ -95,7 +128,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 		print str(os.path.basename(gene))
 		
 		k=0
-		gene = gene.rstrip('\n')
+		
 		multiple=True
 		gene_fp2 = HTSeq.FastaReader(gene)
 		
@@ -140,14 +173,15 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 		genename.pop()
 		genename=".".join(genename)
 		with open(htmlgenespath+genename+".html", "wb") as f:
-			f.write("<!DOCTYPE html>\n<html>\n<head><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script><script type='text/javascript' src='https://mpld3.github.io/js/mpld3.v0.2.js'></script>\n")
+			f.write("<meta charset='UTF-8'><!DOCTYPE html>\n<html>\n<head><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script><script type='text/javascript' src='https://mpld3.github.io/js/mpld3.v0.2.js'></script>\n")
 			f.write("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>")
 			f.write("""<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>""")
 			f.write("""<!-- Latest compiled and minified CSS -->
+			<script src="https://cdn.bio.sh/msa/latest/msa.min.gz.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">""")
 			
-			f.write("</head>\n<body><div id='histdiv'></div>\n")
+			f.write("</head>\n<body><p></p><div id='snippetDiv'></div> <p></p><div id='histdiv'></div>\n")
 			relpath=os.path.relpath(gene,htmlgenespath)
 			#print relpath
 			f.write("<input type=button onClick=window.open('"+relpath+"') value='click here to get fasta file'>\n""")
@@ -162,6 +196,56 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 			plt.grid(True)
 			histplothtml=mpld3.fig_to_dict(fig)
 			histplothtml=str(json.dumps(histplothtml))
+			
+			f.write("""<script>
+
+					var yourDiv = document.getElementById('snippetDiv');
+					var menuDiv = document.createElement('div');
+					var msaDiv = document.createElement('div');
+					yourDiv.appendChild(menuDiv);
+					yourDiv.appendChild(msaDiv);
+
+					/* global yourDiv */
+					var opts = {
+					  el: msaDiv,
+					  importURL: '"""+os.path.join((os.path.relpath(alignFileName,alignFileName)),(os.path.basename(gene)).replace(".fasta","_aligned.fasta"))+"""',
+					  colorscheme: {"scheme": "nucleotide"},
+					};
+					
+					opts.vis = {
+					  scaleslider:true,
+					};
+					
+					var m = msa(opts);
+					m.render()
+
+					var defMenu = new msa.menu.defaultmenu({
+					  el: menuDiv,
+					  msa: m
+					});
+					defMenu.render();
+					
+					function addColumnFilter(menu){    
+						var msa = menu.msa;
+						var hidden = [];    threshold = 100 / 100;
+					   var maxLen = msa.seqs.getMaxLength();
+					   var hidden = [];
+					   // TODO: cache this value
+					   var conserv = msa.g.stats.scale(msa.g.stats.conservation());
+					   console.log(conserv);
+					   var end = maxLen - 1;
+					   for (var i = 0; 0 < end ? i <= end : i >= end; 0 < end ? i++ : i--) {
+						 if (conserv[i] == threshold) {
+							 hidden.push(i);
+						 }
+					   }
+					   return msa.g.columns.set("hidden", hidden);}
+					  
+					 $($('div').find('ul')[2]).prepend('<li id="removePoly">Hide Non Polymorphic Sites</li>');    $('#removePoly').click(function(){
+							addColumnFilter(defMenu);
+						});
+					delete defMenu.views['10_import'];
+					</script>""")
 			
 			f.write("<script type='text/javascript'>var hist ="+str(histplothtml)+";mpld3.draw_figure('histdiv', hist);</script></body></html>")
 			plt.close('all')

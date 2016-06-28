@@ -66,27 +66,59 @@ def main():
 	#genebasename=genebasename[0]
 	
 		
-	#notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot,allelenumberplotMean,allelenumberplotMedian=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath)
 	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath)
 	
 	boxplot=str(json.dumps(boxplot))
 	histplot=str(json.dumps(histplot))
 	allelenumberplot=str(json.dumps(allelenumberplot))
-	#allelenumberplotMean=str(json.dumps(allelenumberplotMean))
-	#allelenumberplotMedian=str(json.dumps(allelenumberplotMedian))
+
 
 	statsPerGene=CheckCDS.analyzeCDS(genes,transTable,True,outputpath)
 	
 	# stats values are ordered in a list allelesNotMultiple3,listStopcodonsInside,listnotStartCodon,numberOfAlleles
-	#if not os.path.exists(outputpath):
-	#	os.makedirs(outputpath)
+
 	
 	with open(htmlFile, "wb") as f:
 		f.write("<!DOCTYPE html>\n<html>\n<head><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script><script type='text/javascript' src='https://mpld3.github.io/js/mpld3.v0.2.js'></script>\n")
 		f.write("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>")
 		f.write("""<!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>""")
-		f.write("""<!-- Latest compiled and minified CSS -->
+		f.write("""<style type="text/css">
+      body {
+        padding-top: 10px;
+        padding-bottom: 60px;
+        padding-left: 20px;
+      }
+
+      /* Custom container */
+      .container {
+        margin: 0 auto;
+        max-width: 1000px;
+      }
+      .container > hr {
+        margin: 60px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 80px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 100px;
+        line-height: 1;
+      }
+      .jumbotron .lead {
+        font-size: 24px;
+        line-height: 1.25;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+    </style>
+		<!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <script>
 function openList1(documentid) {
@@ -197,7 +229,7 @@ li a {
 						<button id='button1' class="btn btn-success btn-block active">Loci size variation analysis</button>
 						</div>
 						<div class="col-sm-3">
-						<button id='button4' class="btn btn-success btn-block active">Coding Domains Sequence analysis</button>
+						<button id='button4' class="btn btn-success btn-block active">CDS analysis</button>
 						</div>
 					</div>
 				</div>""")
@@ -332,13 +364,7 @@ li a {
 		
 		f.write("var json03 ="+str(allelenumberplot)+";mpld3.draw_figure('plot1', json03);")
 
-#	with open((os.path.join(outputpath,"json5.js")), "wb") as f:
-		
-	#	f.write("var json05 ="+str(allelenumberplotMean)+";mpld3.draw_figure('plot2', json05);")	
-	#with open((os.path.join(outputpath,"json6.js")), "wb") as f:
-		
-	#	f.write("var json06 ="+str(allelenumberplotMedian)+";mpld3.draw_figure('plot3', json06);")	
-	
+
 	try:
 		os.remove("listGenes"+listbasename+".txt")
 	except:
