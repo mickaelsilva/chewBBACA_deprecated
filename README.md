@@ -153,7 +153,7 @@ NC_011586.fna	INF-3	LNF
 NC_011595.fna	3	LNF
 ```
 
-The first column has the filename for which the allele call was performed. The table headers have the filenames of files where the alleles are stored for each loci.
+The first column has the filename for which the allele call was performed. The table headers have the filenames of files where the alleles are stored for each loci. (**TODO @JAC** : explain output result )
  
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
 
