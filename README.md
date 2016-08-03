@@ -203,7 +203,7 @@ Both locus presented had an exact match or an infered allele for one genome, whi
 Usefull to determine a core genome and remove genomes that may have technical issues. The algorithm description is the following:
 
 1. For each allelic profile generated for a draft genome , let *nl* be the number of loci that are not present in the allelic profile but are present in 99%  or more of the remaining allelic profiles (97% if total number of genomes under 500 and 95% if under 200);
-2. For and exclusion threshold (et) remove all allelic profiles that have nml greater than et. If no allelic profiles are removed, proceed to Step 4;
+2. For and exclusion threshold (*et*) remove all allelic profiles that have *nl* > *et*. If no allelic profiles are removed, proceed to Step 4;
 3. Return to Step 1.
 4. The locus present in all the draft genomes for the remaining allelic profiles, are defined as the cgMLST schema for the exclusion threshold (et)
 
