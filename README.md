@@ -189,7 +189,7 @@ Change name:  XpressGetCleanLoci4Phyloviz.py -> Extract_cgAlleles.py
 
 ### 5. Validating the cgMLST schema
 
-## Evaluate genome quality
+### 5.1 Evaluate genome quality
 
 
 Usefull to determine a core genome and remove genomes that may have technical issues. The algorithm description is the following:
@@ -222,11 +222,9 @@ Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This 
 
 ### 6. Allele calling using the cgMLST schema
 
+##  6.1 Creating a clean allelic profile for PHYLOViZ 
 
-=============
-##  creating a clean allelic profile for PHYLOViZ 
-
-The
+The 
 Clean a raw output file from an allele calling to a phyloviz readable file. Keep the locus with only Exact matches or new alleles found for all genomes.
 
 Basic usage:
