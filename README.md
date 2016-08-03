@@ -144,7 +144,7 @@ The column headers stand for.
 The ALM and ASM control for the fact that, for the majority of the loci the allele lengths are quite conserved. However some loci can have larger variation in allele length and those should be manually curated.
 
 
-An abridged example of a file output with only two loci:
+An abridged example of an output file for `< outPrefix >_< datestamp>/< outPrefix >_Alleles.txt`  with only two loci:
 
 ```
 FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	
