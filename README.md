@@ -4,7 +4,7 @@
 
 chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, and also providing an allele calling algorithm, that can be run in multiprocessor settings.
 
-This page was created with the dual purpose of servinf as readme file and tutorial for the software.
+This page was created with the dual purpose of serving as readme file and tutorial for the software.
 
 ##Dependencies:
 * [git](https://git-scm.com/)
