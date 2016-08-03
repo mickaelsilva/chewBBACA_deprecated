@@ -114,8 +114,8 @@ Having defined the wgMLST schema with one allele per locus, one can proceed to u
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
 
-This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael create example) .
-If by some reason the process is interrupted, by running the same command line with the same inputs an option to resume the  allele call is provided to the user.   
+This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael provide command line example) .
+If by some reason the process is interrupted (server crash, etc), by running the same command line with the same inputs an option to resume the  allele call is provided to the user avoiding lost computing time.   
 
 **TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
@@ -133,26 +133,30 @@ NC_017162.fna	892	2319	1909	0	0	104	5	37
 NC_011586.fna	1563	1697	1809	0	0	116	6	75	
 ```
 
+The column headers stand for.
 * EXC - allele has exact match (100% identity)
 * INF - infered allele with prodigal
 * LNF - locus not found
 * LOT - locus on the tip of the contig (partial match)
-* PLOT - locus possibly on the tip of the contig (CDS match is on the tip of the contig - to be manualy curated)
-* NIPL - Non informative paralog locus (two or more good blast matches (bsr >0.6) for the protein)
+* PLOT - possible locus on the tip of the contig (CDS match is on the tip of the contig and other alleles for the loci are large enough to be considered LOT- to be manualy curated)
+* NIPL - Non informative paralogous locus . Two or more blast matches with bsr >0.6 for the protein , indicate that the locus could have paralogous and should be removed from the analysis
 * ALM - allele 20% larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
 * ASM - allele 20% smaller than gene size mode (match CDS lenght < gene mode length - gene mode length * 0.2)
 
+The ALM and ASM control for the fact that, for the majority of the loci the allele lengths are quite conserved. However some loci can have larger variation in allele length and those should be manually curated.
 
 
-short example file output:
+abridged example of an example file output with only two loci:
 
 ```
-FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	gi_126640115_ref_NC_009085.1_:1056402-1057004.fasta	gi_12664011510_S10_L001.fasta
+FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	
 NC_017162.fna	INF-2	LNF
 NC_011586.fna	INF-3	LNF
 NC_011595.fna	3	LNF
 ```
 
+The first column has the file id for the allele call. The table headers have the filenames of files where the alleles are stored for each loci
+ 
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
 
 
