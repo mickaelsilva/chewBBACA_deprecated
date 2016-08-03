@@ -197,12 +197,12 @@ Both locus presented had an exact match or an infered allele for one genome, whi
 
 ### 5. Validating the cgMLST schema
 
-### 5.1 Evaluate genome quality
+### 5.1 Evaluate wgMLST call quality per genome 
 
 
 Usefull to determine a core genome and remove genomes that may have technical issues. The algorithm description is the following:
 
-1. For each allelic profile generated for a draft genome , let *nl* be the number of loci that are not present in the allelic profile but are present in 99%  or more of the remaining allelic profiles (97% if total number of genomes under 500 and 95% if under 200);
+1. For each allelic profile generated for a draft genome , let *nl* be the number of loci that are not present in the allelic profile but are present in 99%  or more of the remaining allelic profiles (97% if total number of genomes under 500 and 95% if under 200); **TODO@Mickael**: How is this handled dynamically?
 2. For and exclusion threshold (*et*) remove all allelic profiles that have *nl* > *et*. If no allelic profiles are removed, proceed to Step 4;
 3. Return to Step 1.
 4. The locus present in all the draft genomes for the remaining allelic profiles, are defined as the cgMLST schema for the exclusion threshold (et)
@@ -228,7 +228,7 @@ Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This 
 9. (optional) Use the testQualityGenomes3.py script to reach/analyze the core genome and re-do step 7
 
 
-### 6. Allele calling using the cgMLST schema
+### 6. Defining the cgMLST schema
 
 ##  6.1 Creating a clean allelic profile for PHYLOViZ 
 
