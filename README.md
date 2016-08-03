@@ -177,14 +177,18 @@ The first column has the filename for which the allele call was performed. The t
 * PC -Paralog Count - number of times a CDS on this locus as been found in another locus
 * NDC - Non Determined Locus count -  Number of times the alleles the target locus was not exact match to an allele  (EXC) or a new inferred allele (INF). (i.e. locus can be a LNF,LOT, PLOT, NIPL, ASM, ALM). It helps to decide towards excluding the locus if this number is also large.  
 
+The output file `asasdasdas`lists only loci where at least one paralogous was found. The file format is the following:
+
 ```
 gene	PC	NDC
 gi_22536185_ref_NC_004116.1_:c2045049-2043157.fasta	1	2
 gi_406708523_ref_NC_018646.1_:c1944065-1941807.fasta	1	2
 
 ```
+
 In this example the allele call was ran for 3 genomes.
 Both locus presented had an exact match or an infered allele for one genome, while 2 genomes had issues or didn't have the locus. The CDS returned for the first locus is present in another locus, while the same happens for the second locus, from which we may clearly infer that a locus is being overrepresented by this two locus, since both are catching the same CDS.
+**TODO@JAC: Explain better this section. E**
 
 7. Run the Extract_cgAlleles.py using the outputs from 5. and 6.
 
