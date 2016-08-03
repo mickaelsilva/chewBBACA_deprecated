@@ -101,7 +101,7 @@ Having defined the wgMLST schema with one allele per locus, one can proceed to u
 **Parameters** 
 `-i` path to the list of genomes file. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
-`-g` path to the list of alleles file i.e. the `listGenes.txt`in the `genes` directory
+`-g` path to the list of alleles file i.e. the `listGenes.txt`in the `.../chewbacca_wrkDIR/schema/short` directory
 
 `-o` prefix for the output files
 
