@@ -1,8 +1,10 @@
 #chewBBACA: BSR-Based Allele Calling Algorithm
 
-**chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be said as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. 
+**chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. 
 
 chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, and also providing an allele calling algorithm, that can be run in multiprocessor settings.
+
+This page was created with the dual purpose of servinf as readme file and tutorial for the software.
 
 ##Dependencies:
 * [git](https://git-scm.com/)
@@ -23,7 +25,7 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 **Important Notes before starting:**
 
  - For **chewBBACA**, the definition of an allele is that each allele
-   must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automaticaly exclude any allele which DNA sequence that does not contain start or stop codon and that it's length is not multiple of three.
+   must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automatically exclude any allele which DNA sequence that does not contain start or stop codon and that it's length is not multiple of three. The allele identification is performed using [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/). 
  - All the referenced lists of files *must contain full path* for the files.
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
@@ -81,13 +83,12 @@ The parameters for the command are:
 `-g` minimum locus lenght (removes any loci with length equal or less the specified value
 
 
-**Input:**  `allffnfile.fasta` : a fasta file resulting from concatenating all the genomes we want to use for the creating the wgMLST schema. 
+**Input:**  `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation ,[Prokka](https://github.com/tseemann/prokka/blob/master/README.md), also provide *.ffn* files with its output.
 
 **Output:** One fasta file per gene in the `schema_seed/`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
 
-The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and
- and genes with DNA sequences smaller than chosen in the -g parameter. 
- The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.
+The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and genes with DNA sequences smaller than chosen in the `-g` parameter. 
+The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio* greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.
 
 Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.sh` shellscript. This script will create the necessary files for the allele call, by creating the  directory named `short`. The contents of this dir is already explained in the **folder structure** subsection. It will also contain a  file named "listGenes.txt" These are the genes 
 
@@ -97,7 +98,7 @@ Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.
 
 Having defined the wgMLST schema with one allele per locus, one can proceed to use it to call alleles.  The command is the following
 
-	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 -p /PathToProdigal/prodigal
+	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 -p /<PathToProdigal>/prodigal
 
 **Parameters** 
 `-i` path to the list of genomes file. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
@@ -113,10 +114,10 @@ Having defined the wgMLST schema with one allele per locus, one can proceed to u
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
 
-This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (example Mickael) .
+This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael create example) .
 If by some reason the process is interrupted, by running the same command line with the same inputs an option to resume the  allele call is provided to the user.   
 
-TODO: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
+**TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
 The outputs flies are:
 ```
@@ -138,7 +139,7 @@ NC_011586.fna	1563	1697	1809	0	0	116	6	75
 * LOT - locus on the tip of the contig (partial match)
 * PLOT - locus possibly on the tip of the contig (CDS match is on the tip of the contig - to be manualy curated)
 * NIPL - Non informative paralog locus (two or more good blast matches (bsr >0.6) for the protein)
-* ALM - allele 30% larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
+* ALM - allele 20% larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
 * ASM - allele 20% smaller than gene size mode (match CDS lenght < gene mode length - gene mode length * 0.2)
 
 
