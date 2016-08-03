@@ -119,7 +119,7 @@ If by some reason the process is interrupted (server crash, etc), by running the
 
 **TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
-The outputs flies are:
+The outputs files are:
 ```
 < outPrefix >_< datestamp>/< outPrefix >_statistics.txt
 < outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt
@@ -155,7 +155,7 @@ NC_011586.fna	INF-3	LNF
 NC_011595.fna	3	LNF
 ```
 
-The first column has the file id for the allele call. The table headers have the filenames of files where the alleles are stored for each loci
+The first column has the filename for which the allele call was performed. The table headers have the filenames of files where the alleles are stored for each loci.
  
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
 
