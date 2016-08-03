@@ -113,7 +113,7 @@ Having defined the wgMLST schema with one allele per locus, one can proceed to u
 
 
 This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael provide command line example) .
-If by some reason the process is interrupted (server crash, etc), by running the same command line with the same inputs an option to resume the  allele call is provided to the user avoiding lost computing time.   
+If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
 
 **TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
