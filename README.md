@@ -69,7 +69,9 @@ We suggest that  for each analysis for a given schema, chewBBACA should be run i
 ```
 the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
 In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for each loci. This directory will also contain a subdir named ` .../chewbacca_wrkDIR/schema/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/schema`.
- 
+
+----------
+
 ### 2. wgMLST schema creation
 
 To create a wgMLST schema for a set of pre-determined genomes, you can run the following command:
