@@ -146,7 +146,7 @@ The column headers stand for.
 The ALM and ASM control for the fact that, for the majority of the loci the allele lengths are quite conserved. However some loci can have larger variation in allele length and those should be manually curated.
 
 
-abridged example of an example file output with only two loci:
+An abridged example of an example file output with only two loci:
 
 ```
 FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	
@@ -160,21 +160,21 @@ The first column has the filename for which the allele call was performed. The t
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
 
 
-4. Create a list .txt file containing one draft genome file per line with full paths (similar to 3.)
+1. Create a list .txt file containing one draft genome file per line with full paths (similar to 3.)
 
-5. Run the allelecall script (local or cluster version) using the list files created at 3. and 4.
+2. Run the allelecall script (local or cluster version) using the list files created at 3. and 4.
 
-6. Run the whichRepeatedLoci.py over the contigsInfo.txt output from step 5.
+3. Run the `ParalogPrunning.py.` script using `contigsInfo.txt` output as input from step 5.
 
-whichRepeatedLoci.py -> ParalogPrunning.py
 
-Using the contigsInfo.txt output from the allele call, check if the same CDS is being called for different locus
+**TODO@Mickael**: whichRepeatedLoci.py -> ParalogPrunning.py
 
-	% whichRepeatedLoci.py -i contigsInfo.txt
+	% ParalogPrunning.py -i contigsInfo.txt
 
 `-i` contigsInfo.txt file
 
-short example file output:
+
+
 
 * PC -Paralog Count - number of times a CDS on this locus as been found in another locus
 * NDC - Non Determined Locus count -  Number of times the alleles the target locus was not exact match to an allele  (EXC) or a new inferred allele (INF). (i.e. locus can be a LNF,LOT, PLOT, NIPL, ASM, ALM). It helps to decide towards excluding the locus if this number is also large.  
@@ -188,9 +188,9 @@ gi_406708523_ref_NC_018646.1_:c1944065-1941807.fasta	1	2
 In this example the allele call was ran for 3 genomes.
 Both locus presented had an exact match or an infered allele for one genome, while 2 genomes had issues or didn't have the locus. The CDS returned for the first locus is present in another locus, while the same happens for the second locus, from which we may clearly infer that a locus is being overrepresented by this two locus, since both are catching the same CDS.
 
-7. Run the XpressGetCleanLoci4Phyloviz.py using the outputs from 5. and 6.
+7. Run the Extract_cgAlleles.py using the outputs from 5. and 6.
 
-Change name:  XpressGetCleanLoci4Phyloviz.py -> Extract_cgAlleles.py
+**TODO@Mickael**Change name:  XpressGetCleanLoci4Phyloviz.py -> Extract_cgAlleles.py
 
 ### 5. Validating the cgMLST schema
 
