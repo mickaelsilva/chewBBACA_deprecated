@@ -223,13 +223,10 @@ Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This 
 ### 6. Allele calling using the cgMLST schema
 
 
-#### Evaluate overrepresented loci
-
-
 =============
-## Clean raw output profiles from none exact matches/new alleles
+##  creating a clean allelic profile for PHYLOViZ 
 
-
+The
 Clean a raw output file from an allele calling to a phyloviz readable file. Keep the locus with only Exact matches or new alleles found for all genomes.
 
 Basic usage:
