@@ -31,7 +31,7 @@ This page was created with the dual purpose of serving as readme file and tutori
 
 ### 1. Setting up the analysis
 
-**Installing chewBACCA**
+**1.1 Installing chewBACCA**
 
 To install chewBACCA, simply select the directory where you want it to be installed and run the following command:
 
@@ -49,7 +49,7 @@ to update chewBBACA you simply
 
 You will also need to install all the dependencies indicated above and make sure they are on the PATH.
 
-**PATH settings for chewBBACA**
+**1.2 PATH settings for chewBBACA**
 
 All the subdirectories in the chewBBACA dir  must be on the PATH if you want to be able to access the scripts from any dir. Replace the `<install_dir>` with the full path to chewBBACA instalation directory
 
@@ -59,7 +59,7 @@ export PATH="<install_dir>/chewBBACA/allelecall/:$PATH"
 export PATH="<install_dir>/chewBBACA/createschema/:$PATH"
 export PATH="<install_dir>/SchemaEvaluator/:$PATH"
 ```
-**Folder structure**
+**1.3 Folder structure**
 *This step is optional and is directed to users without much experience in running scripts.*
 We suggest that  for each analysis for a given schema, chewBBACA should be run in a directory (chewbacca_wrkDIR) containing the following directory structure: 
 ```
