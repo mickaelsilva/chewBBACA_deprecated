@@ -138,8 +138,8 @@ NC_011586.fna	1563	1697	1809	0	0	116	6	75
 * LOT - locus on the tip of the contig (partial match)
 * PLOT - locus possibly on the tip of the contig (CDS match is on the tip of the contig - to be manualy curated)
 * NIPL - Non informative paralog locus (two or more good blast matches (bsr >0.6) for the protein)
-* ALM - allele much larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
-* ASM - allele much smaller than gene size mode (match CDS lenght < gene mode length - gene mode length * 0.2)
+* ALM - allele 30% larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
+* ASM - allele 20% smaller than gene size mode (match CDS lenght < gene mode length - gene mode length * 0.2)
 
 
 
@@ -156,7 +156,7 @@ NC_011595.fna	3	LNF
 
 
 4. Create a list .txt file containing one draft genome file per line with full paths (similar to 3.)
-5
+
 5. Run the allelecall script (local or cluster version) using the list files created at 3. and 4.
 
 6. Run the whichRepeatedLoci.py over the contigsInfo.txt output from step 5.
