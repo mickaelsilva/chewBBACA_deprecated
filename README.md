@@ -31,9 +31,9 @@ This page was created with the dual purpose of serving as readme file and tutori
 
 ### 1. Setting up the analysis
 
-**1.1 Installing chewBACCA**
+**1.1 Installing chewBBACA**
 
-To install chewBACCA, simply select the directory where you want it to be installed and run the following command:
+To install chewBBACA, simply select the directory where you want it to be installed and run the following command:
 
 ```
  git clone https://github.com/mickaelsilva/chewBBACA.git
