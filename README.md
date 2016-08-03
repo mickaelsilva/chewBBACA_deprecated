@@ -6,13 +6,6 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 
 This page was created with the dual purpose of serving as readme file and tutorial for the software.
 
-##Dependencies:
-* [git](https://git-scm.com/)
-* [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
-* [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
-* BLAST 2.2.28+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.2.28/
-* [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/)
-
 ##Tutorial contents
  
  1. Setting up the analysis  
@@ -28,6 +21,8 @@ This page was created with the dual purpose of serving as readme file and tutori
    must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automatically exclude any allele which DNA sequence that does not contain start or stop codon and that it's length is not multiple of three. The allele identification is performed using [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/). 
  - All the referenced lists of files *must contain full path* for the files.
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
+
+----------
 
 ### 1. Setting up the analysis
 
@@ -47,7 +42,13 @@ to update chewBBACA you simply
  git pull
 ```
 
-You will also need to install all the dependencies indicated above and make sure they are on the PATH.
+You will also need to install all the all the following dependencies.
+
+* [git](https://git-scm.com/)
+* [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
+* [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
+* BLAST 2.2.28+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.2.28/
+* [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/)
 
 **1.2 PATH settings for chewBBACA**
 
