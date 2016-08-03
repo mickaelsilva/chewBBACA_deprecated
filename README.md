@@ -11,6 +11,7 @@ This page was created with the dual purpose of serving as readme file and tutori
 * [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
 * [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
 * BLAST 2.2.28+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.2.28/
+* [BLAST 2.2.28+] (ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.2.28/)
 * [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/)
 
 ##Tutorial contents
