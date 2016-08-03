@@ -137,9 +137,9 @@ The column headers stand for.
 * LNF - locus not found
 * LOT - locus on the tip of the contig (partial match)
 * PLOT - possible locus on the tip of the contig (CDS match is on the tip of the contig and other alleles for the loci are large enough to be considered LOT- to be manualy curated)
-* NIPL - Non informative paralogous locus . Two or more blast matches with bsr >0.6 for the protein , indicate that the locus could have paralogous and should be removed from the analysis
-* ALM - allele 20% larger than gene size mode (match CDS lenght> gene mode length + gene mode length * 0.2)
-* ASM - allele 20% smaller than gene size mode (match CDS lenght < gene mode length - gene mode length * 0.2)
+* NIPL - Non informative paralogous locus . Two or more BLAST matches with BSR>0.6 for the protein, indicate that the locus could have paralogous and should be removed from the analysis
+* ALM - allele 20% larger than locus size mode (match CDS lenght> locus mode length + locus mode length * 0.2)
+* ASM - allele 20% smaller than locus size mode (match CDS lenght < locus mode length - locus mode length * 0.2)
 
 The ALM and ASM control for the fact that, for the majority of the loci the allele lengths are quite conserved. However some loci can have larger variation in allele length and those should be manually curated.
 
