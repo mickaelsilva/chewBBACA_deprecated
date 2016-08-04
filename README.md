@@ -95,6 +95,8 @@ The second step is grouping all the genes by BLASTIng all the genes against each
 
 Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.sh` shellscript. This script will create the necessary files for the allele call, by creating the  directory named `short`. The contents of this dir is already explained in the **folder structure** subsection. It will also contain a  file named `listGenes.txt` , that will contain the list of loci in the schema.
 
+----------
+
 ### 3.  Allele call using the wgMLST schema 
 
 Having defined the wgMLST schema with one allele per locus, one can proceed to use it to call alleles.  The command is the following
@@ -158,6 +160,8 @@ NC_011595.fna	3	LNF
 
 The first column has the filename for which the allele call was performed. The table headers have the filenames of files where the alleles are stored for each loci. (**TODO @JAC** : explain output result )
  
+----------
+
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
 
 
@@ -198,6 +202,8 @@ Both locus presented had an exact match or an infered allele for one genome, whi
 
 **TODO@Mickael**Change name:  XpressGetCleanLoci4Phyloviz.py -> Extract_cgAlleles.py
 
+----------
+
 ### 5. Validating the cgMLST schema
 
 ### 5.1 Evaluate wgMLST call quality per genome 
@@ -226,11 +232,7 @@ The output consists in a set of plots per iteration and a removedGenomes.txt fil
 
 Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
-
-
-9. (optional) Use the testQualityGenomes3.py script to reach/analyze the core genome and re-do step 7
-
-
+----------
 ### 6. Defining the cgMLST schema
 
 ##  6.1 Creating a clean allelic profile for PHYLOViZ 
@@ -250,7 +252,7 @@ Basic usage:
 
 =============
 
-
+(TO REVIEW)
 
 **Notice :**
 Previous versions used the full allele list to make a BLAST search over the genomes, increasing exponentially the time cost necessary to perform the allele call with the growing allele database. 
