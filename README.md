@@ -11,7 +11,7 @@ This page was created with the dual purpose of serving as readme file and tutori
  1. Setting up the analysis  
  2. wgMLST schema creation  
  3. Allele call using the wgMLST schema
- 4. Selecting a cgMLST schema from the wgMLST schema
+ 4. Defining a cgMLST schema from the wgMLST schema
  5. Validating the cgMLST schema
  6. Allele calling using the cgMLST schema
 
@@ -61,6 +61,7 @@ export PATH="<install_dir>/chewBBACA/createschema/:$PATH"
 export PATH="<install_dir>/SchemaEvaluator/:$PATH"
 ```
 **1.3 Folder structure**
+
 *This step is optional and is directed to users without much experience in running scripts.*
 We suggest that  for each analysis for a given schema, chewBBACA should be run in a directory (chewbacca_wrkDIR) containing the following directory structure: 
 ```
@@ -99,7 +100,7 @@ Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.
 
 ### 3.  Allele call using the wgMLST schema 
 
-Having defined the wgMLST schema with one allele per locus, one can proceed to use it to call alleles.  The command is the following
+Having defined the wgMLST schema with one allele per locus, we can proceed to use it to call alleles on the target genomes.  The command is the following:
 
 	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 -p /<PathToProdigal>/prodigal
 
@@ -117,8 +118,8 @@ Having defined the wgMLST schema with one allele per locus, one can proceed to u
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
 
-This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael provide command line example) .
-If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
+This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael provide command line example).
+**Note:** If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
 
 **TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
 
@@ -235,7 +236,7 @@ Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This 
 ----------
 ### 6. Defining the cgMLST schema
 
-**  6.1 Creating a clean allelic profile for PHYLOViZ **
+ **6.1 Creating a clean allelic profile for PHYLOViZ** 
 
 The 
 Clean a raw output file from an allele calling to a phyloviz readable file. Keep the locus with only Exact matches or new alleles found for all genomes.
