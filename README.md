@@ -76,20 +76,24 @@ In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for
 
 ### 2. wgMLST schema creation
 
-To create a wgMLST schema for a set of pre-determined genomes, you can run the following command:
+If no cgMLST schema is defined or needs to be reevaluated, we can create a wgMLST schema from a set of pre-determined annotated genomes. The command is the following:
 
 `CreateSchema.py -i allffnfile.fasta -g 200`
 
-The parameters for the command are: 
+**Parameters:**
 
-`-i` file with concatenated gene sequences
+`-i`  Input file with concatenated gene sequences
 
 `-g` minimum locus lenght (removes any loci with length equal or less the specified value
 
 
-**Input:**  `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation ,[Prokka](https://github.com/tseemann/prokka/blob/master/README.md), also provide *.ffn* files with its output.
+**Input file definition:**
 
-**Output:** One fasta file per gene in the `schema_seed/`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
+ `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation ,[Prokka](https://github.com/tseemann/prokka/blob/master/README.md), also provide *.ffn* files with its output.
+
+**Outputs:** 
+
+One fasta file per gene in the `schema_seed/`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`.
 
 The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and genes with DNA sequences smaller than chosen in the `-g` parameter. 
 The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio (BSR) greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.
@@ -118,7 +122,8 @@ Having defined the wgMLST schema with one allele per locus, we can proceed to us
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
 
-This will use by defaults cpus-2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael provide command line example).
+This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael provide command line example).
+
 **Note:** If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
 
 **TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
