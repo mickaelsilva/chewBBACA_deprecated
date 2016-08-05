@@ -113,22 +113,24 @@ Having defined the wgMLST schema with one allele per locus, we can proceed to us
 
 `-g` file containing the path to the list of alleles i.e. the `listGenes.txt`in the `.../chewbacca_wrkDIR/schema/short` directory
 
-`-o` prefix for the output files
+`-o` prefix for the output files. ID for the allele call run
 
 `-p` Prodigal path to execution file (type prodigal if already on PATH) 
+(**TODO@Mickael**: do we really need this? Can't we just assume it is on the path?) 
 
 `--cpu` Number of cpus to use (if greater than existing cpus-2 uses cpus-2)
 
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
 
-This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  (**TODO@Mickael**: @Mickael provide command line example).
+This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  
+(**TODO@Mickael**: @Mickael provide command line example).
 
 **Note:** If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
 
-**TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA
+**TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA.py
 
-The outputs files are:
+**Outputs files**:
 ```
 < outPrefix >_< datestamp>/< outPrefix >_statistics.txt
 < outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt
