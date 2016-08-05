@@ -98,7 +98,7 @@ One fasta file per gene in the `schema_seed/`directory that is created in the di
 The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and genes with DNA sequences smaller than chosen in the `-g` parameter. 
 The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio (BSR) greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.
 
-Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.sh` shellscript. This script will create the necessary files for the allele call, by creating the  directory named `short`. The contents of this dir is already explained in the **folder structure** subsection. It will also contain a  file named `listGenes.txt` , that will contain the list of loci in the schema.
+Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.sh` shellscript. This script will create the necessary files for the allele call, by creating the  directory named `short`. The contents of this dir is already explained in the **folder structure** subsection. It will also contain a  file named `listGenes.txt`, that will contain the list of loci in the schema.
 
 ----------
 
@@ -109,9 +109,9 @@ Having defined the wgMLST schema with one allele per locus, we can proceed to us
 	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 -p /<PathToProdigal>/prodigal
 
 **Parameters** 
-`-i` path to the list of genomes file. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
+`-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
-`-g` path to the list of alleles file i.e. the `listGenes.txt`in the `.../chewbacca_wrkDIR/schema/short` directory
+`-g` file containing the path to the list of alleles i.e. the `listGenes.txt`in the `.../chewbacca_wrkDIR/schema/short` directory
 
 `-o` prefix for the output files
 
@@ -257,10 +257,3 @@ Basic usage:
 `-r` (optional) list of genes to remove, one per line, advised to use the detected overrepresented genes from whichRepeatedLoci.py
 
 =============
-
-(TO REVIEW)
-
-**Notice :**
-Previous versions used the full allele list to make a BLAST search over the genomes, increasing exponentially the time cost necessary to perform the allele call with the growing allele database. 
-To address this issue the allele call script has been modified using now 2 files per locus. One file will store all allelic sequence forms found, while a "short" version of the allele will store only
-new alleles with a significant difference to the closest allele (0.6 < BSR < 0.7). The short gene form will be used to perform the BLAST search, allowing a better time performance allele call, while not losing the wider diversity range search.
