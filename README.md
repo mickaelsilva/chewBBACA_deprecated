@@ -1,4 +1,4 @@
-#chewBBACA: BSR-Based Allele Calling Algorithm
+# chewBBACA: BSR-Based Allele Calling Algorithm
 
 **chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. BSR stands for BLAST Score Ratio as proposed by  [Rasko DA et al.](http://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-6-2) 
 
@@ -6,7 +6,7 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 
 This page was created with the dual purpose of serving as readme file and tutorial for the software.
 
-##Tutorial contents
+## Tutorial contents
  
  1. Setting up the analysis  
  2. wgMLST schema creation  
