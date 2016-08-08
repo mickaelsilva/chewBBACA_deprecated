@@ -2,7 +2,7 @@
 
 **chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. BSR stands for BLAST Score Ratio as proposed by  [Rasko DA et al.](http://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-6-2) 
 
-chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, and also providing an allele calling algorithm, that can be run in multiprocessor settings.
+chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ration that can be run in multiprocessor settings and a set of functions to visualize and validate allele variation in the loci.
 
 This page was created with the dual purpose of serving as readme file and tutorial for the software.
 
@@ -89,7 +89,7 @@ If no cgMLST schema is defined or needs to be reevaluated, we can create a wgMLS
 
 **Input file definition:**
 
- `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation ,[Prokka](https://github.com/tseemann/prokka/blob/master/README.md), also provide *.ffn* files with its output.
+ `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation, [Prokka](https://github.com/tseemann/prokka/blob/master/README.md), also provide *.ffn* files with its output.
 
 **Outputs:** 
 
@@ -132,11 +132,11 @@ This will use by default, number of CPUs available minus 2 and can be called in 
 
 **Outputs files**:
 ```
-< outPrefix >_< datestamp>/< outPrefix >_statistics.txt
-< outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt
-< outPrefix >_< datestamp>/< outPrefix >_Alleles.txt 
+./< outPrefix >_< datestamp>/< outPrefix >_statistics.txt
+./< outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt
+./< outPrefix >_< datestamp>/< outPrefix >_Alleles.txt 
 ```
-short example `< outPrefix >_statistics.txt` file:
+An abridged example `./< outPrefix >_< datestamp>/< outPrefix >_statistics.txt` file:
 
 ```
 Stats:	EXC	INF	LNF	LOT	PLOT	NIPL	ALM	ASM
@@ -144,7 +144,7 @@ NC_017162.fna	892	2319	1909	0	0	104	5	37
 NC_011586.fna	1563	1697	1809	0	0	116	6	75	
 ```
 
-The column headers stand for.
+The column headers stand for:
 * EXC - allele has exact match (100% identity)
 * INF - infered allele with prodigal
 * LNF - locus not found
@@ -168,6 +168,7 @@ NC_011595.fna	3	LNF
 
 The first column has the filename for which the allele call was performed. The table headers have the filenames of files where the alleles are stored for each loci. (**TODO @JAC** : explain output result )
  
+ **TODO@Mickael**:  Create example for contigsInfo.txt
 ----------
 
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
