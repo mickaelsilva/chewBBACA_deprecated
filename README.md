@@ -228,7 +228,7 @@ Usefull to determine a core genome and remove genomes that may have technical is
 
 Usage:
 
-testQualityGenomes3 -> TestGenomeQuality
+ **TODO@Mickael**:   testQualityGenomes3 -> TestGenomeQuality
 
 	% testQualityGenomes3.py -i out.txt -n 12 -t 250
 	
@@ -249,6 +249,9 @@ Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This 
 
 The 
 Clean a raw output file from an allele calling to a phyloviz readable file. Keep the locus with only Exact matches or new alleles found for all genomes.
+
+TODO@MickaelChange name: XpressGetCleanLoci4Phyloviz.py -> Extract_cgAlleles.py
+
 
 Basic usage:
 
