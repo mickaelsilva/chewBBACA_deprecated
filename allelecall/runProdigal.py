@@ -10,7 +10,6 @@ def main():
 	try:
 		input_file = sys.argv[1]
 		tempPath = sys.argv[2]
-		prodigal_path = sys.argv[3]
 	except IndexError:
 		print "usage: list_pickle_obj"
 	
@@ -21,8 +20,8 @@ def main():
         # ------------ #
         # RUN PRODIGAL #
         # ------------ #  
-	#prodigal_path='prodigal'
-	proc = subprocess.Popen([prodigal_path, '-i', contigsFasta, '-c', '-m', '-g', '11', '-p', 'single', '-f', 'sco', '-q'], stdout=subprocess.PIPE)
+
+	proc = subprocess.Popen(["prodigal", '-i', contigsFasta, '-c', '-m', '-g', '11', '-p', 'single', '-f', 'sco', '-q'], stdout=subprocess.PIPE)
 	
 	cdsDict = {}
 	tempList = []
