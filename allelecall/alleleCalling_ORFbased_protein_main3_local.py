@@ -133,7 +133,6 @@ def main():
 	parser.add_argument('-i', nargs='?', type=str, help='List of genome files (list of fasta files)', required=True)
 	parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
-	parser.add_argument('-p', nargs='?', type=str, help="Path to prodigal exec file", required=True)
 	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=True)
 	parser.add_argument("-v", "--verbose", help="increase output verbosity",dest='verbose', action="store_true")
 	
@@ -143,7 +142,6 @@ def main():
 	
 	genomeFiles = args.i
 	genes = args.g
-	prodigalPath = args.p
 	cpuToUse=args.cpu
 	
 	if cpuToUse >= multiprocessing.cpu_count()-2:
@@ -159,7 +157,7 @@ def main():
 	print ("Checking all programs are installed and usable")
 	
 	print ("Checking Blast... "+str(which('blastp')))
-	print ("Checking Prodigal... "+str(which(prodigalPath)))
+	print ("Checking Prodigal... "+str(which('prodigal')))
 		
 	
 	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
@@ -210,7 +208,7 @@ def main():
 	
 	pool = multiprocessing.Pool(cpuToUse)
 	for genome in listOfGenomes:
-		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,prodigalPath],))
+		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath],))
 		
 	pool.close()
 	pool.join()
