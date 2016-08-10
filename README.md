@@ -106,7 +106,7 @@ Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.
 
 Having defined the wgMLST schema with one allele per locus, we can proceed to use it to call alleles on the target genomes.  The command is the following:
 
-	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 -p /<PathToProdigal>/prodigal
+	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 
 
 **Parameters** 
 `-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
@@ -124,6 +124,9 @@ Having defined the wgMLST schema with one allele per locus, we can proceed to us
 
 
 This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  
+
+`srun -c 62 --mem 250G BBACA.py -i listgenomes.txt -g listgenes.txt -o OutPrefix --cpu 62`
+
 (**TODO@Mickael**: @Mickael provide command line example).
 
 **Note:** If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
