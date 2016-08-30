@@ -192,7 +192,7 @@ NC_011595.fna	gi|215481761|ref|NC_011595.1|&2897154-2897985&-	LNF
 
 3. Run the `ParalogPrunning.py.` script using `contigsInfo.txt` output as input from step 5.
 
-**TODO@JAC** : Reavaluate paralog prunnig after wgMLST schema is created? 
+**TODO@JAC** : Reavaluate paralog prunnig after wgMLST schema is created? - Paralog prunning allows the detection of loci representing the same locus that weren't detected on the wgMLST schema creation.
 
 **TODO@Mickael**: whichRepeatedLoci.py -> ParalogPrunning.py
 
