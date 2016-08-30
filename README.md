@@ -172,7 +172,15 @@ NC_011595.fna	3	LNF
 The first column has the filename for which the allele call was performed. The table headers have the filenames of files where the alleles are stored for each loci. (**TODO @JAC** : explain output result )
  
  **TODO@Mickael**:  Create example for contigsInfo.txt
- 
+
+An abridged example of an output file for `< outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt`  with only two loci:
+
+```
+FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	
+NC_017162.fna	gi|384129960|ref|NC_017162.1|&967461-968292&+	LNF
+NC_011586.fna	gi|213155370|ref|NC_011586.1|&997690-998521&+	LNF
+NC_011595.fna	gi|215481761|ref|NC_011595.1|&2897154-2897985&-	LNF
+
 ----------
 
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
