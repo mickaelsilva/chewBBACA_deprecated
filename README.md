@@ -180,7 +180,7 @@ FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009
 NC_017162.fna	gi|384129960|ref|NC_017162.1|&967461-968292&+	LNF
 NC_011586.fna	gi|213155370|ref|NC_011586.1|&997690-998521&+	LNF
 NC_011595.fna	gi|215481761|ref|NC_011595.1|&2897154-2897985&-	LNF
-
+```
 ----------
 
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
@@ -232,7 +232,7 @@ Both locus presented had an exact match or an infered allele for one genome, whi
 
 Usefull to determine a core genome and remove genomes that may have technical issues. The algorithm description is the following:
 
-1. For each allelic profile generated for a draft genome , let *nl* be the number of loci that are not present in the allelic profile but are present in 99%  or more of the remaining allelic profiles (97% if total number of genomes under 500 and 95% if under 200); **TODO@Mickael**: How is this handled dynamically?
+1. For each allelic profile generated for a draft genome , let *nl* be the number of loci that are not present in the allelic profile but are present in 99%  or more of the remaining allelic profiles (97% if total number of genomes under 500 and 95% if under 200); **TODO@Mickael**: How is this handled dynamically? - Total number of genomes to be considered is recalculated each time any genome is removed by the exclusion threshold.
 2. For and exclusion threshold (*et*) remove all allelic profiles that have *nl* > *et*. If no allelic profiles are removed, proceed to Step 4;
 3. Return to Step 1.
 4. The locus present in all the draft genomes for the remaining allelic profiles, are defined as the cgMLST schema for the exclusion threshold (et)
