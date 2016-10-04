@@ -94,10 +94,6 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 	with open(proteinfastaPath, "wb") as f:
 			f.write(alleleAllProt)
 			
-	"""if doAll:		
-		return int(alleleI),allelescores,alleleList
-	else:
-		return allelescores,alleleList"""
 	
 	return allelescores,alleleList
 	
@@ -281,7 +277,6 @@ def main():
 		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,False,verbose)
 		
 	else:	
-		#alleleI,allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,True)
 		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,True,verbose)
 		
 			
@@ -334,8 +329,7 @@ def main():
 						
 						raise ValueError("EQUAL")
 		except Exception, e:
-			#print e
-			#print "EQUAL -----------------------------"
+
 			continue
 		
 		else:	
@@ -349,7 +343,7 @@ def main():
 			
 			
 			#blast the genome CDS against the translated locus
-			cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5)
+			cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps_per_subject=10)
 				
 			blast_records = runBlastParser(cline, blast_out_file, proteinfastaPath)
 			verboseprint("Blasted alleles on genome at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
@@ -679,9 +673,7 @@ def main():
 													# --- add the new allele to the gene fasta --- #
 						
 						alleleI+=1
-						#appendAllele='>allele_' + str(alleleI) + '_' + tagAux[:-1] +"_" + str(os.path.basename(genomesList[genome])) + '\n'
 						appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_" + str(alleleI) + "_" + str(os.path.basename(genomesList[genome])) + '\n'
-						#appendAllele='>'+str(((os.path.basename(geneFile)).split("."))[0])+"_" + str(alleleI) + "_" + str(os.path.basename(genomesList[genome])) + '\n'
 						fG = open( geneFile, 'a' )
 						fG.write(appendAllele)
 						fG.write( alleleStr + '\n')
@@ -713,7 +705,6 @@ def main():
 							Gene_Blast_DB_name2 = Create_Blastdb( genefile2, 1, True )
 							verboseprint("Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 							allelescores,alleleList=reDogetBlastScoreRatios(genefile2,basepath,alleleI,allelescores,Gene_Blast_DB_name2,alleleList,geneScorePickle,verbose)
-							#print "allele id " + str(alleleI)
 							verboseprint("Done Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 			
 			except Exception as e:

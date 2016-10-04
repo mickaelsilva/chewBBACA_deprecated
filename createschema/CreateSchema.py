@@ -157,10 +157,8 @@ def main():
 				auxDict[elem[1]] = elem[0]
 				auxprot.append(str(elem[1]))
 			
-			#print str(j)+ " out of " + str(len(orderedprotDict)	)
 				
 			j+=1
-			#print "____" +str(j)
 		print "%s loci are contained in other genes\n" %  (g)
 		
 		#overwrite the original file, obtaining a new file with unique genes
@@ -184,17 +182,13 @@ def main():
 				
 				if str(protseq) in alreadyIn:
 					repeatedgenes+=1
-					#print gene.name + " already saved "
 				
 				elif len(str(protseq))<67:
 					smallgenes+=1
 					
 				else:	
 					alreadyIn.append(str(protseq))
-					protname=">"+str(gene.name)+"\n"
-							
-						#print protseq
-							
+					protname=">"+str(gene.name)+"\n"							
 					protDict[protname] = str(protseq)
 					geneDict[str(gene.name)] = gene.seq
 			else:
@@ -316,9 +310,6 @@ def main():
 	toRemove=list(set(toRemove))
 	s = set(toRemove)
 	notcommonToKeep= [x for x in genesToKeep if x not in s]
-	#print len(toRemove)
-	#print len(genesToKeep)
-	#print len(notcommonToKeep)
 
 	pathfiles=os.path.dirname(geneFile)
 	pathfiles=pathfiles+"/"

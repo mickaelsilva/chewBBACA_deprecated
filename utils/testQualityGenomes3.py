@@ -29,6 +29,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 	plus95=0
 	plus99=0
 	plus995=0
+	badGenomesScoreDict={}
 	
 	# if a locus has one problematic call, check how many genomes have problem in that call
 	
@@ -94,6 +95,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 	for elem in counter.most_common():
 		if int(elem[1])>ythreshold:
 				reallybadgenomes.append((elem)[0])
+
 	#print counter
 	print
 	print "number genes in 100% genomes: " +str(len(allverygood))

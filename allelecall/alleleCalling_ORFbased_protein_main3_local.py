@@ -133,7 +133,6 @@ def main():
 	parser.add_argument('-i', nargs='?', type=str, help='List of genome files (list of fasta files)', required=True)
 	parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
-	parser.add_argument('-p', nargs='?', type=str, help="Path to prodigal exec file", required=True)
 	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=True)
 	parser.add_argument("-v", "--verbose", help="increase output verbosity",dest='verbose', action="store_true")
 	
@@ -143,9 +142,9 @@ def main():
 	
 	genomeFiles = args.i
 	genes = args.g
-	prodigalPath = args.p
 	cpuToUse=args.cpu
 	
+	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
 	if cpuToUse >= multiprocessing.cpu_count()-2:
 		cpuToUse=multiprocessing.cpu_count()-2
 		
@@ -159,10 +158,11 @@ def main():
 
 	scripts_path=os.path.dirname(os.path.realpath(__file__))
 	
+	print ("Will use this number of cpus: "+str(cpuToUse))
 	print ("Checking all programs are installed and usable")
 	
 	print ("Checking Blast... "+str(which('blastp')))
-	print ("Checking Prodigal... "+str(which(prodigalPath)))
+	print ("Checking Prodigal... "+str(which('prodigal')))
 		
 	
 	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
@@ -210,6 +210,7 @@ def main():
 		continueRun=True
 		
 	if continueRun:
+		print ("You chose to continue the allele call")
 		argumentsList=[]
 		resultsList=[]
 		for file in os.listdir(basepath):
@@ -226,22 +227,22 @@ def main():
 			else:
 				shutil.rmtree(os.path.join(genepath,str(foldertodel)))
 
+
+	
+	if not continueRun:
 		
-	else:
+		#user decided not to continue although there was a run that had been stopped before finishing, files will be removed for a new run
 		if os.path.isdir(basepath):
+			print ("You chose to do a new allele call")
 			print ("removing existing files...")
 			shutil.rmtree(basepath)
 	
 		#translate the loci
 		genepath,basepath,lGenesFiles,argumentsList, noShort=loci_translation (genes,listOfGenomes)
-	
-	
-	totgenomes= len(listOfGenomes)
 		
-	joblist =[]
-	results = []
-	
-	if not continueRun:
+		
+		#starting a fresh allele call process, going to run prodigal for all genomes on the list
+		
 		if len(argumentsList) ==0:
 			shutil.rmtree(basepath)
 			raise ValueError('ERROR! AT LEAST ONE GENE FILE MUST CONTAIN AN ALLELE REPRESENTING A CDS')
@@ -255,8 +256,6 @@ def main():
 		# ------------------------------------------------- #
 
 
-
-
 		print ("\nStarting Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
 		
@@ -264,7 +263,7 @@ def main():
 	
 		pool = multiprocessing.Pool(cpuToUse)
 		for genome in listOfGenomes:
-			pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,prodigalPath],))
+			pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath],))
 			
 		pool.close()
 		pool.join()
@@ -353,11 +352,8 @@ def main():
 		pool.join()
 	
 	else:
-		#print len (argumentsList)
-		#for argument in argumentsList:
-		#	if argument in resultsList:
-		#		argumentsList.remove(argument)
-
+		
+		#user decided to continue the stopped run, finding out which genes were left to run
 		argumentsList= list(set(argumentsList) - set(resultsList))
 		argumentsList=sorted(argumentsList)
 
@@ -516,15 +512,23 @@ def main():
 			genome+=1
 		
 		outputpath=os.path.dirname(gOutFile)
+		outputfolder= os.path.join(outputpath,str(gOutFile),str(time.strftime("%Y%m%dT%H%M%S")) )
+		os.makedirs(outputfolder)
 		
-		with open(gOutFile, 'wb') as f:
+		with open(os.path.join(outputfolder,"alleles.txt"), 'wb') as f:
 			f.write(finalphylovinput)
 			
 		print statswrite	
-		with open(os.path.join(outputpath,"statistics.txt"), 'wb') as f:
+		with open(os.path.join(outputfolder,"statistics.txt"), 'wb') as f:
 			f.write(str(statswrite))
+			f.write("\n_________________________________________\n")
+			f.write(starttime)
+			f.write("\nFinished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+			f.write("\nnumber of genomes: "+str(len(listOfGenomes)))
+			f.write("\nnumber of loci: "+str(len(lGenesFiles)))
+			f.write ("\nused this number of cpus: "+str(cpuToUse))
 		
-		with open(os.path.join(outputpath,"contigsInfo.txt"), 'wb') as f:
+		with open(os.path.join(outputfolder,"contigsInfo.txt"), 'wb') as f:
 			f.write(str(finalphylovinput2))
 			
 	except Exception as e:
