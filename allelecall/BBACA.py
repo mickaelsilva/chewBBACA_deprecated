@@ -129,7 +129,7 @@ def call_proc(cmd):
 
 def main():
 			
-	parser = argparse.ArgumentParser(description="This program screens a set of genes in a fasta file.")
+	parser = argparse.ArgumentParser(description="This program call alleles for a set of genomes provided a schema")
 	parser.add_argument('-i', nargs='?', type=str, help='List of genome files (list of fasta files)', required=True)
 	parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)

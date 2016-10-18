@@ -26,32 +26,39 @@ def presence (d3):
 		while column<d2c.shape[1]:
 			try:
 
-				asd=int(d2c[row,column])
-				
-				d2c[row,column]=0
-				
+				aux=int(d2c[row,column])
+				d2c[row,column]=1
 			except:
 				try:
-					int( (d2c[row,column]).replace ("INF-",""))
+					aux=str((d2c[row,column])).replace ("INF-","")
+					aux=int(aux)
 					d2c[row,column]=1
-				except:
+				except Exception as e:
 					d2c[row,column]=0
 				
 			column+=1
 		row+=1
 	
-	d2c
+	#d2c
 
 	genomeslist=(genomeslist.tolist())
+	geneslist=(geneslist.tolist())
 
-	
+	d2c=d2c.tolist()
 	
 	with open ("presence.txt","wb") as f:
 		
-		f.write (str(geneslist.tolist()))
 
-		for elem in d2c:
-			f.write(str(elem.tolist())+"\n")
+		f.write('\t'.join(geneslist[0]))
+			#csvout.write(('\t'.join(elem))+"\n")
+		#f.write (str(geneslist.tolist()))
+		
+		
+		writer = csv.writer(f,delimiter='	')
+		writer.writerows(d2c)
+		
+		#for elem in d2c:
+		#	f.write(str(elem.tolist())+"\n")
 	
 	return True
 
@@ -66,14 +73,14 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	d2 = array(d)
 	
 	#uncomment to get a presence abscence file
-	#presence (d2)
+	presence (d2)
 	
 	genomeslist= d2[1:,:1]
 	
 	d2=d2.T
 	rowid=1
 	deleted=0
-	badAlleles=False
+	#badAlleles=False
 	lnfdel=0
 	balldel=0
 	
@@ -111,7 +118,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 				lnfdel+=1
 				break
 			
-			if badAlleles :
+			"""if badAlleles :
 				allele=d2[rowid][columnid]
 				allele=allele.replace("INF-","",)
 				allele=allele.replace('NA1-', '')
@@ -131,28 +138,28 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 						break
 				except Exception as e:
 					print e
-					pass
+					pass"""
 			
 			columnid+=1
 			genomeindex+=1
-			#pontuationmatrix=[x + y for x, y in zip(pontuationmatrix, aux)]
+
 		rowid+=1
 	
 	
 	d2=d2.T
 	d2=d2.tolist()
 	
+	#map(lambda s: s.replace('INF-', ''), d2)
 	
 	with open(outputfile, "wb") as f:
 		writer = csv.writer(f,delimiter='	')
 		writer.writerows(d2)
 	
-	
 
 	file = open(outputfile)
 	contents = file.read()
 	contents = contents.replace('INF-', '')
-	contents = contents.replace('INF1:-', '')
+	"""contents = contents.replace('INF1:-', '')
 	contents = contents.replace('INF2:-', '')
 	contents = contents.replace('INF3:-', '')
 	contents = contents.replace('INF4:-', '')
@@ -163,7 +170,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	contents = contents.replace('NA2-', '')
 	contents = contents.replace('NA3-', '')
 	contents = contents.replace('NA4-', '')
-	contents = contents.replace('NA5-', '')
+	contents = contents.replace('NA5-', '')"""
 	
 	with open(outputfile, 'w') as f:
 			f.write(contents)
@@ -180,14 +187,14 @@ def main():
 
 	parser = argparse.ArgumentParser(description="This program cleans an output file for phyloviz")
 	parser.add_argument('-i', nargs='?', type=str, help='output to clean', required=True)
-	parser.add_argument('-g', nargs='?', type=str, help='name of the clean file', required=True)
+	parser.add_argument('-o', nargs='?', type=str, help='name of the clean file', required=True)
 	parser.add_argument('-r', nargs='?', type=str, help='listgenes to remove', required=False)
 	
 	args = parser.parse_args()
 
 	
 	pathOutputfile = args.i
-	newfile = args.g
+	newfile = args.o
 	
 	
 	

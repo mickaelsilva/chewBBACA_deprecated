@@ -8,7 +8,7 @@ import operator
 def main():
 
 	parser = argparse.ArgumentParser(description="Check if locus are being represented more than once")
-	parser.add_argument('-i', nargs='?', type=str, help='contig info file', required=True)
+	parser.add_argument('-i', nargs='?', type=str, help='raw file with allele call', required=True)
 	
 	
 	args = parser.parse_args()
@@ -35,6 +35,7 @@ def main():
 
 		genomeSchema2=d2[i]
 		genomeSchema=genomeSchema2.tolist()
+		genomeSchema.pop(0)
 		genomeSchema= "\t".join(genomeSchema)
 		
 		numberLOT=genomeSchema.count("LOT")
@@ -52,17 +53,7 @@ def main():
 	for k,v in pontuationDict.items():
 		print k,v
 
-	print genomeslist2
-	
-	"""with open("RepeatedLoci.txt", "wb") as f:
-		f.write("gene\toverrepresented\tproblems\ttotal\n")
-		for k,v in ordered:
-			try:
-				troubledLocus=str(pontuationDict2[k])
-			except:
-				troubledLocus="0"
-				pass	
-			f.write( (k+ "\t"+str( v)+"\t"+ troubledLocus+"\t"+str(int(v)+int(troubledLocus))+"\n"))"""
+
 			
 	
 if __name__ == "__main__":

@@ -243,11 +243,11 @@ def clean (inputfile,iterations,ythreshold):
 
 def main():
 
-	parser = argparse.ArgumentParser(description="This program cleans an output file for phyloviz")
-	parser.add_argument('-i', nargs='?', type=str, help='output to clean', required=True)
-	parser.add_argument('-n', nargs='?', type=int, help='number of iterations', required=True)
-	parser.add_argument('-t', nargs='?', type=int, help='threshold number of bad calls above 99%', required=True)
-	parser.add_argument('-s', nargs='?', type=int, help='step', required=True)
+	parser = argparse.ArgumentParser(description="This program analyze an allele call raw output matrix, returning info on which genomes are responsible for cgMLST loci loss")
+	parser.add_argument('-i', nargs='?', type=str, help='raw allele call matrix file', required=True)
+	parser.add_argument('-n', nargs='?', type=int, help='maximum number of iterations', required=True)
+	parser.add_argument('-t', nargs='?', type=int, help='maxmimum threshold of bad calls above 99%', required=True)
+	parser.add_argument('-s', nargs='?', type=int, help='step between each threshold analysis', required=True)
 	
 	args = parser.parse_args()
 
@@ -257,9 +257,7 @@ def main():
 	thresholdBadCalls=int(args.t)
 	step=int(args.s)
 	
-	
-	#print matrix
-	
+		
 	allresults=[]
 	threshold=5
 	thresholdlist=[]
@@ -275,7 +273,6 @@ def main():
 		listStableIter.append(stabilizedIter)
 		allresults.append(result)
 		
-		#step=20
 		threshold+=step
 		
 	
@@ -293,6 +290,7 @@ def main():
 	#"Selected genomes to be removed",
 	"Number of Loci present in 99.5% genomes"]
 		
+	i=iterationNumber
 	while i<=iterationNumber:
 		fig, ax1 = plt.subplots(figsize=(30.5,20.0))
 		threshindex=0

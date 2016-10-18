@@ -7,7 +7,7 @@ import operator
 
 def main():
 
-	parser = argparse.ArgumentParser(description="This program removes gens from a matrix")
+	parser = argparse.ArgumentParser(description="This program removes gens from a tab separated allele profile file")
 	parser.add_argument('-i', nargs='?', type=str, help='main matrix file from which to remove', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help='list of genes to remove', required=True)
 	

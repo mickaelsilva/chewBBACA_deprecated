@@ -343,7 +343,12 @@ def main():
 			
 			
 			#blast the genome CDS against the translated locus
-			cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps_per_subject=10)
+			try:
+				cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps_per_subject=10)
+			#2.2.28 up
+			except:
+				cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps=10)
+
 				
 			blast_records = runBlastParser(cline, blast_out_file, proteinfastaPath)
 			verboseprint("Blasted alleles on genome at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))

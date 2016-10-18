@@ -15,7 +15,7 @@ def main():
 	parser.add_argument('-p', nargs='?', type=bool, help='One bad allele still makes gene conserved', required=False)
 	parser.add_argument('--log', dest='logScale', action='store_true')
 	parser.add_argument('-l', nargs='?', type=str, help='name/location main html file', required=True)
-	parser.add_argument('-ta', nargs='?', type=int, help='Threshold', required=True)
+	parser.add_argument('-ta', nargs='?', type=int, help='ncbi translation table', required=True)
 	parser.add_argument('-t', nargs='?', type=float, help='Threshold', required=False)
 	parser.set_defaults(logScale=False)
 	

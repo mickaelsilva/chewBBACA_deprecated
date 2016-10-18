@@ -7,7 +7,7 @@ import operator
 
 def main():
 
-	parser = argparse.ArgumentParser(description="This program calculates distances")
+	parser = argparse.ArgumentParser(description="This program removes genomes from a tab separated allele profile file")
 	parser.add_argument('-i', nargs='?', type=str, help='main list file', required=True)
 	parser.add_argument('-l', nargs='?', type=str, help='to remove list file', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help='output file', required=True)

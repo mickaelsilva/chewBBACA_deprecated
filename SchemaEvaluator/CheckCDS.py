@@ -300,6 +300,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 			
 			f.write("""</head>\n<body><p></p><div id='snippetDiv' style='display:none'></div> <p></p><div id='phylocanvas' style='display:none;border:solid'>
 			<div id="pc-buttons">
+				<input type="text" id="searchbox" onkeyup="search(this);">
               <button id="rectangular" class="btn btn-default btn-sm">Rectangular</button>
               <button id="circular" class="btn btn-info btn-sm">Circular</button>
               <button id="radial" class="btn btn-default btn-sm">Radial</button>
@@ -355,15 +356,37 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 						 tree.setTreeType('circular');
 						  
 						  tree.load(treestr);
-						  
-						}
+						}  
+						  function search (ele) {
+							if(ele.value !== ""){
+							  someleaves=tree.findLeaves(ele.value);
+							  for (index = 0, len = someleaves.length; index < len; ++index) {
+									if (someleaves[index]== null){
+									someleaves.selected = true;
+									
+									}
+									else{
+									someleaves[index].selected = true;
+									}
+									
+								}
+							}
+							else {
+							  tree.branches.E.cascadeFlag('selected', false);
+							  tree.branches.E.cascadeFlag('highlighted', false);
+							  tree.draw();
+								}
+							}
+						
 						$(document).on('click','#pc-buttons .btn', {} ,function(e){
 							$('#pc-buttons .btn').removeClass('btn-info');
 							$('#pc-buttons .btn').addClass('btn-default');
 							$(this).addClass('btn-info');
 							tree.setTreeType(this.id);
 						});
-
+						
+						
+						
 					  </script>
 			<script>
 			

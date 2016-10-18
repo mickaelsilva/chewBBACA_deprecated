@@ -199,7 +199,6 @@ def main():
 	print "Blasting the total of "+ str(len(auxDict.keys())) + " loci"
 	
 	geneFile = os.path.abspath( proteinfile )
-	#print proteinfile
 	Gene_Blast_DB_name = Create_Blastdb( geneFile, 1, True )
 	
 	geneF = os.path.splitext( geneFile )[0]
@@ -348,8 +347,7 @@ def main():
 	print "\nRemoved %s with a high similarity (BSR>0.6)" % str(removedparalogs)
 	print "Total of %s loci that constitute the schema" % str(rest)
 	
-	#with open (pathfiles+"concatenated.fasta","wb") as f:
-	#	f.write (concatenatedFile)
+
 	shutil.rmtree(os.path.join(pathfiles,'blastdbs'))
 	os.remove(proteinfile)
 	os.remove(blast_out_file)
