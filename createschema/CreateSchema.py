@@ -47,7 +47,7 @@ def translateSeq(DNASeq,genename):
 					myseq= Seq(seq)
 					protseq=Seq.translate(myseq, table=11,cds=True)
 				except Exception as e:
-					print "translating error :",e," on locus "+str(genename)
+					print "translation error :",e," on locus "+str(genename)
 
 					protseq=""
 	return protseq,seq,reversedSeq
@@ -56,7 +56,7 @@ def main():
 
 	parser = argparse.ArgumentParser(description="Given an ffn file, recovers the genes that are not paralogs and have a size bigger than the g parameter provided")
 	parser.add_argument('-i', nargs='?', type=str, help='ffn file', required=True)
-	parser.add_argument('-g', nargs='?', type=int, help='int minimum size', required=True)
+	parser.add_argument('-l', nargs='?', type=int, help='int minimum length', required=True)
 	
 	args = parser.parse_args()
 	genes = args.i

@@ -110,10 +110,12 @@ def buildPlot(nparray,ReturnValues):
 	else:
 		fig,ax = plt.subplots(figsize=(20,10))
 
-		bp=plt.boxplot(nparray, 1,bootstrap=1000)
+		#bp=plt.boxplot(nparray, 1,bootstrap=1000)
+		bp=plt.violinplot(nparray, showmeans=True, showextrema=True, showmedians=True, bw_method='silverman')
 	
 	#print cbook.boxplot_stats(nparray)
-		
+	#asdasd
+	#mpld3.show()	
 	handles, labels = plt.gca().get_legend_handles_labels()
 
 	#print labels
@@ -129,8 +131,16 @@ def buildPlot(nparray,ReturnValues):
 
 	
 	#plt.setp(bp['boxes'], color='blue')
-	plt.setp(bp['whiskers'], color='blue')
-	plt.setp(bp['fliers'],marker='o', markerfacecolor='green',linestyle='none')
+	#plt.setp(bp['whiskers'], color='blue')
+	plt.setp(bp['cmedians'], color='blue')
+	plt.setp(bp['cbars'], color='blue')
+	plt.setp(bp['cmins'], color='blue')
+	plt.setp(bp['cmaxes'], color='blue')
+	for pc in bp['bodies']:
+		#pc.set_color('black')
+		pc.set_facecolor('green')
+		pc.set_edgecolor('black')
+	#plt.setp(bp['fliers'],marker='o', markerfacecolor='green',linestyle='none')
 	
 	return plt,ax,fig,bp
 	
@@ -327,19 +337,21 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		
 		
 		plt,ax,fig,bp=buildPlot(sortbymedia,ReturnValues)
-		
-		allboxes=bp.get('boxes')
+
+		#allboxes=bp.get('boxes')
+		allboxes=bp.get('bodies')
 		i=0
 		for box in allboxes:
 			mpld3.plugins.connect(fig, plugins.LineLabelTooltip(box,label=os.path.basename(orderedlistgene[i]),voffset=50, hoffset=10))
 			mpld3.plugins.connect(fig, ClickInfo(box,(os.path.join(relpath,(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
 			i+=1
-		allmedians=bp.get('medians')
-		i=0
+		#allmedians=bp.get('medians')
+		allmedians=bp.get('cmedians')
+		"""i=0
 		for median in allmedians:
 			mpld3.plugins.connect(fig, plugins.LineLabelTooltip(median,label=os.path.basename(orderedlistgene[i]),voffset=50, hoffset=10))
 			mpld3.plugins.connect(fig, ClickInfo(median,(os.path.join(relpath,(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
-			i+=1
+			i+=1"""
 		
 		
 		ax.yaxis.labelpad = 40
