@@ -521,14 +521,14 @@ def main():
 			genome+=1
 		
 		outputpath=os.path.dirname(gOutFile)
-		outputfolder= os.path.join(outputpath,str(gOutFile),str(time.strftime("%Y%m%dT%H%M%S")) )
+		outputfolder= os.path.join(outputpath,str(gOutFile)+str(time.strftime("%Y%m%dT%H%M%S")) )
 		os.makedirs(outputfolder)
 		
-		with open(os.path.join(outputfolder,"alleles.txt"), 'wb') as f:
+		with open(os.path.join(outputfolder,gOutFile+"_alleles.txt"), 'wb') as f:
 			f.write(finalphylovinput)
 			
 		print statswrite	
-		with open(os.path.join(outputfolder,"statistics.txt"), 'wb') as f:
+		with open(os.path.join(outputfolder,gOutFile+"statistics.txt"), 'wb') as f:
 			f.write(str(statswrite))
 			f.write("\n_________________________________________\n")
 			f.write(starttime)
@@ -537,7 +537,7 @@ def main():
 			f.write("\nnumber of loci: "+str(len(lGenesFiles)))
 			f.write ("\nused this number of cpus: "+str(cpuToUse))
 		
-		with open(os.path.join(outputfolder,"contigsInfo.txt"), 'wb') as f:
+		with open(os.path.join(outputfolder,gOutFile+"contigsInfo.txt"), 'wb') as f:
 			f.write(str(finalphylovinput2))
 			
 	except Exception as e:

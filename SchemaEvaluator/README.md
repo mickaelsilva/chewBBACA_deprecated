@@ -10,18 +10,17 @@ pip install -r requirements.txt
 
 Python dependencies:
 * numpy
-* biopython
-* matplotlib
-* mpld3 - http://mpld3.github.io/
-* HTSeq - http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html
+* [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
+* [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
+* [matplotlib](http://matplotlib.org/)
+* [mpld3](http://mpld3.github.io/)
 
 Other dependencies:
 * [mafft](http://mafft.cbrc.jp/alignment/software/linux.html)
 * [clustalw2](http://www.clustal.org/download/2.1/)
 
 
-=============
-#ValidateSchema.py
+#How to run
 
 Main script that calls alleSizeStats.py and CheckCDS.py creating an html file for an easier results reading.
 
