@@ -110,14 +110,14 @@ def main():
 	#write file with a overrepresented locus per line, the number of times the locus is overrepresented, problems and total of overrepresentation+problems
 	
 	with open("RepeatedLoci.txt", "wb") as f:
-		f.write("gene\toverrepresented\tproblems\ttotal\n")
+		f.write("gene\tPC\tNDC\n")
 		for k,v in ordered:
 			try:
 				troubledLocus=str(pontuationDict2[k])
 			except:
 				troubledLocus="0"
 				pass	
-			f.write( (k+ "\t"+str( v)+"\t"+ troubledLocus+"\t"+str(int(v)+int(troubledLocus))+"\n"))
+			f.write( (k+ "\t"+str( v)+"\t"+ troubledLocus+"\n"))
 			
 	
 if __name__ == "__main__":

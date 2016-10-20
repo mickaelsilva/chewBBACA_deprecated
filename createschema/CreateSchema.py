@@ -57,12 +57,15 @@ def main():
 	parser = argparse.ArgumentParser(description="Given an ffn file, recovers the genes that are not paralogs and have a size bigger than the g parameter provided")
 	parser.add_argument('-i', nargs='?', type=str, help='ffn file', required=True)
 	parser.add_argument('-l', nargs='?', type=int, help='int minimum length', required=True)
+	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=False)
 	
 	args = parser.parse_args()
 	genes = args.i
 	sizethresh = args.g
+	cpuToUse = args.cpu
 	passSteps = False
-
+	
+	print ("Checking Blast installed... "+str(which('blastp')))
 	
 	#translate to protein and create new file
 	abspath=os.path.abspath(genes)
@@ -204,8 +207,10 @@ def main():
 	geneF = os.path.splitext( geneFile )[0]
 	blast_out_file = geneF + '.xml'
 					# ------------------------------ RUNNING BLAST ------------------------------ #
-
-	cline = NcbiblastpCommandline(query=geneFile, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5)
+	if cpuToUse:
+		cline = NcbiblastpCommandline(query=geneFile, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5, num_threads=int(cpuToUse))
+	else:
+		cline = NcbiblastpCommandline(query=geneFile, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5)
 	blast_records = runBlastParser(cline, blast_out_file, geneFile)
 	toRemove=[]
 	genesToKeep=[]
