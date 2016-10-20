@@ -101,8 +101,6 @@ def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blas
 	
 	if verbose:
 		def verboseprint(*args):
-			# Print each argument separately so caller doesn't need to
-			# stuff everything to be printed into a single string
 			for arg in args:
 			   print arg,
 			print
@@ -179,7 +177,7 @@ def translateSeq(DNASeq):
 					myseq= Seq(seq)
 					protseq=Seq.translate(myseq, table=tableid,cds=True)
 				except Exception as e:
-					print "translated error"
+					print "translation error"
 					print e
 					protseq=""
 	return protseq,seq,reversedSeq
@@ -212,13 +210,12 @@ def main():
 	
 	if verbose:
 		def verboseprint(*args):
-			# Print each argument separately so caller doesn't need to
-			# stuff everything to be printed into a single string
+
 			for arg in args:
 			   print arg,
 			print
 	else:   
-		verboseprint = lambda *a: None      # do-nothing function
+		verboseprint = lambda *a: None
 	
 	
 	geneFile = argumentList[0]
@@ -308,7 +305,7 @@ def main():
 		genome+=1
 		listOfCDS=currentCDSDict
 		
-		#check if any CDS is completely equal to an allele without blast -FASTER? to be implemented
+		#check if any CDS is completely equal to an allele without blast -FASTER
 		try:
 			for alleleAux in fullAlleleList:
 				for k,cds in listOfCDS.items():
@@ -343,10 +340,8 @@ def main():
 			
 			
 			#blast the genome CDS against the translated locus
-			#try:
 			#	cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps_per_subject=10)
 			#2.2.28 up
-			#except:
 			cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps=10)
 
 				

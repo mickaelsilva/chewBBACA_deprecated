@@ -63,7 +63,7 @@ def translateSeq(DNASeq):
 					myseq= Seq(seq)
 					protseq=Seq.translate(myseq, table=tableid,cds=True)
 				except Exception as e:
-					print "translated error"
+					print "translation error"
 					print e
 					raise
 	return protseq
@@ -159,11 +159,20 @@ def main():
 	scripts_path=os.path.dirname(os.path.realpath(__file__))
 	
 	print ("Will use this number of cpus: "+str(cpuToUse))
-	print ("Checking all programs are installed and usable")
+	print ("Checking all programs are installed")
 	
-	print ("Checking Blast... "+str(which('blastp')))
-	print ("Checking Prodigal... "+str(which('prodigal')))
-		
+	print ("Checking Blast installed... "+str(which('blastp')))
+	print ("Checking Prodigal installed... "+str(which('prodigal')))
+	
+	#check version of Blast
+	
+	proc = subprocess.Popen(['blastp', '-version'], stdout=subprocess.PIPE)
+	line = proc.stdout.readline()
+	if not "blastp: 2.5." in str(line):
+		print "update your blast to 2.5.0, will exit program"
+		sys.exit()
+	else:
+		print "blast version is up to date, the program will continue"
 	
 	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
 	print ("\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
