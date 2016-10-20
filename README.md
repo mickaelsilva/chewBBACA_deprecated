@@ -84,15 +84,15 @@ In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for
 
 If no cgMLST schema is defined or needs to be reevaluated, we can create a wgMLST schema from a set of pre-determined annotated genomes. The command is the following:
 
-`CreateSchema.py -i allffnfile.fasta -g 200 --cpu 4`
+`CreateSchema.py -i allffnfile.fasta -l 200 --cpu 4`
 
 **Parameters:**
 
 `-i`  Input file with concatenated gene sequences
 
-`-g` minimum locus lenght (removes any loci with length equal or less the specified value
+`-l` minimum locus lenght (removes any loci with length equal or less the specified value
 
-`--cpu` optional - cpus to use for BLAST, will work for the latest BLAST releases
+`--cpu` (optional) number of cpus to use for BLAST, will work for the latest BLAST releases
 
 
 **Input file definition:**
@@ -123,7 +123,7 @@ Having defined the wgMLST schema with one allele per locus, we can proceed to us
 
 `-o` prefix for the output files. ID for the allele call run
 
-`--cpu` Number of cpus to use (if greater than existing cpus-2 uses cpus-2)
+`--cpu` Number of cpus to use (if greater than maximum cpus-2, uses cpus-2)
 
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
@@ -261,7 +261,7 @@ Clean a raw output file from an allele calling to a phyloviz readable file. Keep
 
 Basic usage:
 
-	% Extract_cgAlleles.py -i rawDataToClean.txt -g cleanedOutput.txt -r removeLocusList.txt
+	% Extract_cgAlleles.py -i rawDataToClean.txt -o cleanedOutput.txt -r removeLocusList.txt
 	
 `-i` raw output file from an allele calling
 

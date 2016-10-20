@@ -235,7 +235,7 @@ li a {
 				</div>""")
 		
 		f.write("""<div id="fig03" style="display:none"><h2>Distribution of number of alleles per gene by mode/mean/median</h2><div id="plot1"></div></div>
-		<div id="fig01" style="display:none"><h2>Size boxplot for all loci</h2><p>Box plot for each locus on a descending order of the median allele sizes</p><p>Use the zoom button and hover the mouse over a box/median to see the gene name</p><p>-->Box represent the 25 and 75 percentiles (1st and 3rd quartile)</p><p>-->Box plot whiskers representing the 5 and 95 percentile</p><p>-->Red line represent the median (2nd quartile)</p><p>-->Notch are calculated using a bootstrap=1000 value </p><p>-->Green dots are outliers </p></div>
+		<div id="fig01" style="display:none"><h2>Size boxplot for all loci</h2><p>Box plot for each locus on a descending order of the median allele sizes</p><p>Use the zoom button and hover the mouse over a box/median to see the gene name</p><p>-->Blue line represent the median, maximum and minimum</p><p>-->Red line represent the mean</p></div>
 		<div id="fig02" style="display:none"><h2>Distribution of allele mode sizes per gene</h2></div>""")
 		
 		f.write("""<script type="text/javascript">

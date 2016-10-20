@@ -2,13 +2,22 @@
 
 Analyze your alleles for a set of parameters, taking special consideration on the allele CDS and the allele sizes per gene/locus
 
+install python dependencies with:
 
-Dependencies:
+```
+pip install -r requirements.txt
+```
+
+Python dependencies:
 * numpy
 * biopython
 * matplotlib
 * mpld3 - http://mpld3.github.io/
 * HTSeq - http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html
+
+Other dependencies:
+* [mafft](http://mafft.cbrc.jp/alignment/software/linux.html)
+* [clustalw2](http://www.clustal.org/download/2.1/)
 
 
 =============
@@ -18,7 +27,7 @@ Main script that calls alleSizeStats.py and CheckCDS.py creating an html file fo
 
 The optional parameters refer to the analysis of the alleles size. This analysis will calculate the mode size per gene and using that value -/+ a threshold (0.05 default) it will consider the allele as being a good allele if it is still considered within the threshold. It is given to the user the choice of the threshold and the choice to consider that a gene is considered "Conserved" if only one of the alleles is outside the threshold (default) or all the alleles must be within the threshold to be considered a "Conserved allele.
 
-	% ValidateSchema.py -i /home/Pneumoniae_Genes/ -ta 11 --log -l /home/user/results/ratemyschema.html
+	% ValidateSchema.py -i /home/Pneumoniae_Genes/ -ta 11 -l /home/user/results/ratemyschema.html
 	
 `-i` directory where the genes .fasta files are located or alternatively a .txt file containing the full path for each gene .fasta file per line
 
