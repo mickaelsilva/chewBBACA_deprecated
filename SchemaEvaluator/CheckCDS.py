@@ -100,7 +100,7 @@ def main():
 		
 	analyzeCDS(genes,ReturnValues)
 
-def analyzeCDS(genes,transTable,ReturnValues,outputpath):
+def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 	
 	gene_fp = open( genes, 'r')
 	
@@ -122,7 +122,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 		listgenes.append(gene)
 	statsPerGene={}
 	
-	pool = multiprocessing.Pool(6)
+	pool = multiprocessing.Pool(cpu)
 	
 	for gene in listgenes:
 		
@@ -136,7 +136,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 	pool.close()
 	pool.join()
 
-	pool = multiprocessing.Pool(6)
+	pool = multiprocessing.Pool(cpu)
 
 	for gene in listgenes:
 		
@@ -209,7 +209,6 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath):
 		totalalleles+=k
 		
 		#create html per gene
-		#genename=((os.path.basename(gene)).split("."))[0]
 		genename=(os.path.basename(gene)).split(".")
 		genename.pop()
 		genename=".".join(genename)

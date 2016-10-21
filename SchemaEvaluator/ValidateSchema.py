@@ -17,6 +17,8 @@ def main():
 	parser.add_argument('-l', nargs='?', type=str, help='name/location main html file', required=True)
 	parser.add_argument('-ta', nargs='?', type=int, help='ncbi translation table', required=True)
 	parser.add_argument('-t', nargs='?', type=float, help='Threshold', required=False)
+	parser.add_argument('--cpu', nargs='?', type=int, help='number of cpu to use', required=True)
+	parser.add_argument('-s', nargs='?', type=int, help='Threshold', required=False)
 	parser.set_defaults(logScale=False)
 	
 	args=parser.parse_args()
@@ -25,6 +27,7 @@ def main():
 	logScale=args.logScale
 	htmlFile=args.l
 	outputpath=os.path.dirname(htmlFile)
+	cpuToUse=args.cpu
 	
 	try:
 		threshold=float(args.t)
@@ -35,6 +38,11 @@ def main():
 		OneBadGeneNotConserved=bool(args.p)
 	except:
 		OneBadGeneNotConserved=False
+		pass
+	try:
+		splited=int(args.s)
+	except:
+		splited=False
 		pass
 	
 	try:
@@ -66,14 +74,14 @@ def main():
 	#genebasename=genebasename[0]
 	
 		
-	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath)
+	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath,splited)
 	
-	boxplot=str(json.dumps(boxplot))
+	#boxplot=str(json.dumps(boxplot))
 	histplot=str(json.dumps(histplot))
 	allelenumberplot=str(json.dumps(allelenumberplot))
 
 
-	statsPerGene=CheckCDS.analyzeCDS(genes,transTable,True,outputpath)
+	statsPerGene=CheckCDS.analyzeCDS(genes,transTable,True,outputpath,cpuToUse)
 	
 	# stats values are ordered in a list allelesNotMultiple3,listStopcodonsInside,listnotStartCodon,numberOfAlleles
 
@@ -234,9 +242,54 @@ li a {
 					</div>
 				</div>""")
 		
-		f.write("""<div id="fig03" style="display:none"><h2>Distribution of number of alleles per gene by mode/mean/median</h2><div id="plot1"></div></div>
-		<div id="fig01" style="display:none"><h2>Size boxplot for all loci</h2><p>Box plot for each locus on a descending order of the median allele sizes</p><p>Use the zoom button and hover the mouse over a box/median to see the gene name</p><p>-->Blue line represent the median, maximum and minimum</p><p>-->Red line represent the mean</p></div>
-		<div id="fig02" style="display:none"><h2>Distribution of allele mode sizes per gene</h2></div>""")
+		f.write("""<div id="fig03" style="display:none"><h2>Distribution of number of alleles per gene by mode/mean/median</h2><div id="plot1"></div></div><div id="fig01" style="display:none">
+		<h2>Size boxplot for all loci</h2><p>Box plot for each locus on a descending order of the median allele sizes</p>
+		<p>Use the zoom button and hover the mouse over a box/median to see the gene name</p>
+		<p>-->Blue line represent the median, maximum and minimum</p><p>-->Red line represent the mean</p>
+		<button id='buttonbackward' > < </button>
+		<button id='buttonforward' > > </button>
+		""")
+		
+		i=0
+		for elem in boxplot:
+			f.write("""<div id="figbox"""+str(i)+"""" style="display:none"></div>""")
+			i+=1
+		f.write("""</div><div id="fig02" style="display:none"><h2>Distribution of allele mode sizes per gene</h2></div>""")
+		
+		f.write("""<script type="text/javascript">
+					var boxplotPage=0;
+					$("#buttonforward").click(function(){
+					  boxplotPage=boxplotPage+1;
+					  if ($("#figbox"+boxplotPage).length){
+						  if ($("#figbox"+boxplotPage).children().length < 1){
+							$.getScript("jsonbox"+boxplotPage+".js");}
+						  $("#figbox"+boxplotPage).css({"display":"block"});
+						  $("#figbox"+(boxplotPage-1)).css({"display":"none"});
+					   }
+					   else{
+					    boxplotPage=boxplotPage-1;
+					    }
+					$('html, body').animate({scrollTop:$(document).height()}, 1);
+					return false;
+					}); 
+					</script>""")
+		
+		f.write("""<script type="text/javascript">
+					$("#buttonbackward").click(function(){
+					  boxplotPage=boxplotPage-1;
+					  if ($("#figbox"+boxplotPage).length){
+						  if ($("#figbox"+boxplotPage).children().length < 1){
+							$.getScript("jsonbox"+boxplotPage+".js");}
+						  $("#figbox"+boxplotPage).css({"display":"block"});
+						  $("#figbox"+(boxplotPage+1)).css({"display":"none"});
+					   }
+					   else{
+					    boxplotPage=boxplotPage+1;
+					    }
+					$('html, body').animate({scrollTop:$(document).height()}, 1);
+					return false;
+					}); 
+					</script>""")
 		
 		f.write("""<script type="text/javascript">
 					$("#button2").click(function(){
@@ -263,8 +316,9 @@ li a {
 		f.write("""<script type="text/javascript">
 					$("#button1").click(function(){
 					if ($("#fig01 .mpld3-figure").length < 1){
-						$.getScript("json1.js");}
+						$.getScript("jsonbox0.js");}
 					  $("#fig01").css({"display":"block"});
+					  $("#figbox0").css({"display":"block"});
 					  $("#fig02").css({"display":"none"});
 					  $("#fig03").css({"display":"none"});
 					  $("#fig04").css({"display":"none"});
@@ -352,10 +406,17 @@ li a {
 		
 		f.write("\n<script type='text/javascript'>var alleles="+json.dumps(newlist)+"</script>")
 		f.write("</body>\n</html>")
+	
+	i=0
+	for elem in boxplot:
 		
-	with open((os.path.join(outputpath,"json1.js")), "wb") as f:
+		boxplotElem=str(json.dumps(elem))
+		filename="jsonbox"+str(i)+(".js")
+		with open((os.path.join(outputpath,filename)), "wb") as f:
+			
+			f.write("var jsonbox"+str(i)+" ="+str(boxplotElem)+";mpld3.draw_figure('figbox"+str(i)+"', jsonbox"+str(i)+");")
+		i+=1
 		
-		f.write("var json01 ="+str(boxplot)+";mpld3.draw_figure('fig01', json01);")
 	with open((os.path.join(outputpath,"json2.js")), "wb") as f:
 		
 		f.write("var json02 ="+str(histplot)+";mpld3.draw_figure('fig02', json02);")

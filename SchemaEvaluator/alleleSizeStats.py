@@ -99,7 +99,7 @@ class ClickInfo2(plugins.PluginBase):
         self.dict_ = {"type": "clickinfo2","id": utils.get_id(points, "pts"),"labels": labels}
 
 
-def buildPlot(nparray,ReturnValues):
+def buildPlot(nparray,ReturnValues,labellist,relpath):
 	
 	try:
 		plt.close('all')
@@ -142,10 +142,32 @@ def buildPlot(nparray,ReturnValues):
 		pc.set_edgecolor('black')
 	#plt.setp(bp['fliers'],marker='o', markerfacecolor='green',linestyle='none')
 	
-	return plt,ax,fig,bp
+	
+	#allboxes=bp.get('boxes')
+	allboxes=bp.get('bodies')
+	i=0
+	for box in allboxes:
+		mpld3.plugins.connect(fig, plugins.LineLabelTooltip(box,label=os.path.basename(labellist[i]),voffset=50, hoffset=10))
+		mpld3.plugins.connect(fig, ClickInfo(box,(os.path.join(relpath,(os.path.basename(labellist[i])).replace(".fasta",".html")))))
+		i+=1
+	#allmedians=bp.get('medians')
+	allmedians=bp.get('cmedians')
+	"""i=0
+	for median in allmedians:
+		mpld3.plugins.connect(fig, plugins.LineLabelTooltip(median,label=os.path.basename(orderedlistgene[i]),voffset=50, hoffset=10))
+		mpld3.plugins.connect(fig, ClickInfo(median,(os.path.join(relpath,(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
+		i+=1"""
+	
+	
+	ax.yaxis.labelpad = 40
+
+	boxplothtml=mpld3.fig_to_dict(fig)
+	
+	
+	return plt,boxplothtml
 	
 
-def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
+def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,split_thresh):
 	
 	gene_fp = open( genes, 'r')
 
@@ -335,31 +357,38 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath):
 		genebasename=genebasename.split(".")
 		genebasename=genebasename[0]
 		
-		
-		plt,ax,fig,bp=buildPlot(sortbymedia,ReturnValues)
+		#do boxplot plot for each 500 subset of genes
+		switch=True
+		if not split_thresh:
+			split_thresh=len(orderedlistgene)
 
-		#allboxes=bp.get('boxes')
-		allboxes=bp.get('bodies')
-		i=0
-		for box in allboxes:
-			mpld3.plugins.connect(fig, plugins.LineLabelTooltip(box,label=os.path.basename(orderedlistgene[i]),voffset=50, hoffset=10))
-			mpld3.plugins.connect(fig, ClickInfo(box,(os.path.join(relpath,(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
-			i+=1
-		#allmedians=bp.get('medians')
-		allmedians=bp.get('cmedians')
-		"""i=0
-		for median in allmedians:
-			mpld3.plugins.connect(fig, plugins.LineLabelTooltip(median,label=os.path.basename(orderedlistgene[i]),voffset=50, hoffset=10))
-			mpld3.plugins.connect(fig, ClickInfo(median,(os.path.join(relpath,(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
-			i+=1"""
+		boxplothtml=[]
 		
-		
-		ax.yaxis.labelpad = 40
-
-		boxplothtml=mpld3.fig_to_dict(fig)
-		
-				
+		#create largest boxplot
+		plt,boxplothtmlDict=buildPlot(sortbymedia,ReturnValues,orderedlistgene,relpath)
+		boxplothtml.append(boxplothtmlDict)
 		plt.close('all')
+		
+		if split_thresh>=len(orderedlistgene):
+			switch=False
+		#create a box plot for each subset
+		while switch:
+			
+			if len(orderedlistgene)<=split_thresh:
+				switch=False
+			auxList=sortbymedia[0:split_thresh]
+			sortbymedia=sortbymedia[split_thresh:]
+			auxLabels=orderedlistgene[0:split_thresh]
+			orderedlistgene=orderedlistgene[split_thresh:]
+			#plt,ax,fig,bp=buildPlot(sortbymedia,ReturnValues)
+			plt,boxplothtmlDict=buildPlot(auxList,ReturnValues,auxLabels,relpath)
+			
+			boxplothtml.append(boxplothtmlDict)
+			
+					
+			plt.close('all')
+		
+		
 		orderedlistgene2_basename=[]
 		for elem in orderedlistgene2:
 			orderedlistgene2_basename.append(os.path.basename(elem))

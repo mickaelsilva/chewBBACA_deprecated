@@ -34,6 +34,8 @@ The optional parameters refer to the analysis of the alleles size. This analysis
 
 `-l` Location/name of the final html output
 
+`--cpu` number of cpu to use, will be used for mafft and clustal
+
 `--log` (optional) number of alleles per locus plot will be ploted in log10 scale
 
 `-p` (optional) True if all alleles must be within threshold (default=False)
