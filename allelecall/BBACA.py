@@ -461,9 +461,6 @@ def main():
 		genome=0
 		finalphylovinput= "FILE"+ "\t" 
 		finalphylovinput2= "FILE"+ "\t" 
-		#for geneid in genesnames:
-		#	finalphylovinput+= str(geneid)+ "\t"
-		#	finalphylovinput2+= str(geneid)+ "\t"
 		
 		finalphylovinput+=('\t'.join(map(str,genesnames)))
 		finalphylovinput2+=('\t'.join(map(str,genesnames)))
@@ -477,7 +474,6 @@ def main():
 			for gene in phylovout:
 				
 				val= str(gene[genome])
-				#finalphylovinput+= val + "\t"
 				auxList.append(val)
 				if "INF" in val:
 					statsaux[1]+=1
@@ -509,7 +505,6 @@ def main():
 				
 				val= str(gene[genome])
 				auxList.append(val)
-				#finalphylovinput2+= val + "\t"
 			
 			finalphylovinput2+=('\t'.join(map(str,auxList)))	
 			genome+=1
@@ -527,7 +522,6 @@ def main():
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[i]:
 				auxList.append(str(k))
-				#statswrite+= str(k) + "\t"
 			
 			statswrite+=('\t'.join(map(str,auxList)))	
 			i+=1	

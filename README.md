@@ -134,7 +134,6 @@ This will use by default, number of CPUs available minus 2 and can be called in 
 
 **Note:** If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
 
-**TODO@Mickael**: Change name: alleleCalling_ORFbased_protein_main3_local.py --> BBACA.py
 
 **Outputs files**:
 ```
