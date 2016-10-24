@@ -42,4 +42,4 @@ The optional parameters refer to the analysis of the alleles size. This analysis
 
 `-t` (optional) threshold used to calculate the range at which the allele is considered good (default=0.05)
 
-
+`-s` (optional) split the boxplot in subsets of (usefull for >1000 genes scheme)

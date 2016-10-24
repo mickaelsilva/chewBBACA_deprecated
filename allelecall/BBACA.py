@@ -461,19 +461,24 @@ def main():
 		genome=0
 		finalphylovinput= "FILE"+ "\t" 
 		finalphylovinput2= "FILE"+ "\t" 
-		for geneid in genesnames:
-			finalphylovinput+= str(geneid)+ "\t"
-			finalphylovinput2+= str(geneid)+ "\t"
-
+		#for geneid in genesnames:
+		#	finalphylovinput+= str(geneid)+ "\t"
+		#	finalphylovinput2+= str(geneid)+ "\t"
+		
+		finalphylovinput+=('\t'.join(map(str,genesnames)))
+		finalphylovinput2+=('\t'.join(map(str,genesnames)))
+		
 		
 		while genome<len(listOfGenomes):
+			auxList=[]
 			currentGenome = os.path.basename(listOfGenomes[genome])
 			statsaux=[0]*8 # EXC INF LNF LOT incomplete SAC
 			finalphylovinput+= "\n" + currentGenome + "\t"
 			for gene in phylovout:
 				
 				val= str(gene[genome])
-				finalphylovinput+= val + "\t"
+				#finalphylovinput+= val + "\t"
+				auxList.append(val)
 				if "INF" in val:
 					statsaux[1]+=1
 				elif "LNF" in val:
@@ -490,19 +495,23 @@ def main():
 					statsaux[7]+=1
 				else:
 					statsaux[0]+=1
-				
+			
+			finalphylovinput+=('\t'.join(map(str,auxList)))	
 			genome+=1
 			statistics.append(statsaux)
 		
 		genome=0	
 		while genome<len(listOfGenomes):
+			auxList=[]
 			currentGenome = os.path.basename(listOfGenomes[genome])
 			finalphylovinput2+= "\n" + currentGenome + "\t"
 			for gene in phylovout2:
 				
 				val= str(gene[genome])
-				finalphylovinput2+= val + "\t"
+				auxList.append(val)
+				#finalphylovinput2+= val + "\t"
 			
+			finalphylovinput2+=('\t'.join(map(str,auxList)))	
 			genome+=1
 				
 			
@@ -512,23 +521,27 @@ def main():
 		i=0
 		genome=0
 		while genome<len(listOfGenomes):
+			auxList=[]
 			currentGenome = os.path.basename(listOfGenomes[genome])
 			statsaux=[0]*8 # EXC NA INF LNF LOT incomplete SAC
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[i]:
-				statswrite+= str(k) + "\t"
+				auxList.append(str(k))
+				#statswrite+= str(k) + "\t"
+			
+			statswrite+=('\t'.join(map(str,auxList)))	
 			i+=1	
 			genome+=1
 		
 		outputpath=os.path.dirname(gOutFile)
-		outputfolder= os.path.join(outputpath,str(gOutFile)+str(time.strftime("%Y%m%dT%H%M%S")) )
+		outputfolder= os.path.join(outputpath,str(gOutFile)+"_"+str(time.strftime("%Y%m%dT%H%M%S")) )
 		os.makedirs(outputfolder)
 		
 		with open(os.path.join(outputfolder,gOutFile+"_alleles.txt"), 'wb') as f:
 			f.write(finalphylovinput)
 			
 		print statswrite	
-		with open(os.path.join(outputfolder,gOutFile+"statistics.txt"), 'wb') as f:
+		with open(os.path.join(outputfolder,gOutFile+"_statistics.txt"), 'wb') as f:
 			f.write(str(statswrite))
 			f.write("\n_________________________________________\n")
 			f.write(starttime)
@@ -537,7 +550,7 @@ def main():
 			f.write("\nnumber of loci: "+str(len(lGenesFiles)))
 			f.write ("\nused this number of cpus: "+str(cpuToUse))
 		
-		with open(os.path.join(outputfolder,gOutFile+"contigsInfo.txt"), 'wb') as f:
+		with open(os.path.join(outputfolder,gOutFile+"_contigsInfo.txt"), 'wb') as f:
 			f.write(str(finalphylovinput2))
 			
 	except Exception as e:
