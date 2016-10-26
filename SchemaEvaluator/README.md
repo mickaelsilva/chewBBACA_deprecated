@@ -1,5 +1,10 @@
 #Validate Schema
 
+Some examples:
+* [Campylobacter PubMLST cgMLST (June 2016) ] (http://darwin.phyloviz.net/~msilva/test/campy_Pubmlst_June_2016/RmS.html)
+* [S. Aureus ridom cgMLST (June 2016) ] (http://darwin.phyloviz.net/~msilva/test/aureus_ridom_june_2016/RmS.html)
+* [E. coli enterobase cgMLST (June 2016) ] (http://darwin.phyloviz.net/~msilva/test/ecoli_enterobase/RmS.html)
+
 Analyze your alleles for a set of parameters, taking special consideration on the allele CDS and the allele sizes per gene/locus
 
 install python dependencies with:
@@ -19,6 +24,9 @@ Other dependencies:
 * [mafft](http://mafft.cbrc.jp/alignment/software/linux.html)
 * [clustalw2](http://www.clustal.org/download/2.1/)
 
+The following visualization tools are later used on the html (not to install):
+* [MSAViewer](http://msa.biojs.net/)
+* [Phylocanvas](http://phylocanvas.org/)
 
 #How to run
 
@@ -43,3 +51,5 @@ The optional parameters refer to the analysis of the alleles size. This analysis
 `-t` (optional) threshold used to calculate the range at which the allele is considered good (default=0.05)
 
 `-s` (optional) split the boxplot in subsets of (usefull for >1000 genes scheme)
+
+`--title` (optional) title to appear on the final html.

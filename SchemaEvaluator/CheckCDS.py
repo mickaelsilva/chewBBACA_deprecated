@@ -281,7 +281,9 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 			f.write("<input type=button onClick=window.open('"+relpath+"') value='Get fasta file'>\n<p></p>""")
 			f.write("<input type=button onClick=window.open('"+os.path.join((os.path.relpath(alignFileName,alignFileName)),(os.path.basename(gene)).replace(".fasta","_aligned.fasta"))+"') value='Get msa file'>\n""")
 			
-			f.write("""<div class='container'>
+			f.write("""<p>MSA alignement done using clustalw2 and visualized using msaviewer</p>
+				<p>Tree built with mafft and visualized using phylocanvas</p>
+				<div class='container'>
 					<div class='row'>
 						
 						<div class="col-sm-3">

@@ -12,13 +12,14 @@ def main():
 	
 	parser = argparse.ArgumentParser(description="This program analyses a set of gene files, analyzing the alleles CDS and the length of the alleles per gene")
 	parser.add_argument('-i', nargs='?', type=str, help='list genes, directory or .txt file with the full path', required=True)
-	parser.add_argument('-p', nargs='?', type=bool, help='One bad allele still makes gene conserved', required=False)
+	parser.add_argument('-p', nargs='?', type=bool, help='One bad allele still makes gene conserved', required=False, default=False)
 	parser.add_argument('--log', dest='logScale', action='store_true')
 	parser.add_argument('-l', nargs='?', type=str, help='name/location main html file', required=True)
 	parser.add_argument('-ta', nargs='?', type=int, help='ncbi translation table', required=True)
-	parser.add_argument('-t', nargs='?', type=float, help='Threshold', required=False)
+	parser.add_argument('-t', nargs='?', type=float, help='Threshold', required=False, default=0.05)
+	parser.add_argument('--title', nargs='?', type=str, help='title on the html', required=False, default="My Analyzed wg/cg MLST Schema - Rate My Schema")
 	parser.add_argument('--cpu', nargs='?', type=int, help='number of cpu to use', required=True)
-	parser.add_argument('-s', nargs='?', type=int, help='Threshold', required=False)
+	parser.add_argument('-s', nargs='?', type=int, help='Threshold', required=False, default=False)
 	parser.set_defaults(logScale=False)
 	
 	args=parser.parse_args()
@@ -28,22 +29,10 @@ def main():
 	htmlFile=args.l
 	outputpath=os.path.dirname(htmlFile)
 	cpuToUse=args.cpu
-	
-	try:
-		threshold=float(args.t)
-	except:
-		threshold=0.05
-		pass
-	try:
-		OneBadGeneNotConserved=bool(args.p)
-	except:
-		OneBadGeneNotConserved=False
-		pass
-	try:
-		splited=int(args.s)
-	except:
-		splited=False
-		pass
+	threshold=float(args.t)
+	OneBadGeneNotConserved=bool(args.p)
+	splited=int(args.s)
+	title=str(args.title)
 	
 	try:
 		f=open( genes, 'r')
@@ -203,7 +192,7 @@ li a {
 </style>\n</head>\n<body>""")
 		
 		f.write("""<div class="jumbotron">
-  <h1>My Analyzed wg/cg MLST Schema - Rate My Schema</h1>
+  <h2>"""+title+"""</h2>
   <p>Explore the analysis by clicking the analysis buttons</p></div>""")
 		
 
