@@ -9,6 +9,7 @@ from CommonFastaFunctions import runBlastParser
 from Bio.Blast.Applications import NcbiblastpCommandline
 import collections
 import shutil
+from  init_schema_4_bbaca import get_Short
 
 def which(program):
     import os
@@ -334,6 +335,7 @@ def main():
 
 	pathfiles=os.path.dirname(geneFile)
 	pathfiles=pathfiles+"/"
+	listfiles=[]
 
 	g_fp = HTSeq.FastaReader( genes )
 	removedparalogs=0
@@ -356,7 +358,9 @@ def main():
 			if int(len(contig.seq))>sizethresh:
 				namefile=contig.name
 				namefile=namefile.replace("|","_")
-				with open(os.path.join(schema_folder_path,namefile+".fasta"), "wb") as f:
+				newFile=os.path.join(schema_folder_path,namefile+".fasta")
+				listfiles.append(newFile)
+				with open(newFile, "wb") as f:
 					f.write(">1\n"+contig.seq+"\n")
 				rest+=1	
 				concatenatedFile+=">"+namefile+"\n"+contig.seq+"\n"
@@ -373,6 +377,10 @@ def main():
 	shutil.rmtree(os.path.join(pathfiles,'blastdbs'))
 	os.remove(proteinfile)
 	os.remove(blast_out_file)
+	
+	#create short folder
+	get_Short(listfiles)
+	
 	
 if __name__ == "__main__":
 	main()

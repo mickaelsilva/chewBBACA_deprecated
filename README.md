@@ -106,8 +106,6 @@ One fasta file per gene in the `schema_seed/`directory that is created in the di
 The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and genes with DNA sequences smaller than chosen in the `-g` parameter. 
 The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio (BSR) greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.
 
-Finally  in the resulting directory `schema_seed` ,  run the `init_bbaca_schema.sh` shellscript. This script will create the necessary files for the allele call, by creating the  directory named `short`. The contents of this dir is already explained in the **folder structure** subsection. It will also contain a  file named `listGenes.txt`, that will contain the list of loci in the schema.
-
 ----------
 
 ### 3.  Allele call using the wgMLST schema 

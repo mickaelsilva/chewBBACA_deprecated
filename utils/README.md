@@ -33,7 +33,7 @@ This program removes genes from a tab separated allele profile file. Writes a fi
 
 This program removes genomes from a tab separated allele profile file
 
-	% RemoveGenomes.py -i raw_output.tsv -l listgenomes.txt new_file.tsv
+	% RemoveGenomes.py -i raw_output.tsv -l listgenomes.txt -o new_file.tsv
 	
 `-i` main matrix file from which to remove
 
