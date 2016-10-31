@@ -32,7 +32,10 @@ def presence (d3):
 				try:
 					aux=str((d2c[row,column])).replace ("INF-","")
 					aux=int(aux)
-					d2c[row,column]=1
+					if aux>0:
+						d2c[row,column]=1
+					else :
+						d2c[row,column]=0
 				except Exception as e:
 					d2c[row,column]=0
 				

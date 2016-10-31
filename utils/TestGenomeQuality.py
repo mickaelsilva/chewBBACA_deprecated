@@ -7,20 +7,58 @@ import collections
 from collections import OrderedDict
 import matplotlib.pyplot as plt
 import Counter
+import time
 
+
+def presAbs (d2c):	
+
+	print "generating presence abscence matrix"
+	#genelist= d2[:1,1:]
+	#print "Warning: all profiles must have same length"
+	#for item in d2c:
+		#print "genome "+str(item[0])+" has a profile length of "+str(len(item))
+	geneslist= d2c[:1,:]
+	genomeslist= d2c[1:,:1]
+	
+	#d2c = d2c[1:,:]
+	
+	row=1
+	while row<d2c.shape[0]:
+		column=1
+		while column<d2c.shape[1]:
+			try:
+
+				aux=int(d2c[row,column])
+				if aux>0:
+					d2c[row,column]=1
+				else :
+					d2c[row,column]=0
+			except:
+				try:
+					aux=str((d2c[row,column])).replace ("INF-","")
+					aux=int(aux)
+					d2c[row,column]=1
+				except Exception as e:
+					d2c[row,column]=0
+				
+			column+=1
+		row+=1
+	print "done"
+	
+	return d2c
 
 # function to report the most problematic locus/genomes and report the number of good locus by % of genomes
 # a list of genomes with a sum of problems higher than the given ythreshold will be returned
 def presence3(d2,ythreshold,vector,abscenceMatrix):
-	print "calculating presence abscence ..."
+	print "checking loci with missing data ..."
 	d2d=d2
 	
 	genomeslist= d2d[1:,:1]
 	geneslist = d2d[0]
 	
-	d2d = d2d[1:,1:-1]
+	#d2d = d2d[1:,1:]
 	
-	column=0
+	column=1
 	totals=[]
 	allbadgenomes=[]
 	reallybadgenomes=[]
@@ -34,7 +72,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 	# if a locus has one problematic call, check how many genomes have problem in that call
 	
 	while column<d2d.shape[1]:
-		row=0
+		row=1
 		notfound=0
 		badgenomes=[]
 		while row<d2d.shape[0]:
@@ -46,7 +84,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 				#if d2d[row,column] == "LNF" :
 					d2d[row,column]=0
 					notfound+=1
-					badgenomes.append(row)
+					badgenomes.append(row-1)
 					
 				else:
 					d2d[row,column]=1
@@ -54,7 +92,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 			else:
 				if int(d2d[row,column]) == 0:
 					notfound+=1
-					badgenomes.append(row)
+					badgenomes.append(row-1)
 					
 				else:
 					d2d[row,column]=1
@@ -75,9 +113,9 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 			for badgenome in badgenomes:
 				allbadgenomes.append((genomeslist[int(badgenome)])[0])
 		elif value==1:
-			allverygood.append(geneslist[column+1])
+			allverygood.append(geneslist[column])
 		elif value==0:
-			allverybad.append(geneslist[column+1])
+			allverybad.append(geneslist[column])
 		if value>0.95:
 			plus95+=1
 		if value>0.99:
@@ -139,7 +177,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 		#number of loci at 99.5%
 	vector[6].append(plus995)
 	
-	print "presence abscence calculated"
+	print "checked loci with missing data"
 	
 	return d2d,reallybadgenomes,vector,True
 	
@@ -172,7 +210,7 @@ def removegenomes(d2a,bagenomeslist):
 	return d2a
 
 
-def clean (inputfile,iterations,ythreshold):
+def clean (d2,iterations,ythreshold):
 	
 	#open the raw file to be clean
 	
@@ -180,15 +218,12 @@ def clean (inputfile,iterations,ythreshold):
 		reader = csv.reader(f, delimiter="\t")
 		d = list(reader)"""
 	
-	print "will try to open file..."
-	#d2=np.loadtxt(inputfile, delimiter='\t')
-	d2 = np.genfromtxt(inputfile, delimiter='\t', dtype=None)
-	print "file was read"
+
 	#d2 = array(d)
 	
 	
-
-		
+	
+	abscencematrix=True	
 	
 	i=0
 	removedlistgenomes=[]
@@ -200,7 +235,7 @@ def clean (inputfile,iterations,ythreshold):
 	lastremovedgenomesCount=0
 	iterationStabilizedat=None
 	isStable=False
-	abscencematrix=False
+	
 	while i<=iterations:
 		
 		print "\n########## ITERATION NUMBER %s  ##########  \n" % str(i)
@@ -251,6 +286,7 @@ def main():
 	
 	args = parser.parse_args()
 
+	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
 	
 	pathOutputfile = args.i
 	iterationNumber=int(args.n)
@@ -265,11 +301,20 @@ def main():
 	
 	#for each threshold run a clean function on the dataset, using the previous run output (to be removed genomes) as input for the new one
 	
+	print "will try to open file..."
+	#d2=np.loadtxt(inputfile, delimiter='\t')
+	d2original = np.genfromtxt(pathOutputfile, delimiter='\t', dtype=None)
+	d2copy=np.copy(d2original)
+	#create abscence/presence matrix for easier processing
+	d2copy=presAbs(d2copy)
+	print "file was read"
+	
+	
 	while threshold<thresholdBadCalls:
 		
 		thresholdlist.append(threshold)
 		print "########## USING A THRESHOLD AT " +str(threshold) + " ########"
-		result,stabilizedIter=clean(pathOutputfile,iterationNumber,threshold)
+		result,stabilizedIter=clean(d2copy,iterationNumber,threshold)
 		listStableIter.append(stabilizedIter)
 		allresults.append(result)
 		
@@ -350,7 +395,8 @@ def main():
 	
 	#plt.show()
 	plt.close()		
-	
+	print (starttime)
+	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	
 		

@@ -39,7 +39,7 @@ def main():
 	
 	geneFiles = args.i
 	listGenes=[]
-	gene_fp = open( genesList, 'r')
+	gene_fp = open( geneFiles, 'r')
 	for gene in gene_fp:
 		gene = gene.rstrip('\n')
 		listGenes.append(gene)
