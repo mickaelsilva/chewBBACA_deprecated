@@ -44,15 +44,20 @@ to update chewBBACA you simply
 
 You will also need to install all the all the following dependencies. Prodigal and BLAST must be added to the PATH variables.
 
-You may use this pip command to install the python dependencies automatically:
+You may use this pip command to install the python dependencies automatically (cd to the chewBBACA folder):
 
 ```
 pip install -r requirements.txt
 ```
 
 * [git](https://git-scm.com/)
+
+Python dependencies:
 * [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
 * [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
+
+
+Other dependencies:
 * BLAST 2.5.0+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.5.0/
 * [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/)
 
@@ -77,7 +82,7 @@ We suggest that  for each analysis for a given schema, chewBBACA should be run i
 ```
 the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
 In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for each loci. This directory will also contain a subdir named ` .../chewbacca_wrkDIR/schema/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/schema`.
-
+All auxiliary temporary files will be contained in the `.../chewbacca_wrkDIR/schema ` on the folder "temp"
 ----------
 
 ### 2. wgMLST schema creation
@@ -97,7 +102,7 @@ If no cgMLST schema is defined or needs to be reevaluated, we can create a wgMLS
 
 **Input file definition:**
 
- `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation, [Prokka](https://github.com/tseemann/prokka/blob/master/README.md), also provide *.ffn* files with its output.
+ `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation, [Prokka](https://github.com/tseemann/prokka), also provide *.ffn* files with its output. Another source for bacteria .ffn files is NCBI at ftp://ftp.ncbi.nih.gov/genomes/archive/old_genbank/Bacteria/
 
 **Outputs:** 
 
@@ -117,7 +122,7 @@ Having defined the wgMLST schema with one allele per locus, we can proceed to us
 **Parameters** 
 `-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
-`-g` file containing the path to the list of alleles i.e. the `listGenes.txt`in the `.../chewbacca_wrkDIR/schema/short` directory
+`-g` file containing the path to the list of alleles
 
 `-o` prefix for the output files. ID for the allele call run
 
