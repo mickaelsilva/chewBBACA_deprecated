@@ -7,7 +7,7 @@ import argparse
 import collections
 from collections import OrderedDict
 
-def presence (d3):	
+def presAbs (d3):	
 
 	d2c=np.copy(d3)
 	
@@ -18,24 +18,24 @@ def presence (d3):
 	geneslist= d2c[:1,:]
 	genomeslist= d2c[1:,:1]
 	
-	d2c = d2c[1:,:]
+	#d2c = d2c[1:,:]
 	
-	row=0
+	row=1
 	while row<d2c.shape[0]:
 		column=1
 		while column<d2c.shape[1]:
 			try:
 
 				aux=int(d2c[row,column])
-				d2c[row,column]=1
+				if aux>0:
+					d2c[row,column]=1
+				else :
+					d2c[row,column]=0
 			except:
 				try:
 					aux=str((d2c[row,column])).replace ("INF-","")
 					aux=int(aux)
-					if aux>0:
-						d2c[row,column]=1
-					else :
-						d2c[row,column]=0
+					d2c[row,column]=1
 				except Exception as e:
 					d2c[row,column]=0
 				
@@ -47,23 +47,17 @@ def presence (d3):
 	genomeslist=(genomeslist.tolist())
 	geneslist=(geneslist.tolist())
 
-	d2c=d2c.tolist()
+	d2d=d2c.tolist()
 	
 	with open ("presence.txt","wb") as f:
 		
-
 		f.write('\t'.join(geneslist[0]))
-			#csvout.write(('\t'.join(elem))+"\n")
-		#f.write (str(geneslist.tolist()))
-		
-		
+
 		writer = csv.writer(f,delimiter='	')
-		writer.writerows(d2c)
+		writer.writerows(d2d)
 		
-		#for elem in d2c:
-		#	f.write(str(elem.tolist())+"\n")
 	
-	return True
+	return d2c
 
 def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	
@@ -73,17 +67,17 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 		reader = csv.reader(f, delimiter="\t")
 		d = list(reader)
 	
-	d2 = array(d)
+	originald2 = array(d)
 	
 	#uncomment to get a presence abscence file
-	presence (d2)
+	d2=presAbs (originald2)
 	
 	genomeslist= d2[1:,:1]
 	
 	d2=d2.T
 	rowid=1
 	deleted=0
-	#badAlleles=False
+	abscenceMatrix=True
 	lnfdel=0
 	balldel=0
 	
@@ -94,7 +88,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	lostgenesList=[]
 	
 	while rowid< d2.shape[0]:
-		columnid=0
+		columnid=1
 		genomeindex=0
 		
 		
@@ -111,52 +105,44 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 				lnfdel+=1
 				break
 			
-			elif ( "PLOT" in d2[rowid][columnid] or "NIPL" in d2[rowid][columnid] or "LNF" in d2[rowid][columnid] or "LOT" in d2[rowid][columnid]  or "ALM" in d2[rowid][columnid]  or "ASM" in d2[rowid][columnid] or "ERROR" in d2[rowid][columnid]  or "ABM" in d2[rowid][columnid]) or "undefined allele" in d2[rowid][columnid] or "small match" in d2[rowid][columnid] or "allele incomplete" in d2[rowid][columnid]:	
+			elif not abscenceMatrix:
 				
-				d2=np.delete(d2, rowid, 0)
-				totaldeletedgenes+=1
-				deleted+=1
-				rowid-=1
-				columnid=1
-				lnfdel+=1
-				break
-			
-			"""if badAlleles :
-				allele=d2[rowid][columnid]
-				allele=allele.replace("INF-","",)
-				allele=allele.replace('NA1-', '')
-				allele=allele.replace('NA2-', '')
-				allele=allele.replace('NA3-', '')
-				allele=allele.replace('NA4-', '')
-				allele=allele.replace('NA5-', '')
-				try:
-					if int(allele) in badAlleles:
+				if ( "PLOT" in d2[rowid][columnid] or "NIPL" in d2[rowid][columnid] or "LNF" in d2[rowid][columnid] or "LOT" in d2[rowid][columnid]  or "ALM" in d2[rowid][columnid]  or "ASM" in d2[rowid][columnid] or "ERROR" in d2[rowid][columnid]  or "ABM" in d2[rowid][columnid]) or "undefined allele" in d2[rowid][columnid] or "small match" in d2[rowid][columnid] or "allele incomplete" in d2[rowid][columnid]:	
+					
+					originald2=np.delete(originald2, rowid, 0)
+					d2=np.delete(d2, rowid, 0)
+					totaldeletedgenes+=1
+					deleted+=1
+					rowid-=1
+					columnid=1
+					lnfdel+=1
+					break
+			else:
+				if int(d2[rowid,columnid]) == 0:
+					
+					originald2=np.delete(originald2, rowid, 0)
+					d2=np.delete(d2, rowid, 0)
+					totaldeletedgenes+=1
+					deleted+=1
+					rowid-=1
+					columnid=1
+					lnfdel+=1
+					break
 
-						d2=np.delete(d2, rowid, 0)
-						totaldeletedgenes+=1
-						deleted+=1
-						rowid-=1
-						columnid=1
-						balldel+=1
-						break
-				except Exception as e:
-					print e
-					pass"""
+
 			
 			columnid+=1
 			genomeindex+=1
 
 		rowid+=1
 	
-	
-	d2=d2.T
-	d2=d2.tolist()
+	originald2=originald2.tolist()
 	
 	#map(lambda s: s.replace('INF-', ''), d2)
 	
 	with open(outputfile, "wb") as f:
 		writer = csv.writer(f,delimiter='	')
-		writer.writerows(d2)
+		writer.writerows(originald2)
 	
 
 	file = open(outputfile)

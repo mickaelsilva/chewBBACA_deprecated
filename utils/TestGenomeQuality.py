@@ -379,10 +379,10 @@ def main():
 		ax1.set_xlabel('Threshold')
 
 		ax2.set_ylabel('Number of genomes in use', color='#663300')
-		plt.title('Iteration number '+str(i),loc='left')
+		#plt.title('Iteration number '+str(i),loc='left')
 
 		
-		plt.savefig("Iteration_"+str(i)+'.png')
+		plt.savefig('GenomeQualityPlot.png')
 		i+=1
 		
 	
