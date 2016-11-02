@@ -74,6 +74,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	
 	genomeslist= d2[1:,:1]
 	
+	originald2=originald2.T
 	d2=d2.T
 	rowid=1
 	deleted=0
@@ -97,6 +98,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 			#print d2[rowid][0]
 			if d2[rowid][0] in toremovegenes:
 				
+				originald2=np.delete(originald2, rowid, 0)
 				d2=np.delete(d2, rowid, 0)
 				totaldeletedgenes+=1
 				deleted+=1
@@ -136,6 +138,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 
 		rowid+=1
 	
+	originald2=originald2.T
 	originald2=originald2.tolist()
 	
 	#map(lambda s: s.replace('INF-', ''), d2)

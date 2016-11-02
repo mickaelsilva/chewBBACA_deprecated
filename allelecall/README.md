@@ -1,4 +1,4 @@
-# chewBBACA: BSR-Based Allele Calling Algorithm - Quick and Dirty
+# chewBBACA: Quick and Dirty
 
 **Important Notes before starting:**
 
@@ -8,23 +8,23 @@
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
 ----------
-**FAQ**
+##FAQ
 
-Q: How to do the quick and dirty?
+###Q: How to do the quick and dirty?  
 A: Just follow the 4 steps bellow.
 
-Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?
+###Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
 A: Try to run step 5, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises from the ashes.
 
-Q: Step 2 is taking hours, will it ever end?
+###Q: Step 2 is taking hours, will it ever end?  
 A: Depending on the variability of the strains you are using to create the schema and the number of cpu you are using. The more variable the strains, the more BLAST comparisons are made.
 
-Q: Step 3 just crashed at 99% after 2 days running and I smashed my computer, will you refund me?
+###Q: Step 3 just crashed at 99% after 2 days running and I smashed my computer, will you refund me?  
 A: I have good news, you should be able to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
 
 ----------
 
-### 1. Setting up the analysis
+## 1. Setting up the analysis
 
 **Installing chewBBACA**
 
@@ -50,9 +50,9 @@ Other dependencies:
 
 ----------
 
-### 2. wgMLST schema creation
+## 2. wgMLST schema creation
 
-If no cgMLST schema is defined or needs to be reevaluated, we can create a wgMLST schema from a set of pre-determined annotated genomes. The command is the following:
+Create your own wgMLST schema. The command is the following:
 
 `CreateSchema.py -i allffnfile.fasta -l 200 --cpu 4`
 
@@ -75,7 +75,7 @@ One fasta file per gene in the `schema_seed/`directory that is created in the di
 
 ----------
 
-### 3.  Allele call using the wgMLST schema 
+## 3.  Allele call using the wgMLST schema 
 
 Create two list of files with the full paths (one path per line), one list for genomes and another for genes (genes are located on the schema seed created in the last step, ignore the short folder)
 
@@ -84,6 +84,7 @@ Then run is the following:
 	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 
 
 **Parameters** 
+
 `-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
 `-g` file containing the path to the list of alleles
@@ -129,7 +130,7 @@ Basic usage:
 
 =============
 
-### 5. Evaluate wgMLST call quality per genome
+## 5. Evaluate wgMLST call quality per genome
 
 
 Usage:
