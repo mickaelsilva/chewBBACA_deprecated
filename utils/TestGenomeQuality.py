@@ -128,13 +128,11 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 	
 	counter=Counter.Counter(allbadgenomes)
 	
-	#print "Ordered count of genomes with bad calls, considering only a bad call when the locus is present in more than "+str(xthreshold*100)+"% of the genomes"
 	
 	for elem in counter.most_common():
 		if int(elem[1])>ythreshold:
 				reallybadgenomes.append((elem)[0])
 
-	#print counter
 	print
 	print "number genes in 100% genomes: " +str(len(allverygood))
 	print "number genes above 99%: " +str(plus99)
@@ -144,11 +142,6 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 	print len (totals)
 	
 	
-	#print "this genomes have more than " +str(ythreshold)+" bad calls in locus present in more than "+str(xthreshold*100)+"% of the genomes :"
-	#for x in reallybadgenomes:
-	#	print x
-	
-
 	
 	d2d=d2d.T
 	
@@ -212,16 +205,6 @@ def removegenomes(d2a,bagenomeslist):
 
 def clean (d2,iterations,ythreshold):
 	
-	#open the raw file to be clean
-	
-	"""with open(inputfile) as f:
-		reader = csv.reader(f, delimiter="\t")
-		d = list(reader)"""
-	
-
-	#d2 = array(d)
-	
-	
 	
 	abscencematrix=True	
 	
@@ -238,7 +221,7 @@ def clean (d2,iterations,ythreshold):
 	
 	while i<=iterations:
 		
-		print "\n########## ITERATION NUMBER %s  ##########  \n" % str(i)
+		
 		#print "genomes to be removed:"
 		#print toremovegenomes
 		
@@ -252,6 +235,7 @@ def clean (d2,iterations,ythreshold):
 			print "stabilized at "+str(i)
 			isStable=True
 		if not isStable:
+			print "\n########## ITERATION NUMBER %s  ##########  \n" % str(i)
 			print "total removed genomes :" +str(len(removedlistgenomes))
 			d2=removegenomes(d2,toremovegenomes)
 			matrix3,toremovegenomes,statsvector,abscencematrix=presence3(d2,ythreshold,statsvector,abscencematrix)
@@ -262,10 +246,7 @@ def clean (d2,iterations,ythreshold):
 		
 		i+=1
 		
-
-	
-	#run a function that returns a matrix with 0 and 1 depending on wheter the call is a Locus Not Found or not
-	
+		
 	with open("removedGenomes.txt", "a") as f:
 		f.write("using a threshold of "+ str(ythreshold)+" at iteration number " +str(i)+"\n")
 		

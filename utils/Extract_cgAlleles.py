@@ -11,15 +11,10 @@ def presAbs (d3):
 
 	d2c=np.copy(d3)
 	
-	#genelist= d2[:1,1:]
-	#print "Warning: all profiles must have same length"
-	#for item in d2c:
-		#print "genome "+str(item[0])+" has a profile length of "+str(len(item))
+
 	geneslist= d2c[:1,:]
 	genomeslist= d2c[1:,:1]
-	
-	#d2c = d2c[1:,:]
-	
+		
 	row=1
 	while row<d2c.shape[0]:
 		column=1
@@ -42,7 +37,6 @@ def presAbs (d3):
 			column+=1
 		row+=1
 	
-	#d2c
 
 	genomeslist=(genomeslist.tolist())
 	geneslist=(geneslist.tolist())
@@ -69,7 +63,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	
 	originald2 = array(d)
 	
-	#uncomment to get a presence abscence file
+	#get presence abscence matrix
 	d2=presAbs (originald2)
 	
 	genomeslist= d2[1:,:1]
@@ -88,14 +82,15 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	pontuationmatrix=[0]*numbergenomes	
 	lostgenesList=[]
 	
+	#clean the original matrix, using the information on the presence/abscence matrix
+	
 	while rowid< d2.shape[0]:
 		columnid=1
 		genomeindex=0
 		
 		
-		#print badAlleles
 		while columnid< d2.shape[1]:
-			#print d2[rowid][0]
+
 			if d2[rowid][0] in toremovegenes:
 				
 				originald2=np.delete(originald2, rowid, 0)
@@ -141,39 +136,25 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	originald2=originald2.T
 	originald2=originald2.tolist()
 	
-	#map(lambda s: s.replace('INF-', ''), d2)
+	#write the output file
 	
 	with open(outputfile, "wb") as f:
 		writer = csv.writer(f,delimiter='	')
 		writer.writerows(originald2)
 	
-
+	#chewbbaca files have INF that needs to be removed
 	file = open(outputfile)
 	contents = file.read()
 	contents = contents.replace('INF-', '')
-	"""contents = contents.replace('INF1:-', '')
-	contents = contents.replace('INF2:-', '')
-	contents = contents.replace('INF3:-', '')
-	contents = contents.replace('INF4:-', '')
-	contents = contents.replace('INF5:-', '')
-	contents = contents.replace('INF6:-', '')
-	contents = contents.replace('INF7:-', '')
-	contents = contents.replace('NA1-', '')
-	contents = contents.replace('NA2-', '')
-	contents = contents.replace('NA3-', '')
-	contents = contents.replace('NA4-', '')
-	contents = contents.replace('NA5-', '')"""
+
 	
 	with open(outputfile, 'w') as f:
 			f.write(contents)
 	
-	#if deleted==0:
-	#print str(lnfdel),str(balldel)
+
 	print "deleted : %s loci" % totaldeletedgenes
 	print "total loci remaining : "+ str(rowid)
-	#else:
-		#clean(outputfile,outputfile,totaldeletedgenes,shortGenomeList,genesDirect,rangeFloat)
-	
+
 
 def main():
 
@@ -205,9 +186,7 @@ def main():
 			
 	except:		
 		pass
-	
-	#print matrix
-	
+		
 	clean(pathOutputfile,newfile,0,0.2,genesToRemove)
 
 	

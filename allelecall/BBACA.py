@@ -176,7 +176,7 @@ def main():
 		print "blast version is up to date, the program will continue"
 	
 	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
-	print ("\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	print (starttime)
 	
 	
 	

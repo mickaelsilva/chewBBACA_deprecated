@@ -11,7 +11,7 @@
 ##FAQ
 
 ###Q: How to do the quick and dirty?  
-A: Just follow the 4 steps bellow.
+A: Just follow the first 4 steps bellow.
 
 ###Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
 A: Try to run step 5, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises from the ashes.
@@ -20,7 +20,7 @@ A: Try to run step 5, your analysis may contain some genomes responsible for a c
 A: Depending on the variability of the strains you are using to create the schema and the number of cpu you are using. The more variable the strains, the more BLAST comparisons are made.
 
 ###Q: Step 3 just crashed at 99% after 2 days running and I smashed my computer, will you refund me?  
-A: I have good news, you should be able to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
+A: chewBBACA shoul allow you to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
 
 ----------
 

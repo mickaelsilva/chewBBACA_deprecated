@@ -10,6 +10,7 @@ from Bio.Blast.Applications import NcbiblastpCommandline
 import collections
 import shutil
 from  init_schema_4_bbaca import get_Short
+import time
 
 def which(program):
     import os
@@ -82,6 +83,9 @@ def main():
 	sizethresh = args.l
 	cpuToUse = args.cpu
 	passSteps = False
+	
+	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
+	print ("\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	print ("Checking Blast installed... "+str(which('blastp')))
 	
@@ -373,6 +377,7 @@ def main():
 	print "\nRemoved %s with a high similarity (BSR>0.6)" % str(removedparalogs)
 	print "Total of %s loci that constitute the schema" % str(rest)
 	
+	
 
 	shutil.rmtree(os.path.join(pathfiles,'blastdbs'))
 	os.remove(proteinfile)
@@ -380,7 +385,8 @@ def main():
 	
 	#create short folder
 	get_Short(listfiles)
-	
+	print (starttime)
+	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 if __name__ == "__main__":
 	main()

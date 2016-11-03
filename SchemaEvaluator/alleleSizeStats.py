@@ -351,7 +351,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 		plt.show()	
 		plt.close('all')
 	else:
-		print "Creating the plot image files"
+		print "Creating the boxplot files"
 		
 		genebasename=str(os.path.basename(genes))
 		genebasename=genebasename.split(".")
@@ -368,10 +368,13 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 		plt,boxplothtmlDict=buildPlot(sortbymedia,ReturnValues,orderedlistgene,relpath)
 		boxplothtml.append(boxplothtmlDict)
 		plt.close('all')
+		print "Created the main boxplot file"
 		
 		if split_thresh>=len(orderedlistgene):
 			switch=False
 		#create a box plot for each subset
+		
+		print "Creating the sub boxplots"
 		while switch:
 			
 			if len(orderedlistgene)<=split_thresh:
@@ -387,7 +390,9 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 			
 					
 			plt.close('all')
+		print "Created the sub boxplots"
 		
+		print "Creating the allele number plot"
 		
 		orderedlistgene2_basename=[]
 		for elem in orderedlistgene2:
@@ -458,7 +463,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 		numberallelesplotMedianhtml=mpld3.fig_to_dict(fig)
 		
 		plt.close('all')
-		
+		print "Created the allele number plot"
 	
 		
 		fig, ax = plt.subplots(figsize=(20,10))
