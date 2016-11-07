@@ -146,10 +146,8 @@ def main():
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
 	if cpuToUse >= multiprocessing.cpu_count()-2:
-		cpuToUse=multiprocessing.cpu_count()-2
+		print "Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action"
 		
-	if multiprocessing.cpu_count()<3:
-		cpuToUse=args.cpu
 	
 	try:
 		verbose=args.verbose
@@ -316,9 +314,8 @@ def main():
 			g_fp = HTSeq.FastaReader( genomeFile )
 			for contig in g_fp:
 				sequence=str(contig.seq)
-				genomeDict[ contig.name ] = sequence
+				currentGenomeDict[ contig.name ] = sequence
 			
-			currentGenomeDict = genomeDict
 			
 			i+=1
 			for contigTag,value in currentCDSDict.iteritems():
@@ -340,11 +337,15 @@ def main():
 			with open(filepath, 'wb') as f:
 				var = listOfCDS
 				pickle.dump(var, f)
+			listOfCDS=''
 
 			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
 			with open(filepath, 'wb') as f:
 				f.write(genomeProts)
-				
+			genomeProts=''
+			var=''
+			currentGenomeDict=''
+			currentCDSDict=''
 		
 		print ("Starting Genome Blast Db creation at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
@@ -367,7 +368,7 @@ def main():
 		argumentsList= list(set(argumentsList) - set(resultsList))
 		argumentsList=sorted(argumentsList)
 
-		
+	
 	print
 	print ("Starting Allele Calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	

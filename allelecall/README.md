@@ -120,13 +120,15 @@ Clean a raw output file from an allele calling to a phyloviz readable file. Use 
 
 Basic usage:
 
-	% Extract_cgAlleles.py -i Alleles.txt -o cleanedOutput.txt -r removeLocusList.txt
+	% Extract_cgAlleles.py -i rawDataToClean.txt -o cleanedOutput.txt -r removeLocusList.txt -g removeGenomesList.txt
 	
 `-i` raw output file from an allele calling
 
 `-o` path/name of the clean file
 
 `-r` (optional) list of genes to remove, one per line, advised to use the detected overrepresented genes from ParalogPrunning.py
+
+`-g` (optional) list of genomes to remove, one per line, advised to use genomes that perform worst on statistics or use the result from the testGenomeQuality script
 
 =============
 

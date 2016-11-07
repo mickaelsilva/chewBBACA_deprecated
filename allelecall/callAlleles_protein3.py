@@ -13,7 +13,6 @@ import pickle
 import shutil
 import warnings
 
-
 def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 	
 	if verbose:
@@ -136,7 +135,8 @@ def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blas
 
 	var=[alleleI,allelescores2]
 	with open(picklepath,'wb') as f:
-		currentCDSDict = pickle.dump(var, f)
+		#currentCDSDict = pickle.dump(var, f)
+		pickle.dump(var, f)
 	
 	return allelescores2,alleleList2
 
@@ -281,7 +281,6 @@ def main():
 	verboseprint ("Finished BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	genome=-1	
 	
-	genomeDict = {}
 	verboseprint ("starting allele call blast at: "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	for genomeFile in genomesList:
 		verboseprint(genomeFile)
@@ -291,24 +290,24 @@ def main():
 		
 		# load the translated CDS from the genome to a dictionary
 		filepath=os.path.join(temppath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
+		
 		with open(filepath,'rb') as f:
 			currentCDSDict = pickle.load(f)
-		
+
 		#load the contig info of the genome to a dictionary
 		g_fp = HTSeq.FastaReader( genomeFile )
 		for contig in g_fp:
 			sequence=str(contig.seq)
-			genomeDict[ contig.name ] = sequence
-		
-		currentGenomeDict = genomeDict
+			currentGenomeDict[ contig.name ] = sequence
+		sequence=''
 
 		genome+=1
-		listOfCDS=currentCDSDict
+		#listOfCDS=currentCDSDict
 		
 		#check if any CDS is completely equal to an allele without blast -FASTER
 		try:
 			for alleleAux in fullAlleleList:
-				for k,cds in listOfCDS.items():
+				for k,cds in currentCDSDict.items():
 					if str(alleleAux) == str(cds):
 						################################################
 						# EXACT MATCH --- MATCH == GENE --- GENE FOUND #
@@ -378,7 +377,7 @@ def main():
 
 							cdsStrName=((alignment.title).split(" "))[1]
 							
-							DNAstr=str(listOfCDS[">"+cdsStrName])
+							DNAstr=str(currentCDSDict[">"+cdsStrName])
 
 							AlleleDNAstr=alleleList[int(alleleMatchid)-1]
 							if len(AlleleDNAstr)>biggestSizeAllele:
@@ -437,12 +436,14 @@ def main():
 											
 				verboseprint("Classifying the match at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))		
 				
+
+				
 				#if no best match was found it's a Locus Not Found
 				
 				#check for ambiguious bases
 				if not bestmatch[0]==0:
 				
-					alleleStr=listOfCDS[">"+bestmatch[3]]
+					alleleStr=currentCDSDict[">"+bestmatch[3]]
 					listFoundAmbiguities=[]
 					listambiguousBases=['K','M','R','Y','S','W','B','V','H','D','X','N','-','.']
 					listFoundAmbiguities=[e for e in listambiguousBases if e in AlleleDNAstr]
@@ -489,6 +490,7 @@ def main():
 					matchLocation2=matchLocation.split("-")			
 					seq=currentGenomeDict[ contigname ]
 					bestMatchContigLen=len(seq)
+					seq=''
 					
 					rightmatchContig=bestMatchContigLen-int(matchLocation2[1])	
 					leftmatchContig=int(matchLocation2[0])
@@ -567,7 +569,7 @@ def main():
 					
 					match=bestmatch[5]
 					geneLen=bestmatch[6]
-					alleleStr=listOfCDS[">"+bestmatch[3]]
+					alleleStr=currentCDSDict[">"+bestmatch[3]]
 					contigname=bestmatch[3]	
 					
 					contigname=contigname.split("&")
@@ -577,6 +579,7 @@ def main():
 					
 					seq=currentGenomeDict[ contigname ]
 					bestMatchContigLen=len(seq)
+					seq=''
 					
 					protSeq,alleleStr,Reversed=translateSeq(alleleStr)
 					
@@ -707,6 +710,8 @@ def main():
 							allelescores,alleleList=reDogetBlastScoreRatios(genefile2,basepath,alleleI,allelescores,Gene_Blast_DB_name2,alleleList,geneScorePickle,verbose)
 							verboseprint("Done Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 			
+			
+			
 			except Exception as e:
 				print "some error occurred"
 				print e
@@ -716,7 +721,8 @@ def main():
 				perfectMatchIdAllele.append("ERROR")
 				resultsList.append('ERROR')  
 		
-	
+		
+		
 	final =	(resultsList,perfectMatchIdAllele)	
 	verboseprint("Finished allele calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	filepath=os.path.join(temppath , os.path.basename(geneFile)+"_result.txt")

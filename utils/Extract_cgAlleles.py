@@ -7,14 +7,27 @@ import argparse
 import collections
 from collections import OrderedDict
 
-def presAbs (d3):	
+def presAbs (d3,listgenomesRemove):	
 
 	d2c=np.copy(d3)
 	
 
 	geneslist= d2c[:1,:]
-	genomeslist= d2c[1:,:1]
-		
+	genomeslist= d2c[:,:1]
+	genomeslist=(genomeslist.tolist())
+	
+	#remove genomes
+	print "removing the following genomes..."
+	for genome in genomeslist:
+		if genome[0] in listgenomesRemove:
+			print genome[0]
+			rowid=genomeslist.index(genome)
+			genomeslist.pop(rowid)
+			d2c=np.delete(d2c, rowid, 0)
+	
+	print "all genomes removed"
+	
+	"building the presence and abscence matrix..."
 	row=1
 	while row<d2c.shape[0]:
 		column=1
@@ -37,9 +50,7 @@ def presAbs (d3):
 			column+=1
 		row+=1
 	
-
-	genomeslist=(genomeslist.tolist())
-	geneslist=(geneslist.tolist())
+	"presence and abscence matrix built"
 
 	d2d=d2c.tolist()
 	
@@ -53,7 +64,7 @@ def presAbs (d3):
 	
 	return d2c
 
-def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
+def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes,toremovegenomes):
 	
 	#open the raw file to be clean
 	
@@ -64,7 +75,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	originald2 = array(d)
 	
 	#get presence abscence matrix
-	d2=presAbs (originald2)
+	d2=presAbs (originald2,toremovegenomes)
 	
 	genomeslist= d2[1:,:1]
 	
@@ -153,7 +164,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes):
 	
 
 	print "deleted : %s loci" % totaldeletedgenes
-	print "total loci remaining : "+ str(rowid)
+	print "total loci remaining : "+ str(rowid-2)
 
 
 def main():
@@ -162,6 +173,7 @@ def main():
 	parser.add_argument('-i', nargs='?', type=str, help='output to clean', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help='name of the clean file', required=True)
 	parser.add_argument('-r', nargs='?', type=str, help='listgenes to remove', required=False)
+	parser.add_argument('-g', nargs='?', type=str, help='listgenomes to remove', required=False)
 	
 	args = parser.parse_args()
 
@@ -172,6 +184,7 @@ def main():
 	
 	
 	genesToRemove=[]
+	genomesToRemove=[]
 	
 	try:
 		genesToRemoveFile = (args.r)
@@ -186,8 +199,22 @@ def main():
 			
 	except:		
 		pass
+	
+	try:
+		genomesToRemoveFile = (args.g)
+		fp = open(genomesToRemoveFile, 'r')
 		
-	clean(pathOutputfile,newfile,0,0.2,genesToRemove)
+		for genomeFile in fp:
+
+			genomeFile = genomeFile.rstrip('\n')
+			genomeFile = genomeFile.rstrip('\r')
+			
+			genomesToRemove.append( genomeFile )
+			
+	except:		
+		pass
+		
+	clean(pathOutputfile,newfile,0,0.2,genesToRemove,genomesToRemove)
 
 	
 
