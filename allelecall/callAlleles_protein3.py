@@ -13,7 +13,7 @@ import pickle
 import shutil
 import warnings
 
-def getBlastScoreRatios(genefile,basepath,doAll,verbose):
+def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 	
 	if verbose:
 		def verboseprint(*args):
@@ -32,7 +32,8 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 	alleleList=[]
 	alleleI=0
 	
-	for allele in gene_fp: #new db for each allele to blast it against himself
+	#calculate bsr for each allele
+	for allele in gene_fp: 
 		
 		aux=(allele.name).split("_")
 		if len(aux)<2:
@@ -40,11 +41,12 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 		else:
 			alleleI=int(aux[1])
 
-		genome=-1
+		#genome=-1
 		alleleList.append(allele.seq)
 		translatedSequence,x,y=translateSeq(allele.seq)
 		
 		if translatedSequence =='':
+			print "cannot translate allele on bsr calculation"
 			pass
 			
 		else:	
@@ -52,9 +54,12 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 			alleleAllProt+=">"+str(alleleI)+"\n"+str(translatedSequence+"\n")
 			proteinfastaPath=os.path.join(basepath,str(os.path.basename(genefile)+'_protein2.fasta'))
 			
+			#new db for each allele to blast it against himself
 			with open(proteinfastaPath, "wb") as f:
 				f.write(alleleProt)
 			Gene_Blast_DB_name = Create_Blastdb( proteinfastaPath, 1, True )
+			
+			#if bsr hasn't been calculated, do the BLAST
 			if doAll:
 				
 				blast_out_file = os.path.join(basepath,'blastdbs/temp.xml')
@@ -62,7 +67,7 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 				
 
 				# --- get BLAST score ratio --- #
-				cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5)
+				cline = NcbiblastpCommandline(cmd=blastPath, query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5)
 				allelescore=0
 			
 				blast_records = runBlastParser(cline,blast_out_file, alleleProt)
@@ -83,20 +88,21 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose):
 				with open(geneScorePickle,'wb') as f:
 					pickle.dump(var, f)			
 			
+			#bsr has already been calculated, load it to memory
 			else:
 				geneScorePickle=os.path.abspath(genefile)+'_bsr.txt'
 				with open(geneScorePickle,'rb') as f:
 					var = pickle.load(f)
 					allelescores=var[1]
-				
+	
 	proteinfastaPath=os.path.join(basepath,str(os.path.basename(genefile)+'_protein.fasta'))
 	with open(proteinfastaPath, "wb") as f:
 			f.write(alleleAllProt)
 			
-	
+	#returning all allele BSR scores and list of alleles for this gene
 	return allelescores,alleleList
 	
-def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blast_DB_name,alleleList2,picklepath,verbose):
+def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blast_DB_name,alleleList2,picklepath,verbose,blastPath):
 	
 	if verbose:
 		def verboseprint(*args):
@@ -113,11 +119,11 @@ def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blas
 		
 	proteinfastaPath=genefile
 	
-	verboseprint ("Re-starting Blast alleles at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+	verboseprint ("Starting Blast of new alleles to calculate BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 	blast_out_file2 = os.path.join(basepath,'blastdbs/temp.xml')
 
-	cline = NcbiblastpCommandline(query=proteinfastaPath, db=newGene_Blast_DB_name, evalue=0.001, out=blast_out_file2, outfmt=5)
+	cline = NcbiblastpCommandline(cmd=blastPath, query=proteinfastaPath, db=newGene_Blast_DB_name, evalue=0.001, out=blast_out_file2, outfmt=5)
 	allelescore=0
 	blast_records = runBlastParser(cline,blast_out_file2, proteinfastaPath)
 	
@@ -191,7 +197,8 @@ def main():
 	try:
 		input_file = sys.argv[1]
 		temppath = sys.argv[2]
-		verbose= sys.argv[3]
+		blastPath= sys.argv[3]
+		verbose= sys.argv[4]
 		
 		if verbose == 'True':
 			verbose=True
@@ -271,15 +278,14 @@ def main():
 
 	if os.path.isfile(geneScorePickle) :
 		
-		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,False,verbose)
+		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,False,verbose,blastPath)
 		
 	else:	
-		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,True,verbose)
+		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,True,verbose,blastPath)
 		
 			
 			
 	verboseprint ("Finished BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-	genome=-1	
 	
 	verboseprint ("starting allele call blast at: "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	for genomeFile in genomesList:
@@ -301,8 +307,6 @@ def main():
 			currentGenomeDict[ contig.name ] = sequence
 		sequence=''
 
-		genome+=1
-		#listOfCDS=currentCDSDict
 		
 		#check if any CDS is completely equal to an allele without blast -FASTER
 		try:
@@ -341,7 +345,7 @@ def main():
 			#blast the genome CDS against the translated locus
 			#	cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps_per_subject=10)
 			#2.2.28 up
-			cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps=10)
+			cline = NcbiblastpCommandline(cmd=blastPath, query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps=10)
 
 				
 			blast_records = runBlastParser(cline, blast_out_file, proteinfastaPath)
@@ -353,9 +357,11 @@ def main():
 			
 			biggestSizeAllele=0
 			
+			#get mode allele size
 			moda=max(set(alleleSizes), key=alleleSizes.count)
 			contador= Counter(alleleSizes).most_common()
 			
+			#if most common allele size appears 1 time, get first allele size
 			if (contador[0])[1] ==1:
 				moda= alleleSizes[0]
 
@@ -676,7 +682,7 @@ def main():
 													# --- add the new allele to the gene fasta --- #
 						
 						alleleI+=1
-						appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_" + str(alleleI) + "_" + str(os.path.basename(genomesList[genome])) + '\n'
+						appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_" + str(alleleI) + "_" + str(os.path.basename(genomeFile)) + '\n'
 						fG = open( geneFile, 'a' )
 						fG.write(appendAllele)
 						fG.write( alleleStr + '\n')
@@ -707,7 +713,7 @@ def main():
 							genefile2= geneTransalatedPath2
 							Gene_Blast_DB_name2 = Create_Blastdb( genefile2, 1, True )
 							verboseprint("Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-							allelescores,alleleList=reDogetBlastScoreRatios(genefile2,basepath,alleleI,allelescores,Gene_Blast_DB_name2,alleleList,geneScorePickle,verbose)
+							allelescores,alleleList=reDogetBlastScoreRatios(genefile2,basepath,alleleI,allelescores,Gene_Blast_DB_name2,alleleList,geneScorePickle,verbose,blastPath)
 							verboseprint("Done Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 			
 			
@@ -720,7 +726,6 @@ def main():
 				perfectMatchIdAllele2.append("ERROR")
 				perfectMatchIdAllele.append("ERROR")
 				resultsList.append('ERROR')  
-		
 		
 		
 	final =	(resultsList,perfectMatchIdAllele)	

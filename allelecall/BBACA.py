@@ -134,8 +134,8 @@ def main():
 	parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
 	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=True)
-	parser.add_argument("-v", "--verbose", help="increase output verbosity",dest='verbose', action="store_true")
-	
+	parser.add_argument("-v", "--verbose", help="increase output verbosity",dest='verbose', action="store_true",default=False)
+	parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False,default='blastp')
 	
 	
 	args = parser.parse_args()
@@ -143,28 +143,28 @@ def main():
 	genomeFiles = args.i
 	genes = args.g
 	cpuToUse=args.cpu
+	verbose=args.verbose
+	BlastpPath=args.b
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
-	if cpuToUse >= multiprocessing.cpu_count()-2:
+	if cpuToUse > multiprocessing.cpu_count()-2:
 		print "Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action"
 		
 	
-	try:
-		verbose=args.verbose
-	except:
-		verbose=False
-
+	
+	print BlastpPath
+	
 	scripts_path=os.path.dirname(os.path.realpath(__file__))
 	
 	print ("Will use this number of cpus: "+str(cpuToUse))
 	print ("Checking all programs are installed")
 	
-	print ("Checking Blast installed... "+str(which('blastp')))
+	print ("Checking Blast installed... "+str(which(str(BlastpPath))))
 	print ("Checking Prodigal installed... "+str(which('prodigal')))
 	
 	#check version of Blast
 	
-	proc = subprocess.Popen(['blastp', '-version'], stdout=subprocess.PIPE)
+	proc = subprocess.Popen([BlastpPath, '-version'], stdout=subprocess.PIPE)
 	line = proc.stdout.readline()
 	if not "blastp: 2.5." in str(line):
 		print "your blast version is " + str(line)
@@ -349,7 +349,7 @@ def main():
 		
 		print ("Starting Genome Blast Db creation at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
-		#creation of the Databases for each genome, one genome per core using n-2 cores (n number of cores)
+		#creation of the Databases for each genome, one genome per core using n cores
 		
 		pool = multiprocessing.Pool(cpuToUse)
 		for genomeFile in listOfGenomes:
@@ -373,13 +373,13 @@ def main():
 	print ("Starting Allele Calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 
-	# Run the allele call, one gene per core using n-2 cores (n number of cores)
+	# Run the allele call, one gene per core using n cores
 	
 	
 	pool = multiprocessing.Pool(cpuToUse)
 	for argList in argumentsList:
 		
-		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"callAlleles_protein3.py"),str(argList),basepath,str(verbose)],))
+		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"callAlleles_protein3.py"),str(argList),basepath,str(BlastpPath),str(verbose)],))
 
 	pool.close()
 	pool.join()
