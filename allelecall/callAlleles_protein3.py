@@ -17,8 +17,6 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 	
 	if verbose:
 		def verboseprint(*args):
-			# Print each argument separately so caller doesn't need to
-			# stuff everything to be printed into a single string
 			for arg in args:
 			   print arg,
 			print
@@ -35,20 +33,22 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 	#calculate bsr for each allele
 	for allele in gene_fp: 
 		
+		#usually first allele name is just >1 and after that it has >gene_id_genome
 		aux=(allele.name).split("_")
 		if len(aux)<2:
 			alleleI=int(aux[0])
 		else:
 			alleleI=int(aux[1])
 
-		#genome=-1
+		#try to translate the allele
 		alleleList.append(allele.seq)
 		translatedSequence,x,y=translateSeq(allele.seq)
 		
 		if translatedSequence =='':
 			print "cannot translate allele on bsr calculation"
 			pass
-			
+		
+		#calculate BSR for the allele	
 		else:	
 			alleleProt=">"+str(alleleI)+"\n"+str(translatedSequence+"\n")
 			alleleAllProt+=">"+str(alleleI)+"\n"+str(translatedSequence+"\n")
@@ -88,7 +88,7 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 				with open(geneScorePickle,'wb') as f:
 					pickle.dump(var, f)			
 			
-			#bsr has already been calculated, load it to memory
+			#bsr had already been calculated, load it to memory
 			else:
 				geneScorePickle=os.path.abspath(genefile)+'_bsr.txt'
 				with open(geneScorePickle,'rb') as f:
@@ -611,7 +611,7 @@ def main():
 							###########################
 					
 					
-					
+					#check if contig is smaller than the matched allele
 					if leftmatchContig<leftmatchAllele and 	rightmatchContig < rightmatchAllele:
 					
 						resultsList.append('LOTSC:-1')
@@ -633,7 +633,7 @@ def main():
 						verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 3' tip of the contig \n")
 						
 					
-					elif 	rightmatchContig < rightmatchAllele:
+					elif rightmatchContig < rightmatchAllele:
 						
 						resultsList.append('LOT5:-1')
 						perfectMatchIdAllele.append('LOT5')

@@ -295,12 +295,7 @@ def main():
 	
 	
 		#---CDS to protein---#
-		listOFProt=[]
-		listAllCDS=[]
-		
-		i = 0
-		j=0
-		
+				
 		#translate the genome CDSs, load them into dictionaries and fasta files to be used further ahead
 		for genomeFile in listOfGenomes:
 			listOfCDS={}
@@ -316,14 +311,14 @@ def main():
 				sequence=str(contig.seq)
 				currentGenomeDict[ contig.name ] = sequence
 			
-			
-			i+=1
+			j=0
 			for contigTag,value in currentCDSDict.iteritems():
 
 				for protein in value:
 					try:
 						seq= currentGenomeDict[ contigTag ][ protein[0]:protein[1] ].upper()
 						protseq=translateSeq(seq)
+						j+=1
 						idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[0])+"-"+str(protein[1])
 						genomeProts+=idstr+"\n"
 						listOfCDS[idstr]=seq
@@ -332,7 +327,7 @@ def main():
 					except Exception as e:
 						print str(e)+" "+str(genomeFile)
 						pass
-					j+=1
+
 			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
 			with open(filepath, 'wb') as f:
 				var = listOfCDS
@@ -387,6 +382,8 @@ def main():
 
 	print ("Finished Allele Calling at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
+	print ("Wrapping up the results")
+	
 	output=[]
 	for gene in lGenesFiles:
 		filepath=os.path.join(basepath, os.path.basename(gene)+"_result.txt")
@@ -402,7 +399,7 @@ def main():
 			output2.append(var)
 
 
-	print ("Wrapping up the results")
+	
 
 	#delete all temp files
 	shutil.rmtree(basepath)
@@ -515,18 +512,16 @@ def main():
 		
 		gOutFile = args.o
 		statswrite='Genome\tEXC\tINF\tLNF\tLOT\tPLOT\tNIPL\tALM\tASM'
-		i=0
 		genome=0
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = os.path.basename(listOfGenomes[genome])
 			statsaux=[0]*8 # EXC NA INF LNF LOT incomplete SAC
 			statswrite+= "\n" + currentGenome + "\t"
-			for k in statistics[i]:
+			for k in statistics[genome]:
 				auxList.append(str(k))
 			
 			statswrite+=('\t'.join(map(str,auxList)))	
-			i+=1	
 			genome+=1
 		
 		outputpath=os.path.dirname(gOutFile)
