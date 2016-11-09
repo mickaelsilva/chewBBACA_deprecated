@@ -91,9 +91,11 @@ Then run is the following:
 
 `-o` prefix for the output files. ID for the allele call run
 
-`--cpu` Number of cpus to use (if greater than maximum cpus-2, uses cpus-2)
+`--cpu` Number of cpus to use 
 
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
+
+`-b` Blastp full path(optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
 
 
 This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  
