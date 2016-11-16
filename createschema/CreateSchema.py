@@ -77,17 +77,23 @@ def main():
 	parser.add_argument('-i', nargs='?', type=str, help='ffn file', required=True)
 	parser.add_argument('-l', nargs='?', type=int, help='int minimum length', required=True)
 	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=False)
+	parser.add_argument('-p', nargs='?', type=str, help="file with protein", required=False, default=False)
+	parser.add_argument('-o', nargs='?', type=str, help="output filename", required=False, default=False)
+	parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False,default='blastp')
 	
 	args = parser.parse_args()
 	genes = args.i
 	sizethresh = args.l
 	cpuToUse = args.cpu
-	passSteps = False
+	passSteps = True
+	proteinFIlePath=args.p
+	outputFIlePath=args.o
+	BlastpPath=args.b
 	
 	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
 	print ("\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
-	print ("Checking Blast installed... "+str(which('blastp')))
+	print ("Checking Blast installed... "+str(which(BlastpPath)))
 	
 	#translate to protein and create new file
 	abspath=os.path.abspath(genes)
@@ -106,7 +112,7 @@ def main():
 	
 	print "Checking translatability of the loci:\n"
 	
-	if not passSteps:
+	if not proteinFIlePath:
 		#print "not passing steps"
 		with open(proteinfile, "wb") as f:
 			g_fp = HTSeq.FastaReader( genes )
@@ -153,7 +159,8 @@ def main():
 		print (str(repeatedgenes) + " repeated loci out of "+ str(totalgenes))
 		print (str(smallgenes) + " loci out of "+ str(totalgenes)+ " smaller than "+str(sizethresh)+"bp")
 		print "\nprotein file created\n"
-				
+	
+		
 		# first step -  remove genes contained in other genes or 100% equal genes
 		
 		# list of results - the output of the function
@@ -193,35 +200,25 @@ def main():
 			for k,v in auxDict.iteritems():
 				allsequences+=v+k+"\n"
 			f.write(allsequences)
-	
+				
 	else:
+		#print "passed steps"
 		
+		proteinfile=proteinFIlePath
 		totalgenes=0
 		smallgenes=0
 		g_fp = HTSeq.FastaReader( genes )
-		
+		proteinfile=proteinFIlePath
 		for gene in g_fp:
 			dnaseq=	str(gene.seq)
-			protseq,x,y=translateSeq(dnaseq)
-			if len(protseq)>1:
-				
-				if str(protseq) in alreadyIn:
-					repeatedgenes+=1
-				
-				elif len(str(protseq))<67:
-					smallgenes+=1
-					
-				else:	
-					alreadyIn.append(str(protseq))
-					protname=">"+str(gene.name)+"\n"							
-					protDict[protname] = str(protseq)
-					geneDict[str(gene.name)] = gene.seq
-			else:
 
-				print gene.name
+			protname=">"+str(gene.name)+"\n"							
+			#protDict[protname] = str(protseq)
+			geneDict[str(gene.name)] = gene.seq
+
 	
-	
-	print "Blasting the total of "+ str(len(auxDict.keys())) + " loci"
+	print "Starting Blast"
+	#print "Blasting the total of "+ str(len(auxDict.keys())) + " loci"
 	
 	geneFile = os.path.abspath( proteinfile )
 	Gene_Blast_DB_name = Create_Blastdb( geneFile, 1, True )
@@ -230,10 +227,12 @@ def main():
 	blast_out_file = geneF + '.xml'
 					# ------------------------------ RUNNING BLAST ------------------------------ #
 	if cpuToUse:
-		cline = NcbiblastpCommandline(query=geneFile, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5, num_threads=int(cpuToUse))
+		cline = NcbiblastpCommandline(cmd=BlastpPath, query=geneFile, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5, num_threads=int(cpuToUse))
 	else:
-		cline = NcbiblastpCommandline(query=geneFile, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5)
+		cline = NcbiblastpCommandline(cmd=BlastpPath, query=geneFile, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5)
 	blast_records = runBlastParser(cline, blast_out_file, geneFile)
+	print "Finished blast"
+	
 	toRemove=[]
 	genesToKeep=[]
 	log=["removed\tcause\texplanation"]
@@ -325,10 +324,7 @@ def main():
 		except Exception as e:
 			#print e
 			pass
-	with open("schemacreation.log", "wb") as f:
-		for elem in log:
-			
-			f.write(str(elem)+"\n")
+	
 	
 
 	
@@ -349,7 +345,7 @@ def main():
 	concatenatedFile=''
 	schema_folder_path=os.path.join(pathfiles,'schema_seed')
 	
-	if not os.path.exists(schema_folder_path):
+	if not os.path.exists(schema_folder_path) and not proteinFIlePath:
 		os.makedirs(schema_folder_path)
 	
 	for contig in g_fp:
@@ -357,34 +353,51 @@ def main():
 		name = contig.name+" "+contig.descr
 		name2= contig.name
 		
-		
+		#print name2
 		if name2 not in toRemove and name2 in genesToKeep:
 			if int(len(contig.seq))>sizethresh:
 				namefile=contig.name
 				namefile=namefile.replace("|","_")
-				newFile=os.path.join(schema_folder_path,namefile+".fasta")
-				listfiles.append(newFile)
-				with open(newFile, "wb") as f:
-					f.write(">1\n"+contig.seq+"\n")
+				
+				if not proteinFIlePath:
+					newFile=os.path.join(schema_folder_path,namefile+".fasta")
+					listfiles.append(newFile)
+					with open(newFile, "wb") as f:
+						f.write(">1\n"+contig.seq+"\n")
+				else:
+					concatenatedFile+=">"+contig.name+" \n"+contig.seq+"\n"
+					
 				rest+=1	
-				concatenatedFile+=">"+namefile+"\n"+contig.seq+"\n"
+				
 			else:
 				removedsize+=1
 		else:
 
 			removedparalogs+=1
-		
-	print "\nRemoved %s with a high similarity (BSR>0.6)" % str(removedparalogs)
-	print "Total of %s loci that constitute the schema" % str(rest)
+	
+	if proteinFIlePath and outputFIlePath:
+		with open(outputFIlePath, "wb") as f:
+			f.write(concatenatedFile)
+	
+	#create short folder
+	else:
+		#with open("schemacreation.log", "wb") as f:
+		#	for elem in log:
+				
+		#		f.write(str(elem)+"\n")
+		get_Short(listfiles)
+		print "\nRemoved %s with a high similarity (BSR>0.6)" % str(removedparalogs)
+		print "Total of %s loci that constitute the schema" % str(rest)
+		os.remove(proteinfile)
 	
 	
 
 	shutil.rmtree(os.path.join(pathfiles,'blastdbs'))
-	os.remove(proteinfile)
+	
 	os.remove(blast_out_file)
 	
-	#create short folder
-	get_Short(listfiles)
+	
+	
 	print (starttime)
 	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
