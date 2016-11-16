@@ -16,18 +16,28 @@ def presAbs (d3,listgenomesRemove):
 	genomeslist= d2c[:,:1]
 	genomeslist=(genomeslist.tolist())
 	
-	#remove genomes
-	print "removing the following genomes..."
+	geneslistaux=[]
 	for genome in genomeslist:
-		if genome[0] in listgenomesRemove:
-			print genome[0]
-			rowid=genomeslist.index(genome)
-			genomeslist.pop(rowid)
-			d2c=np.delete(d2c, rowid, 0)
+		geneslistaux.append(genome[0])
 	
+	#remove genomes
+	listidstoremove=[]
+	print "removing the following genomes..."
+	for genome in geneslistaux:
+		if genome in listgenomesRemove:
+			print genome
+			rowid=geneslistaux.index(genome)
+			listidstoremove.append(rowid)
+			#geneslistaux.pop(rowid)
+	
+	listidstoremove=sorted(listidstoremove, reverse=True)	
+	for idtoremove in listidstoremove:
+		d3=np.delete(d3, idtoremove, 0)
+		d2c=np.delete(d2c, idtoremove, 0)
+
 	print "all genomes removed"
 	
-	"building the presence and abscence matrix..."
+	print "building the presence and abscence matrix..."
 	row=1
 	while row<d2c.shape[0]:
 		column=1
@@ -50,7 +60,7 @@ def presAbs (d3,listgenomesRemove):
 			column+=1
 		row+=1
 	
-	"presence and abscence matrix built"
+	print "presence and abscence matrix built"
 
 	d2d=d2c.tolist()
 	
@@ -62,7 +72,7 @@ def presAbs (d3,listgenomesRemove):
 		writer.writerows(d2d)
 		
 	
-	return d2c
+	return d2c,d3
 
 def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes,toremovegenomes):
 	
@@ -75,7 +85,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes,torem
 	originald2 = array(d)
 	
 	#get presence abscence matrix
-	d2=presAbs (originald2,toremovegenomes)
+	d2,originald2=presAbs (originald2,toremovegenomes)
 	
 	genomeslist= d2[1:,:1]
 	
