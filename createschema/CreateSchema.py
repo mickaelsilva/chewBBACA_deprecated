@@ -345,8 +345,10 @@ def main():
 	concatenatedFile=''
 	schema_folder_path=os.path.join(pathfiles,'schema_seed')
 	
-	if not os.path.exists(schema_folder_path) and not proteinFIlePath:
+	if not os.path.exists(schema_folder_path) and not proteinFIlePath and not outputFIlePath:
 		os.makedirs(schema_folder_path)
+	elif not proteinFIlePath and outputFIlePath:
+		os.makedirs(outputFIlePath)
 	
 	for contig in g_fp:
 		totalgenes+=1
@@ -359,8 +361,19 @@ def main():
 				namefile=contig.name
 				namefile=namefile.replace("|","_")
 				
-				if not proteinFIlePath:
+				if not proteinFIlePath and not outputFIlePath:
+					print "lala"
+					print proteinFIlePath
+					print outputFIlePath
 					newFile=os.path.join(schema_folder_path,namefile+".fasta")
+					listfiles.append(newFile)
+					with open(newFile, "wb") as f:
+						f.write(">1\n"+contig.seq+"\n")
+				elif not proteinFIlePath and outputFIlePath:
+					print "lele"
+					print proteinFIlePath
+					print outputFIlePath
+					newFile=os.path.join(outputFIlePath,namefile+".fasta")
 					listfiles.append(newFile)
 					with open(newFile, "wb") as f:
 						f.write(">1\n"+contig.seq+"\n")
@@ -378,7 +391,12 @@ def main():
 	if proteinFIlePath and outputFIlePath:
 		with open(outputFIlePath, "wb") as f:
 			f.write(concatenatedFile)
-	
+	elif not proteinFIlePath and outputFIlePath:
+		get_Short(listfiles)
+		print "\nRemoved %s with a high similarity (BSR>0.6)" % str(removedparalogs)
+		print "Total of %s loci that constitute the schema" % str(rest)
+		os.remove(proteinfile)
+		
 	#create short folder
 	else:
 		#with open("schemacreation.log", "wb") as f:

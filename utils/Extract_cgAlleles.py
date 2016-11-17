@@ -66,8 +66,6 @@ def presAbs (d3,listgenomesRemove):
 	
 	with open ("presence.txt","wb") as f:
 		
-		f.write('\t'.join(geneslist[0]))
-
 		writer = csv.writer(f,delimiter='	')
 		writer.writerows(d2d)
 		

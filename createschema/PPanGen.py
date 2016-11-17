@@ -453,12 +453,12 @@ def main():
 		if len(listOfGenomes)==1:
 			print "Creating the schema"
 			lastFile=listOfGenomes.pop()
-			proc = subprocess.Popen(['/home/msilva/chewBBACA/createschema/CreateSchema.py', '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath],stdout=subprocess.PIPE)
+			proc = subprocess.Popen(['/home/msilva/chewBBACA/createschema/CreateSchema.py', '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath,"-o",outputFile],stdout=subprocess.PIPE)
 			p_status = proc.wait()
 			print "Schema Created sucessfully"
 
 	
-	#shutil.rmtree(basepath)		
+	shutil.rmtree(basepath)		
 	
 	print (starttime)
 	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
