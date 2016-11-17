@@ -31,7 +31,7 @@ def which(program):
 	
 	
 
-def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp):
+def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPath):
 	
 	pathForTemp=os.path.join(basepath,newName)
 	if not os.path.exists(pathForTemp):
@@ -235,7 +235,7 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp):
 		#sadasd
 		# run createschema
 		print "running blast will use this number of cpu: "+str(cpu)
-		proc = subprocess.Popen(['/home/msilva/chewBBACA/createschema/CreateSchema.py', '-i', fastaFile,'-l', "200",'--cpu', str(cpu),'-p', proteinFile, '-o', fastaFile, "-b", blastp],stdout=subprocess.PIPE)
+		proc = subprocess.Popen([createSchemaPath, '-i', fastaFile,'-l', "200",'--cpu', str(cpu),'-p', proteinFile, '-o', fastaFile, "-b", blastp],stdout=subprocess.PIPE)
 		p_status = proc.wait()
 		print "finished blast"
 		
@@ -387,7 +387,9 @@ def main():
 		print "All prodigal files necessary were created\n"
 		
 	print ("Finishing Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-
+	
+	createSchemaPath= os.path.join(os.path.dirname(os.path.abspath(__file__)),'CreateSchema.py')
+	
 
 	#---CDS to protein---#
 			
@@ -443,7 +445,7 @@ def main():
 			listOfGenomes.append(pathFornewgGenome)
 			extraCpuPerProcess=extraCpu/numberOfPairs
 			print "running analysis for pair : "+str(v[0])+" "+str(v[1])
-			pool.apply_async(checkGeneStrings,args=[v[0],v[1],newgGenome,basepath,extraCpuPerProcess+1,BlastpPath])
+			pool.apply_async(checkGeneStrings,args=[v[0],v[1],newgGenome,basepath,extraCpuPerProcess+1,BlastpPath,createSchemaPath])
 			
 		
 		pool.close()
@@ -453,7 +455,7 @@ def main():
 		if len(listOfGenomes)==1:
 			print "Creating the schema"
 			lastFile=listOfGenomes.pop()
-			proc = subprocess.Popen(['/home/msilva/chewBBACA/createschema/CreateSchema.py', '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath,"-o",outputFile],stdout=subprocess.PIPE)
+			proc = subprocess.Popen([createSchemaPath, '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath,"-o",outputFile],stdout=subprocess.PIPE)
 			p_status = proc.wait()
 			print "Schema Created sucessfully"
 
