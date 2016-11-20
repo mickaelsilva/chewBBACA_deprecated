@@ -8,7 +8,7 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt
 import Counter
 import time
-
+matplotlib.use('Agg')
 
 def presAbs (d2c):	
 

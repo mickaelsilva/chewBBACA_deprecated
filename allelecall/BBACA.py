@@ -28,6 +28,53 @@ def which(program):
 
     return "Not found"
 
+def prepGenomes(genomeFile,basepath):
+	
+	listOfCDS={}
+	genomeProts=""
+	currentCDSDict = {}
+	currentGenomeDict = {}
+	filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF.txt")
+	with open(filepath,'rb') as f:
+		currentCDSDict = pickle.load(f)
+		
+	g_fp = HTSeq.FastaReader( genomeFile )
+	for contig in g_fp:
+		sequence=str(contig.seq)
+		currentGenomeDict[ contig.name ] = sequence
+	
+	j=0
+	for contigTag,value in currentCDSDict.iteritems():
+
+		for protein in value:
+			try:
+				seq= currentGenomeDict[ contigTag ][ protein[0]:protein[1] ].upper()
+				protseq=translateSeq(seq)
+				j+=1
+				idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[0])+"-"+str(protein[1])
+				genomeProts+=idstr+"\n"
+				listOfCDS[idstr]=seq
+				genomeProts+=str(protseq)+"\n"
+				
+			except Exception as e:
+				print str(e)+" "+str(genomeFile)
+				pass
+
+	filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
+	with open(filepath, 'wb') as f:
+		var = listOfCDS
+		pickle.dump(var, f)
+	listOfCDS=''
+
+	filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
+	with open(filepath, 'wb') as f:
+		f.write(genomeProts)
+	genomeProts=''
+	var=''
+	currentGenomeDict=''
+	currentCDSDict=''
+
+	return True
 
 def reverseComplement(strDNA):
 
@@ -297,50 +344,15 @@ def main():
 		#---CDS to protein---#
 				
 		#translate the genome CDSs, load them into dictionaries and fasta files to be used further ahead
+		
+		print "Translating genomes"
+		pool = multiprocessing.Pool(cpuToUse)
 		for genomeFile in listOfGenomes:
-			listOfCDS={}
-			genomeProts=""
-			currentCDSDict = {}
-			currentGenomeDict = {}
-			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF.txt")
-			with open(filepath,'rb') as f:
-				currentCDSDict = pickle.load(f)
-				
-			g_fp = HTSeq.FastaReader( genomeFile )
-			for contig in g_fp:
-				sequence=str(contig.seq)
-				currentGenomeDict[ contig.name ] = sequence
 			
-			j=0
-			for contigTag,value in currentCDSDict.iteritems():
-
-				for protein in value:
-					try:
-						seq= currentGenomeDict[ contigTag ][ protein[0]:protein[1] ].upper()
-						protseq=translateSeq(seq)
-						j+=1
-						idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[0])+"-"+str(protein[1])
-						genomeProts+=idstr+"\n"
-						listOfCDS[idstr]=seq
-						genomeProts+=str(protseq)+"\n"
-						
-					except Exception as e:
-						print str(e)+" "+str(genomeFile)
-						pass
-
-			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
-			with open(filepath, 'wb') as f:
-				var = listOfCDS
-				pickle.dump(var, f)
-			listOfCDS=''
-
-			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
-			with open(filepath, 'wb') as f:
-				f.write(genomeProts)
-			genomeProts=''
-			var=''
-			currentGenomeDict=''
-			currentCDSDict=''
+			pool.apply_async(prepGenomes,args=[str(genomeFile),basepath])
+		pool.close()
+		pool.join()
+		
 		
 		print ("Starting Genome Blast Db creation at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
