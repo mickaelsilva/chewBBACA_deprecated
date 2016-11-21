@@ -453,7 +453,7 @@ def main():
 		print "finished running pair analysis"
 		
 		if len(listOfGenomes)==1:
-			print "Creating the schema"
+			print "___________________\nFinal step : creating the schema"
 			lastFile=listOfGenomes.pop()
 			proc = subprocess.Popen([createSchemaPath, '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath,"-o",outputFile])
 			p_status = proc.wait()
