@@ -455,7 +455,7 @@ def main():
 		if len(listOfGenomes)==1:
 			print "Creating the schema"
 			lastFile=listOfGenomes.pop()
-			proc = subprocess.Popen([createSchemaPath, '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath,"-o",outputFile],stdout=subprocess.PIPE)
+			proc = subprocess.Popen([createSchemaPath, '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath,"-o",outputFile])
 			p_status = proc.wait()
 			print "Schema Created sucessfully"
 
