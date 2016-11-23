@@ -360,6 +360,7 @@ def main():
 			if int(len(contig.seq))>sizethresh:
 				namefile=contig.name
 				namefile=namefile.replace("|","_")
+				namefile=namefile.replace("_","-")
 				
 				if not proteinFIlePath and not outputFIlePath:
 					newFile=os.path.join(schema_folder_path,namefile+".fasta")

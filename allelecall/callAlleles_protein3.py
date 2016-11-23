@@ -213,7 +213,7 @@ def main():
 	argumentList=[]
 	with open(input_file,'rb') as f:
 		argumentList = pickle.load(f)
-	warnings.filterwarnings('ignore')
+	#warnings.filterwarnings('ignore')
 	
 	if verbose:
 		def verboseprint(*args):
@@ -306,30 +306,65 @@ def main():
 			sequence=str(contig.seq)
 			currentGenomeDict[ contig.name ] = sequence
 		sequence=''
-
 		
+		
+		#create a dictionary with cds length, for future comparing only the alleles with cds of same size (FASTER)
+		dictCDSLen={}
+		for contigTag,value in currentCDSDict.iteritems():
+			lengthofCDS=len(value)
+			try:
+				dictCDSLen[lengthofCDS].append(contigTag)
+			except:
+				dictCDSLen[lengthofCDS]=[contigTag]
+
 		#check if any CDS is completely equal to an allele without blast -FASTER
 		try:
+			equalmatches=False
+			reverse=False
 			for alleleAux in fullAlleleList:
-				for k,cds in currentCDSDict.items():
-					if str(alleleAux) == str(cds):
-						################################################
-						# EXACT MATCH --- MATCH == GENE --- GENE FOUND #
-						################################################
-						contigname=k.split("&")
-						matchLocation=contigname[2]	
+				lengthofAllele=len(alleleAux)
+				#get list of all CDS with same size as the allele
+				if lengthofAllele in dictCDSLen.keys():
+					tempList=dictCDSLen[lengthofAllele]
+					#only compare the CDS with same size instead of all CDS
+					for elem in tempList:
+						cds=currentCDSDict[elem]
+						try:
+							reversedcds=reverseComplement(cds)
+						except:
+							reversedcds=''
+						if reversedcds=='':
+							pass
+						elif str(alleleAux) == str(cds):
+							equalmatches=True
+						elif str(alleleAux) == str(reversedcds):
+							equalmatches=True
+							reverse=True
+						if equalmatches:
+							################################################
+							# EXACT MATCH --- MATCH == GENE --- GENE FOUND #
+							################################################
+							contigname=elem.split("&")
+							matchLocation=contigname[2]	
+							contigname=(contigname[0]).replace(">","")
+							
+							if reverse:
+								alleleMatchid=(int(fullAlleleList.index(reversedcds)))+1
+								perfectMatchIdAllele.append(str(alleleMatchid))
+								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"+")
+							else:
+								alleleMatchid=(int(fullAlleleList.index(cds)))+1
+								perfectMatchIdAllele.append(str(alleleMatchid))
+								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"-")
+							resultsList.append('EXC:' + str(alleleMatchid) )
+							raise ValueError("EQUAL")
 						
-						contigname=(contigname[0]).replace(">","")
-						alleleMatchid=(int(fullAlleleList.index(cds)))+1
-						
-						perfectMatchIdAllele.append(str(alleleMatchid))
-						perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"+")
-
-						resultsList.append('EXC:' + str(alleleMatchid) )
-						
-						raise ValueError("EQUAL")
+		
 		except Exception, e:
-
+			#~ exc_type, exc_obj, exc_tb = sys.exc_info()
+			#~ fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			#~ print(exc_tb.tb_lineno)
+			#~ print e
 			continue
 		
 		else:	
@@ -343,7 +378,7 @@ def main():
 			
 			
 			#blast the genome CDS against the translated locus
-			#	cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps_per_subject=10)
+			#cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps_per_subject=10)
 			#2.2.28 up
 			cline = NcbiblastpCommandline(cmd=blastPath, query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps=10)
 
@@ -355,7 +390,7 @@ def main():
 			for allele in fullAlleleList:
 				alleleSizes.append(len(allele))
 			
-			biggestSizeAllele=0
+			biggestSizeAllele=max(alleleSizes)
 			
 			#get mode allele size
 			moda=max(set(alleleSizes), key=alleleSizes.count)
@@ -386,54 +421,54 @@ def main():
 							DNAstr=str(currentCDSDict[">"+cdsStrName])
 
 							AlleleDNAstr=alleleList[int(alleleMatchid)-1]
-							if len(AlleleDNAstr)>biggestSizeAllele:
-								biggestSizeAllele=len(AlleleDNAstr)
-								
-							compare=False
-							
-							#check if DNA sequence is already defined as an allele
-							
-							
-							
+
+			
 							if scoreRatio>0.6:
 								locationcontigs.append(cdsStrName)
 								
-								if DNAstr in fullAlleleList:
-									compare=True
-									alleleMatchid=(int(fullAlleleList.index(DNAstr)))+1
-								
-								else:
-									try:
-										DNAstr=reverseComplement(DNAstr)
-										if DNAstr in fullAlleleList:
-											compare=True
-											alleleMatchid=(int(fullAlleleList.index(DNAstr)))+1
-									except:
-										#some ambiguous base found cant reversecomplement it
-										continue
-								
+							#~ if DNAstr in fullAlleleList:
+									#~ print match
+									#~ compare=True
+									#~ alleleMatchid=(int(fullAlleleList.index(DNAstr)))+1
+								#~ 
+								#~ else:
+									#~ try:
+										#~ DNAstr=reverseComplement(DNAstr)
+										#~ if DNAstr in fullAlleleList:
+											#~ compare=True
+											#~ alleleMatchid=(int(fullAlleleList.index(DNAstr)))+1
+									#~ except:
+										#~ #some ambiguous base found cant reversecomplement it
+										#~ continue
+							#~ if compare:
+								#~ print genomeFile
+								#~ raise ValueError("wtffff")
+							#~ 
+							#~ notCDS=False
+							#~ try:
+								#~ protseq=translateSeq(DNAstr)
+							#~ except:
+								#~ notCDS=True
+							#~ if notCDS:
+								#~ pass
 							
-							notCDS=False
-							try:
-								protseq=translateSeq(DNAstr)
-							except:
-								notCDS=True
-							if notCDS:
-								pass
+							#~ elif(compare is True):
+								#~ bestmatch=[match.score,1,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr),AlleleDNAstr]
+							#~ 
+							#~ elif(scoreRatio == 1 and bestmatch[2] is False and compare is True):
+								#~ bestmatch=[match.score,scoreRatio,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
+#~ 
+							#~ elif(scoreRatio == 1 and match.score>bestmatch[0] and compare is True and bestmatch[2] is False):
+								#~ bestmatch=[match.score,scoreRatio,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
+#~ 
+							#~ elif(scoreRatio == 1 and bestmatch[2] is False and compare is False):
+								#~ bestmatch=[match.score,scoreRatio,False,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
 							
-							elif(compare is True):
-								bestmatch=[match.score,1,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr),AlleleDNAstr]
+							#elif(scoreRatio == 1 and match.score>bestmatch[0] and compare is False):
 							
-							elif(scoreRatio == 1 and bestmatch[2] is False and compare is True):
-								bestmatch=[match.score,scoreRatio,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
-
-							elif(scoreRatio == 1 and match.score>bestmatch[0] and compare is True and bestmatch[2] is False):
-								bestmatch=[match.score,scoreRatio,True,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
-
-							elif(scoreRatio == 1 and bestmatch[2] is False and compare is False):
-								bestmatch=[match.score,scoreRatio,False,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
+							#select the best match from BLAST results
 							
-							elif(scoreRatio == 1 and match.score>bestmatch[0] and compare is False):
+							if(scoreRatio == 1 and match.score>bestmatch[0]):
 								bestmatch=[match.score,scoreRatio,False,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
 
 							elif(match.score>bestmatch[0] and scoreRatio>0.6 and scoreRatio>bestmatch[1] and bestmatch[2] is False):
@@ -482,92 +517,93 @@ def main():
 					
 				
 				#in case the DNA match sequence equal to the DNA sequence of the comparing allele
-				elif bestmatch[2] is True:
-					contigname=bestmatch[3]	
-					
-					contigname=contigname.split("&")
-					matchLocation=contigname[2]	
-					contigname=contigname[0]	
-					protSeq,alleleStr,Reversed=translateSeq(alleleStr)
-					
-
-					#check for possible locus on tip
-					match=bestmatch[5]
-					matchLocation2=matchLocation.split("-")			
-					seq=currentGenomeDict[ contigname ]
-					bestMatchContigLen=len(seq)
-					seq=''
-					
-					rightmatchContig=bestMatchContigLen-int(matchLocation2[1])	
-					leftmatchContig=int(matchLocation2[0])
-					
-					if Reversed:
-						aux=rightmatchContig
-						rightmatchContig=leftmatchContig
-						leftmatchContig=aux
-					
-					
-					
-					
-					
-					# get extra space to the right and left between the allele and match
-					
-					possibleExtra=int(moda)-((int(match.query_end)*3)-(int(match.query_start)*3))
-					
-					if possibleExtra<0:
-						perfectMatchIdAllele.append(str(bestmatch[4]))
-						if not Reversed:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"+")
-						else:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"-")
-						resultsList.append('EXC:' + str(bestmatch[4]) )
-					
-					else:	
-						rightmatchAllele=possibleExtra
-						leftmatchAllele=possibleExtra
-						
-						if leftmatchContig<leftmatchAllele and 	rightmatchContig < rightmatchAllele:
-					
-							resultsList.append('PLOTSC:-1')
-							perfectMatchIdAllele.append('PLOTSC')
-							perfectMatchIdAllele2.append('PLOTSC')
-
-							verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly bigger than the contig \n")
-							
-						
-						elif leftmatchContig<leftmatchAllele:
-							
-							
-							resultsList.append('PLOT3:-1')
-							perfectMatchIdAllele.append('PLOT3')
-							perfectMatchIdAllele2.append('PLOT3')
-							
-							verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly on the 3' tip of the contig \n")
-							
-							
-						
-						elif 	rightmatchContig < rightmatchAllele:
-							
-							resultsList.append('PLOT5:-1')
-							perfectMatchIdAllele.append('PLOT5')
-							perfectMatchIdAllele2.append('PLOT5')
-							
-							verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly on the 5' tip of the contig \n")
-			
-					
-						else:
-							#if a perfect match was found
-									
-							################################################
-							# EXACT MATCH --- MATCH == GENE --- GENE FOUND #
-							################################################
-									
-							perfectMatchIdAllele.append(str(bestmatch[4]))
-							if not Reversed:
-								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"+")
-							else:
-								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"-")
-							resultsList.append('EXC:' + str(bestmatch[4]) )
+				#~ elif bestmatch[2] is True:
+					#~ contigname=bestmatch[3]	
+					#~ 
+					#~ contigname=contigname.split("&")
+					#~ matchLocation=contigname[2]	
+					#~ contigname=contigname[0]	
+					#~ protSeq,alleleStr,Reversed=translateSeq(alleleStr)
+					#~ 
+#~ 
+					#~ #check for possible locus on tip
+					#~ match=bestmatch[5]
+					#~ matchLocation2=matchLocation.split("-")			
+					#~ seq=currentGenomeDict[ contigname ]
+					#~ bestMatchContigLen=len(seq)
+					#~ seq=''
+					#~ 
+					#~ rightmatchContig=bestMatchContigLen-int(matchLocation2[1])	
+					#~ leftmatchContig=int(matchLocation2[0])
+					#~ 
+					#~ if Reversed:
+						#~ aux=rightmatchContig
+						#~ rightmatchContig=leftmatchContig
+						#~ leftmatchContig=aux
+					#~ 
+					#~ 
+					#~ 
+					#~ 
+					#~ 
+					#~ # get extra space to the right and left between the allele and match
+					#~ 
+					#~ possibleExtra=int(moda)-((int(match.query_end)*3)-(int(match.query_start)*3))
+					#~ 
+					#~ if possibleExtra<0:
+						#~ perfectMatchIdAllele.append(str(bestmatch[4]))
+						#~ if not Reversed:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"+")
+						#~ else:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"-")
+						#~ resultsList.append('EXC:' + str(bestmatch[4]) )
+					#~ 
+					#~ else:	
+						#~ rightmatchAllele=possibleExtra
+						#~ leftmatchAllele=possibleExtra
+						#~ print bestmatch
+						#~ if leftmatchContig<leftmatchAllele and 	rightmatchContig < rightmatchAllele:
+					#~ 
+							#~ resultsList.append('PLOTSC:-1')
+							#~ perfectMatchIdAllele.append('PLOTSC')
+							#~ perfectMatchIdAllele2.append('PLOTSC')
+#~ 
+							#~ verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly bigger than the contig \n")
+							#~ 
+						#~ 
+						#~ elif leftmatchContig<leftmatchAllele:
+							#~ 
+							#~ 
+							#~ resultsList.append('PLOT3:-1')
+							#~ perfectMatchIdAllele.append('PLOT3')
+							#~ perfectMatchIdAllele2.append('PLOT3')
+							#~ 
+							#~ verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly on the 3' tip of the contig \n")
+							#~ 
+							#~ 
+						#~ 
+						#~ elif 	rightmatchContig < rightmatchAllele:
+							#~ 
+							#~ resultsList.append('PLOT5:-1')
+							#~ perfectMatchIdAllele.append('PLOT5')
+							#~ perfectMatchIdAllele2.append('PLOT5')
+							#~ 
+							#~ verboseprint(match, "contig extras (l,r)",leftmatchContig,rightmatchContig,"allele extras (l,r)",leftmatchAllele,rightmatchAllele,"Locus is possibly on the 5' tip of the contig \n")
+			#~ 
+					#~ 
+						#~ else:
+							#~ #if a perfect match was found
+							#~ print 	genomeFile
+							#~ print 	geneFile
+							#~ ################################################
+							#~ # EXACT MATCH --- MATCH == GENE --- GENE FOUND #
+							#~ ################################################
+									#~ 
+							#~ perfectMatchIdAllele.append(str(bestmatch[4]))
+							#~ if not Reversed:
+								#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"+")
+							#~ else:
+								#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"-")
+							#~ resultsList.append('EXC:' + str(bestmatch[4]) )"""
 
 				
 				# if match with BSR >0.6 and not equal DNA sequences
@@ -592,6 +628,7 @@ def main():
 					
 					rightmatchContig=bestMatchContigLen-int(matchLocation[1])	
 					leftmatchContig=int(matchLocation[0])
+					
 					
 					if Reversed:
 						aux=rightmatchContig

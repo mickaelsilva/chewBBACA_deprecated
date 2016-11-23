@@ -9,7 +9,6 @@ import pickle
 import shutil
 import multiprocessing
 import subprocess
-import copy
 
 def which(program):
     import os
@@ -78,7 +77,6 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPat
 			except:
 				for k,v in currentGenomeDict.iteritems():
 					currentCDSDict[k]=[[v]]
-				#currentCDSDict=copy.deepcopy(currentGenomeDict)
 			
 			j=0
 			
@@ -89,14 +87,12 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPat
 				for protein in value:
 					protid+=1
 					
-					#print protein
 					#at first iteration we use the genome file and after a cds only multifasta file
 					try:
 						seq= currentGenomeDict[ contigTag ][ protein[0]:protein[1] ].upper()
 					
 					except Exception as e:
-						#print contigTag
-						#print protein
+
 						seq=str(protein[0])
 						
 					try:	
@@ -108,7 +104,7 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPat
 					#check if any protein with size on dict
 					
 					try:
-						#print len(protseq)
+
 						if len(str(protseq))<67:
 							smallProteins+=1
 							pass
@@ -194,8 +190,7 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPat
 		
 		for elem in auxlist:
 			counter+=1
-			#print "processing "+str(counter)+" out of "+str(len(auxlist))
-			#print auxprotlist
+
 			for protid in dictprotsLen[elem]:
 				str2=str(dictprots[protid])
 				
@@ -216,7 +211,6 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPat
 						finalnumber+=1
 						auxprotlist.append(str2)
 				except Exception as e:
-					#print "first element added"
 					str1=dictprotsName[protid]
 					genomeProtsTrans+=str1+"\n"+str2+"\n"
 					finalnumber+=1
@@ -232,8 +226,7 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPat
 			f.write(genomeProtsTrans)
 		
 
-		#sadasd
-		# run createschema
+		# run createschema for the final protogenome
 		print "running blast will use this number of cpu: "+str(cpu)
 		proc = subprocess.Popen([createSchemaPath, '-i', fastaFile,'-l', "200",'--cpu', str(cpu),'-p', proteinFile, '-o', fastaFile, "-b", blastp],stdout=subprocess.PIPE)
 		p_status = proc.wait()
