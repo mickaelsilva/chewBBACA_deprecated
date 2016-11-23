@@ -87,6 +87,7 @@ In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for
 ----------
 
 ### 2. wgMLST schema creation
+
 #####Define your pan genome schema based on a set of genomes:
 `PPanGen.py -i listGenomes -o OutputFolderName --cpu 4`
 
@@ -99,8 +100,10 @@ In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for
 
 **Outputs:** 
 
-One fasta file per gene in the `schema_seed/`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`. It will also create the necessary files for the allele call, by creating the directory named short. The contents of this dir is already explained in the folder structure subsection.
+One fasta file per gene in the `schema_seed/`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence.
+
 ----------
+
 #####Or create a wgMLST schema from a set of pre-determined annotated genomes. The command is the following:
 
 `CreateSchema.py -i allffnfile.fasta -l 200 --cpu 4`
