@@ -183,13 +183,14 @@ def main():
 	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=True)
 	parser.add_argument("-v", "--verbose", help="increase output verbosity",dest='verbose', action="store_true",default=False)
 	parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False,default='blastp')
-	
+	parser.add_argument('--bsr', nargs='?', type=float, help="BLAST full path", required=False,default=0.6)
 	
 	args = parser.parse_args()
 	
 	genomeFiles = args.i
 	genes = args.g
 	cpuToUse=args.cpu
+	BSRTresh=args.bsr
 	verbose=args.verbose
 	BlastpPath=args.b
 	divideOutput=False
@@ -388,7 +389,7 @@ def main():
 	pool = multiprocessing.Pool(cpuToUse)
 	for argList in argumentsList:
 		
-		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"callAlleles_protein3.py"),str(argList),basepath,str(BlastpPath),str(verbose)],))
+		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"callAlleles_protein3.py"),str(argList),basepath,str(BlastpPath),str(verbose),str(BSRTresh)],))
 
 	pool.close()
 	pool.join()
@@ -470,8 +471,8 @@ def main():
 		genome=0
 		
 		genesHeader="FILE"+ "\t"+('\t'.join(map(str,genesnames)))
-		#finalphylovinput+=genesHeader
-		#finalphylovinput2+=genesHeader
+		finalphylovinput+=genesHeader
+		finalphylovinput2+=genesHeader
 		
 		if divideOutput:
 			allelesDict={}

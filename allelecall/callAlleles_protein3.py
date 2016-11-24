@@ -198,6 +198,7 @@ def main():
 		temppath = sys.argv[2]
 		blastPath= sys.argv[3]
 		verbose= sys.argv[4]
+		bsrTresh= sys.argv[5]
 		
 		if verbose == 'True':
 			verbose=True
@@ -207,7 +208,7 @@ def main():
 	except IndexError:
 		print "Error starting the callAlleleles_protein3 script. usage: list_pickle_obj"
 	
-	
+	bsrTresh=float(bsrTresh)
 	
 	argumentList=[]
 	with open(input_file,'rb') as f:
@@ -422,7 +423,7 @@ def main():
 							AlleleDNAstr=alleleList[int(alleleMatchid)-1]
 
 			
-							if scoreRatio>0.6:
+							if scoreRatio>=bsrTresh:
 								locationcontigs.append(cdsStrName)
 								
 							#~ if DNAstr in fullAlleleList:
@@ -470,7 +471,7 @@ def main():
 							if(scoreRatio == 1 and match.score>bestmatch[0]):
 								bestmatch=[match.score,scoreRatio,False,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
 
-							elif(match.score>bestmatch[0] and scoreRatio>0.6 and scoreRatio>bestmatch[1] and bestmatch[2] is False):
+							elif(match.score>bestmatch[0] and scoreRatio>=bsrTresh and scoreRatio>bestmatch[1] and bestmatch[2] is False):
 								bestmatch=[match.score,scoreRatio,False,cdsStrName,int(alleleMatchid),match,len(AlleleDNAstr)]
 								
 											
@@ -725,7 +726,7 @@ def main():
 						fG.close()
 						fullAlleleList.append(alleleStr)
 						
-						if bestmatch[1]>0.6 and bestmatch[1]<0.7:
+						if bestmatch[1]>=bsrTresh and bestmatch[1]<bsrTresh+0.1:
 							fG = open( shortgeneFile, 'a' )
 							fG.write(appendAllele)
 							fG.write( alleleStr + '\n')
