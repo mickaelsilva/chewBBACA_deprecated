@@ -471,8 +471,8 @@ def main():
 		genome=0
 		
 		genesHeader="FILE"+ "\t"+('\t'.join(map(str,genesnames)))
-		finalphylovinput+=genesHeader
-		finalphylovinput2+=genesHeader
+		finalphylovinput=genesHeader
+		finalphylovinput2=genesHeader
 		
 		if divideOutput:
 			allelesDict={}
