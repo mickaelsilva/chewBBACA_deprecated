@@ -141,7 +141,6 @@ def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blas
 
 	var=[alleleI,allelescores2]
 	with open(picklepath,'wb') as f:
-		#currentCDSDict = pickle.dump(var, f)
 		pickle.dump(var, f)
 	
 	return allelescores2,alleleList2
@@ -274,7 +273,7 @@ def main():
 
 	geneScorePickle=os.path.abspath(shortgeneFile)+'_bsr.txt'
 	
-	#check if bsr as arealdy been calculated and recalculate it
+	#check if bsr as arealdy been calculated and recalculate it if necessary
 
 	if os.path.isfile(geneScorePickle) :
 		

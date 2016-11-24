@@ -192,6 +192,8 @@ def main():
 	cpuToUse=args.cpu
 	verbose=args.verbose
 	BlastpPath=args.b
+	divideOutput=False
+	gOutFile = args.o
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
 	if cpuToUse > multiprocessing.cpu_count()-2:
@@ -252,8 +254,8 @@ def main():
 			gene = gene.rstrip('\r')
 			lGenesFiles.append( gene )
 	
-	first_gene = first_gene.rstrip('\n')
-	first_gene = first_gene.rstrip('\r')
+	#create temp folder inside the folder where the first gene is located
+	first_gene = lGenesFiles[0]
 	genepath=os.path.dirname(first_gene)
 	basepath=os.path.join(genepath, "temp")
 	testVar=""
@@ -397,22 +399,18 @@ def main():
 	print ("Wrapping up the results")
 	
 	output=[]
+	output2=[]
 	for gene in lGenesFiles:
 		filepath=os.path.join(basepath, os.path.basename(gene)+"_result.txt")
+		filepath2=os.path.join(basepath, os.path.basename(gene)+"_result2.txt")
 		with open(filepath,'rb') as f:
 			var = pickle.load(f)
 			output.append(var)
-	
-	output2=[]
-	for gene in lGenesFiles:
-		filepath2=os.path.join(basepath, os.path.basename(gene)+"_result2.txt")
 		with open(filepath2,'rb') as f:
 			var = pickle.load(f)
 			output2.append(var)
-
-
 	
-
+		
 	#delete all temp files
 	shutil.rmtree(basepath)
 	
@@ -470,17 +468,20 @@ def main():
 			phylovout2.append(alleleschema)
 
 		genome=0
-		finalphylovinput= "FILE"+ "\t" 
-		finalphylovinput2= "FILE"+ "\t" 
 		
-		finalphylovinput+=('\t'.join(map(str,genesnames)))
-		finalphylovinput2+=('\t'.join(map(str,genesnames)))
+		genesHeader="FILE"+ "\t"+('\t'.join(map(str,genesnames)))
+		#finalphylovinput+=genesHeader
+		#finalphylovinput2+=genesHeader
 		
+		if divideOutput:
+			allelesDict={}
+			contigDict={}
+			statsDict={}
 		
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = os.path.basename(listOfGenomes[genome])
-			statsaux=[0]*8 # EXC INF LNF LOT incomplete SAC
+			statsaux=[0]*8 # EXC INF LNF LOT PLOT NIPL ALM ASM
 			finalphylovinput+= "\n" + currentGenome + "\t"
 			for gene in phylovout:
 				
@@ -503,6 +504,8 @@ def main():
 				else:
 					statsaux[0]+=1
 			
+			if divideOutput:
+				allelesDict[currentGenome]=('\t'.join(map(str,auxList)))	
 			finalphylovinput+=('\t'.join(map(str,auxList)))	
 			genome+=1
 			statistics.append(statsaux)
@@ -517,22 +520,26 @@ def main():
 				val= str(gene[genome])
 				auxList.append(val)
 			
+			if divideOutput:
+				contigDict[currentGenome]=('\t'.join(map(str,auxList)))	
 			finalphylovinput2+=('\t'.join(map(str,auxList)))	
 			genome+=1
 				
 			
 		
-		gOutFile = args.o
+		
 		statswrite='Genome\tEXC\tINF\tLNF\tLOT\tPLOT\tNIPL\tALM\tASM'
 		genome=0
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = os.path.basename(listOfGenomes[genome])
-			statsaux=[0]*8 # EXC NA INF LNF LOT incomplete SAC
+			statsaux=[0]*8 # EXC INF LNF LOT PLOT NIPL ALM ASM
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[genome]:
 				auxList.append(str(k))
 			
+			if divideOutput:
+				statsDict[currentGenome]=('\t'.join(map(str,auxList)))	
 			statswrite+=('\t'.join(map(str,auxList)))	
 			genome+=1
 		
@@ -540,21 +547,25 @@ def main():
 		outputfolder= os.path.join(outputpath,str(gOutFile)+"_"+str(time.strftime("%Y%m%dT%H%M%S")) )
 		os.makedirs(outputfolder)
 		
-		with open(os.path.join(outputfolder,gOutFile+"_alleles.txt"), 'wb') as f:
-			f.write(finalphylovinput)
+		if not divideOutput:
+			with open(os.path.join(outputfolder,gOutFile+"_alleles.txt"), 'wb') as f:
+				f.write(genesHeader)
+				f.write(finalphylovinput)
+				
+			print statswrite	
+			with open(os.path.join(outputfolder,gOutFile+"_statistics.txt"), 'wb') as f:
+				f.write(genesHeader)
+				f.write(str(statswrite))
+				f.write("\n_________________________________________\n")
+				f.write(starttime)
+				f.write("\nFinished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+				f.write("\nnumber of genomes: "+str(len(listOfGenomes)))
+				f.write("\nnumber of loci: "+str(len(lGenesFiles)))
+				f.write ("\nused this number of cpus: "+str(cpuToUse))
 			
-		print statswrite	
-		with open(os.path.join(outputfolder,gOutFile+"_statistics.txt"), 'wb') as f:
-			f.write(str(statswrite))
-			f.write("\n_________________________________________\n")
-			f.write(starttime)
-			f.write("\nFinished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-			f.write("\nnumber of genomes: "+str(len(listOfGenomes)))
-			f.write("\nnumber of loci: "+str(len(lGenesFiles)))
-			f.write ("\nused this number of cpus: "+str(cpuToUse))
-		
-		with open(os.path.join(outputfolder,gOutFile+"_contigsInfo.txt"), 'wb') as f:
-			f.write(str(finalphylovinput2))
+			with open(os.path.join(outputfolder,gOutFile+"_contigsInfo.txt"), 'wb') as f:
+				f.write(genesHeader)
+				f.write(str(finalphylovinput2))
 			
 	except Exception as e:
 		print e
