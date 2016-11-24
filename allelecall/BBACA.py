@@ -482,7 +482,7 @@ def main():
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = os.path.basename(listOfGenomes[genome])
-			statsaux=[0]*8 # EXC INF LNF LOT PLOT NIPL ALM ASM
+			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
 			finalphylovinput+= "\n" + currentGenome + "\t"
 			for gene in phylovout:
 				
@@ -493,15 +493,13 @@ def main():
 				elif "LNF" in val:
 					statsaux[2]+=1
 				elif "PLOT" in val:
-					statsaux[4]+=1
-				elif "LOT" in val:
-					statsaux[3]+=1 
+					statsaux[3]+=1
 				elif "NIPL" in val:
-					statsaux[5]+=1
+					statsaux[4]+=1
 				elif "ALM" in val:
-					statsaux[6]+=1
+					statsaux[5]+=1
 				elif "ASM" in val:
-					statsaux[7]+=1
+					statsaux[6]+=1
 				else:
 					statsaux[0]+=1
 			
@@ -529,12 +527,12 @@ def main():
 			
 		
 		
-		statswrite='Genome\tEXC\tINF\tLNF\tLOT\tPLOT\tNIPL\tALM\tASM'
+		statswrite='Genome\tEXC\tINF\tLNF\tPLOT\tNIPL\tALM\tASM'
 		genome=0
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = os.path.basename(listOfGenomes[genome])
-			statsaux=[0]*8 # EXC INF LNF LOT PLOT NIPL ALM ASM
+			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[genome]:
 				auxList.append(str(k))
@@ -555,7 +553,6 @@ def main():
 				
 			print statswrite	
 			with open(os.path.join(outputfolder,gOutFile+"_statistics.txt"), 'wb') as f:
-				f.write(genesHeader)
 				f.write(str(statswrite))
 				f.write("\n_________________________________________\n")
 				f.write(starttime)

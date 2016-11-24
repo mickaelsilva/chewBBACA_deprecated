@@ -651,7 +651,7 @@ def main():
 					#check if contig is smaller than the matched allele
 					if leftmatchContig<leftmatchAllele and 	rightmatchContig < rightmatchAllele:
 					
-						resultsList.append('LOTSC:-1')
+						resultsList.append('PLOTSC:-1')
 						perfectMatchIdAllele.append('LOTSC')
 						perfectMatchIdAllele2.append('LOTSC')
 						
@@ -663,18 +663,18 @@ def main():
 					elif leftmatchContig<leftmatchAllele:
 						
 						
-						resultsList.append('LOT3:-1')
-						perfectMatchIdAllele.append('LOT3')
-						perfectMatchIdAllele2.append('LOT3')
+						resultsList.append('PLOT3:-1')
+						perfectMatchIdAllele.append('PLOT3')
+						perfectMatchIdAllele2.append('PLOT3')
 						
 						verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 3' tip of the contig \n")
 						
 					
 					elif rightmatchContig < rightmatchAllele:
 						
-						resultsList.append('LOT5:-1')
-						perfectMatchIdAllele.append('LOT5')
-						perfectMatchIdAllele2.append('LOT5')
+						resultsList.append('PLOT5:-1')
+						perfectMatchIdAllele.append('PLOT5')
+						perfectMatchIdAllele2.append('PLOT5')
 						
 						verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 5' tip of the contig \n")
 						
