@@ -548,7 +548,6 @@ def main():
 		
 		if not divideOutput:
 			with open(os.path.join(outputfolder,gOutFile+"_alleles.txt"), 'wb') as f:
-				f.write(genesHeader)
 				f.write(finalphylovinput)
 				
 			print statswrite	
@@ -562,7 +561,6 @@ def main():
 				f.write ("\nused this number of cpus: "+str(cpuToUse))
 			
 			with open(os.path.join(outputfolder,gOutFile+"_contigsInfo.txt"), 'wb') as f:
-				f.write(genesHeader)
 				f.write(str(finalphylovinput2))
 			
 	except Exception as e:
