@@ -135,7 +135,7 @@ The second step is grouping all the genes by BLASTIng all the genes against each
 
 Having defined the wgMLST schema with one allele per locus, we can proceed to use it to call alleles on the target genomes.  The command is the following:
 
-	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 
+	% BBACA.py -i listGenomes.txt -g listGenes.txt -o Results --cpu 3 --bsr 0.9 --so -b /home/user/blast2.5.0/blastp -v
 
 **Parameters** 
 `-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
@@ -148,11 +148,16 @@ Having defined the wgMLST schema with one allele per locus, we can proceed to us
 
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
-`-b` Blastp full path(optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
+`-b` Blastp full path (optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
+
+`--bsr` BSR minimum value (optional). Default value is 0.6.
+
+`--so` Split output files by (optional). Default is all results concatenated.
+
 
 This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  
 
-`srun -c 62 --mem 250G BBACA.py -i listgenomes.txt -g listgenes.txt -o OutPrefix --cpu 62`
+`srun -c 62 --mem 50G BBACA.py -i listgenomes.txt -g listgenes.txt -o OutPrefix --cpu 62`
 
 **Note:** If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
 
@@ -166,17 +171,16 @@ This will use by default, number of CPUs available minus 2 and can be called in 
 An abridged example `./< outPrefix >_< datestamp>/< outPrefix >_statistics.txt` file:
 
 ```
-Stats:	EXC	INF	LNF	LOT	PLOT	NIPL	ALM	ASM
-NC_017162.fna	892	2319	1909	0	0	104	5	37	
-NC_011586.fna	1563	1697	1809	0	0	116	6	75	
+Stats:	EXC	INF	LNF	PLOT	NIPL	ALM	ASM
+NC_017162.fna	892	2319	1909	0	104	5	37	
+NC_011586.fna	1563	1697	1809	0	116	6	75	
 ```
 
 The column headers stand for:
 * EXC - allele has exact match (100% identity)
 * INF - infered allele with prodigal
 * LNF - locus not found
-* LOT - locus on the tip of the contig (partial match)
-* PLOT - possible locus on the tip of the contig (CDS match is on the tip of the contig and other alleles for the loci are large enough to be considered LOT- to be manualy curated)
+* PLOT - locus on the tip of the contig (partial match)
 * NIPL - Non informative paralogous locus . Two or more BLAST matches with BSR>0.6 for the protein, indicate that the locus could have paralogous and should be removed from the analysis. A high number of NIPL may also indicate a poor assembled genome, with a high number of smaller contigs.
 * ALM - allele 20% larger than locus size mode (match CDS lenght> locus mode length + locus mode length * 0.2)
 * ASM - allele 20% smaller than locus size mode (match CDS lenght < locus mode length - locus mode length * 0.2)

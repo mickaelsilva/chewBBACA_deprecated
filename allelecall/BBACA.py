@@ -183,7 +183,8 @@ def main():
 	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=True)
 	parser.add_argument("-v", "--verbose", help="increase output verbosity",dest='verbose', action="store_true",default=False)
 	parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False,default='blastp')
-	parser.add_argument('--bsr', nargs='?', type=float, help="BLAST full path", required=False,default=0.6)
+	parser.add_argument('--bsr', nargs='?', type=float, help="minimum BSR score", required=False,default=0.6)
+	parser.add_argument("--so", help="split the output per genome",dest='divideOutput', action="store_true",default=False)
 	
 	args = parser.parse_args()
 	
@@ -193,7 +194,7 @@ def main():
 	BSRTresh=args.bsr
 	verbose=args.verbose
 	BlastpPath=args.b
-	divideOutput=False
+	divideOutput=args.divideOutput
 	gOutFile = args.o
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
@@ -231,7 +232,7 @@ def main():
 	listOfCDSDicts = []
 	listOfGenomes = []
 	listOfGenomesDict = []
-
+	listOfGenomesBasename = []
 	
 	print "checking if genome files exist.."
 	with open(genomeFiles, 'r') as fp:
@@ -241,6 +242,7 @@ def main():
 			genomeFile = genomeFile.rstrip('\r')
 			if os.path.isfile(genomeFile):
 				listOfGenomes.append( genomeFile )
+				listOfGenomesBasename.append(os.path.basename(genomeFile) )
 			else:
 				print "File does not exist, will not be used : "+str(genomeFile)
 			genomeDict = {}
@@ -435,7 +437,7 @@ def main():
 				numberexactmatches+=1
 					
 	
-	print "\nused a bsr of : " +str(BSRTresh+"\n")			
+	print "\nused a bsr of : " +str(BSRTresh)+"\n"		
 	print "\n %s exact matches found out of %s" % (numberexactmatches,(len(output[0][0])*len(output)) )	
 	print "\n %s percent of exact matches \n##################################################" % (float((numberexactmatches*100)/(len(output[0][0])*len(output))) )	
 		
@@ -493,7 +495,7 @@ def main():
 		
 		while genome<len(listOfGenomes):
 			auxList=[]
-			currentGenome = os.path.basename(listOfGenomes[genome])
+			currentGenome = listOfGenomesBasename[genome]
 			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
 			finalphylovinput+= "\n" + currentGenome + "\t"
 			for gene in phylovout:
@@ -524,7 +526,7 @@ def main():
 		genome=0	
 		while genome<len(listOfGenomes):
 			auxList=[]
-			currentGenome = os.path.basename(listOfGenomes[genome])
+			currentGenome = listOfGenomesBasename[genome]
 			finalphylovinput2+= "\n" + currentGenome + "\t"
 			for gene in phylovout2:
 				
@@ -539,11 +541,12 @@ def main():
 			
 		
 		
-		statswrite='Genome\tEXC\tINF\tLNF\tPLOT\tNIPL\tALM\tASM'
+		statsHeader='Genome\tEXC\tINF\tLNF\tPLOT\tNIPL\tALM\tASM'
+		statswrite=statsHeader
 		genome=0
 		while genome<len(listOfGenomes):
 			auxList=[]
-			currentGenome = os.path.basename(listOfGenomes[genome])
+			currentGenome = listOfGenomesBasename[genome]
 			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[genome]:
@@ -557,12 +560,12 @@ def main():
 		outputpath=os.path.dirname(gOutFile)
 		outputfolder= os.path.join(outputpath,str(gOutFile)+"_"+str(time.strftime("%Y%m%dT%H%M%S")) )
 		os.makedirs(outputfolder)
-		
+		print statswrite
 		if not divideOutput:
 			with open(os.path.join(outputfolder,gOutFile+"_alleles.txt"), 'wb') as f:
 				f.write(finalphylovinput)
 				
-			print statswrite	
+				
 			with open(os.path.join(outputfolder,gOutFile+"_statistics.txt"), 'wb') as f:
 				f.write(str(statswrite))
 				f.write("\n_________________________________________\n")
@@ -575,7 +578,24 @@ def main():
 			
 			with open(os.path.join(outputfolder,gOutFile+"_contigsInfo.txt"), 'wb') as f:
 				f.write(str(finalphylovinput2))
-			
+		else:
+			for genome in listOfGenomesBasename:
+				currentGenome = os.path.splitext(genome)[0]
+				perGenomeFolder=os.path.join(outputfolder,currentGenome)
+				os.makedirs(perGenomeFolder)
+				with open(os.path.join(perGenomeFolder,currentGenome+"_statistics.txt"), 'wb') as f:
+					f.write(statsHeader+"\n")
+					f.write(genome)
+					f.write(statsDict[genome])
+				with open(os.path.join(perGenomeFolder,currentGenome+"_contigsInfo.txt"), 'wb') as f:
+					f.write(genesHeader+"\n")
+					f.write(genome)
+					f.write(contigDict[genome])
+				with open(os.path.join(perGenomeFolder,currentGenome+"_alleles.txt"), 'wb') as f:
+					f.write(genesHeader+"\n")
+					f.write(genome)
+					f.write(allelesDict[genome])
+				
 	except Exception as e:
 		print e
 		

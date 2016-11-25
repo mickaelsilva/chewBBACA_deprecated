@@ -11,7 +11,6 @@ from CommonFastaFunctions import runBlastParser
 import time
 import pickle
 import shutil
-import warnings
 
 def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 	
@@ -213,7 +212,6 @@ def main():
 	argumentList=[]
 	with open(input_file,'rb') as f:
 		argumentList = pickle.load(f)
-	#warnings.filterwarnings('ignore')
 	
 	if verbose:
 		def verboseprint(*args):

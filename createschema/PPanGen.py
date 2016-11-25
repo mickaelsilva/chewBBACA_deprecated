@@ -216,6 +216,11 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPat
 					finalnumber+=1
 					auxprotlist.append(str2)
 		
+		auxprotlist=[]
+		dictprots={}
+		dictprotsLen={}
+		dictprotsName={}
+		
 		print "number of contained proteins : " +str(contained)
 		print "total of loci to blast : "+str(finalnumber)
 		
@@ -224,7 +229,7 @@ def checkGeneStrings(genome1,genome2,newName,basepath,cpu,blastp,createSchemaPat
 		
 		with open(proteinFile, 'a') as f:
 			f.write(genomeProtsTrans)
-		
+		genomeProtsTrans=''
 
 		# run createschema for the final protogenome
 		print "running blast will use this number of cpu: "+str(cpu)
