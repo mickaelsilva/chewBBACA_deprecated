@@ -6,6 +6,8 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 
 This page was created with the dual purpose of serving as readme file and tutorial for the software.
 
+Use BBACA gitter at `https://gitter.im/BBACA/Lobby` for direct chat interaction.
+
 ## Tutorial contents
  
  1. Setting up the analysis  
