@@ -232,28 +232,40 @@ def main():
 	listOfGenomes = []
 	listOfGenomesDict = []
 
-	fp = open(genomeFiles, 'r')
+	
+	print "checking if genome files exist.."
+	with open(genomeFiles, 'r') as fp:
+		for genomeFile in fp:
 
-	for genomeFile in fp:
+			genomeFile = genomeFile.rstrip('\n')
+			genomeFile = genomeFile.rstrip('\r')
+			if os.path.isfile(genomeFile):
+				listOfGenomes.append( genomeFile )
+			else:
+				print "File does not exist, will not be used : "+str(genomeFile)
+			genomeDict = {}
 
-		genomeFile = genomeFile.rstrip('\n')
-		genomeFile = genomeFile.rstrip('\r')
-		listOfGenomes.append( genomeFile )
-		genomeDict = {}
-
-	fp.close()
+	
+	if len(listOfGenomes) ==0:
+			raise ValueError('ERROR! No usable genome files in '+str(genomeFiles))
 	
 	#check if remnant files from previous run exist, prompt user if exists to know if it's his run and want to continue or start a new one
-
-	with open(genes, 'r') as f:
-		first_gene = f.readline()
 	
 	lGenesFiles = []
+	
+	print "checking if gene files exist.."
 	with open(genes, 'r') as gene_fp:
 		for gene in gene_fp:
 			gene = gene.rstrip('\n')
 			gene = gene.rstrip('\r')
-			lGenesFiles.append( gene )
+			if os.path.isfile(gene):
+				lGenesFiles.append( gene )
+			else:
+				print "File does not exist, will not be used : "+str(gene)
+	
+	
+	if len(lGenesFiles) ==0:
+			raise ValueError('ERROR! No usable gene files in '+str(genes))
 	
 	#create temp folder inside the folder where the first gene is located
 	first_gene = lGenesFiles[0]
@@ -423,7 +435,7 @@ def main():
 				numberexactmatches+=1
 					
 	
-				
+	print "\nused a bsr of : " +str(BSRTresh+"\n")			
 	print "\n %s exact matches found out of %s" % (numberexactmatches,(len(output[0][0])*len(output)) )	
 	print "\n %s percent of exact matches \n##################################################" % (float((numberexactmatches*100)/(len(output[0][0])*len(output))) )	
 		
@@ -559,6 +571,7 @@ def main():
 				f.write("\nnumber of genomes: "+str(len(listOfGenomes)))
 				f.write("\nnumber of loci: "+str(len(lGenesFiles)))
 				f.write ("\nused this number of cpus: "+str(cpuToUse))
+				f.write("\nused a bsr of : " +str(BSRTresh))
 			
 			with open(os.path.join(outputfolder,gOutFile+"_contigsInfo.txt"), 'wb') as f:
 				f.write(str(finalphylovinput2))

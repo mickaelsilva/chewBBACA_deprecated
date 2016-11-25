@@ -308,7 +308,7 @@ def main():
 		sequence=''
 		
 		
-		#create a dictionary with cds length, for future comparing only the alleles with cds of same size (FASTER)
+		#create a dictionary with cds length, for future comparing only the alleles with cds of same size 
 		dictCDSLen={}
 		for contigTag,value in currentCDSDict.iteritems():
 			lengthofCDS=len(value)
