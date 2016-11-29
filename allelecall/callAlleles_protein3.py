@@ -37,7 +37,7 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 		if len(aux)<2:
 			alleleI=int(aux[0])
 		else:
-			alleleI=int(aux[1])
+			alleleI=int(aux[-1])
 
 		#try to translate the allele
 		alleleList.append(allele.seq)
@@ -259,7 +259,7 @@ def main():
 		if len(aux)<2:
 			alleleI=int(aux[0])
 		else:
-			alleleI=int(aux[1])
+			alleleI=int(aux[-1])
 		fullAlleleList.append(allele.seq)
 	
 	resultsList = []
@@ -410,7 +410,7 @@ def main():
 						# select the best match
 						for match in alignment.hsps:
 							
-							alleleMatchid=str(blast_record.query_id).split("_")[1]
+							alleleMatchid=str(blast_record.query_id).split("_")[-1]
 							
 							scoreRatio=float(match.score)/float(allelescores[int(alleleMatchid)-1])
 
@@ -717,7 +717,8 @@ def main():
 													# --- add the new allele to the gene fasta --- #
 						
 						alleleI+=1
-						appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_" + str(alleleI) + "_" + str(os.path.basename(genomeFile)) + '\n'
+						#appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_" + str(alleleI) + "_" + str(os.path.basename(genomeFile)) + '\n'
+						appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_" + str(os.path.basename(genomeFile)) + "_" + str(alleleI) + '\n'
 						fG = open( geneFile, 'a' )
 						fG.write(appendAllele)
 						fG.write( alleleStr + '\n')

@@ -370,12 +370,12 @@ def main():
 					newFile=os.path.join(schema_folder_path,namefile+".fasta")
 					listfiles.append(newFile)
 					with open(newFile, "wb") as f:
-						f.write(">"+namefile+"_1_\n"+contig.seq+"\n")
+						f.write(">"+namefile+"_1\n"+contig.seq+"\n")
 				elif not proteinFIlePath and outputFIlePath:
 					newFile=os.path.join(outputFIlePath,namefile+".fasta")
 					listfiles.append(newFile)
 					with open(newFile, "wb") as f:
-						f.write(">"+namefile+"_1_\n"+contig.seq+"\n")
+						f.write(">"+namefile+"_1\n"+contig.seq+"\n")
 				else:
 					concatenatedFile+=">"+contig.name+" \n"+contig.seq+"\n"
 					
