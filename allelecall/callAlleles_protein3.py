@@ -331,9 +331,9 @@ def main():
 							reversedcds=reverseComplement(cds)
 						except:
 							reversedcds=''
-						if reversedcds=='':
-							pass
-						elif str(alleleAux) == str(cds):
+						#~ if reversedcds=='':
+							#~ pass
+						if str(alleleAux) == str(cds):
 							equalmatches=True
 						elif str(alleleAux) == str(reversedcds):
 							equalmatches=True

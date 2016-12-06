@@ -437,7 +437,7 @@ def main():
 				numberexactmatches+=1
 					
 	
-	print "\nused a bsr of : " +str(BSRTresh)+"\n"		
+	print "\n used a bsr of : " +str(BSRTresh)	
 	print "\n %s exact matches found out of %s" % (numberexactmatches,(len(output[0][0])*len(output)) )	
 	print "\n %s percent of exact matches \n##################################################" % (float((numberexactmatches*100)/(len(output[0][0])*len(output))) )	
 		
