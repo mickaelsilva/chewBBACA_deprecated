@@ -6,6 +6,7 @@ import argparse
 import json
 from operator import itemgetter
 import HTSeq
+import time
 
 
 def main():
@@ -19,7 +20,7 @@ def main():
 	parser.add_argument('-t', nargs='?', type=float, help='Threshold', required=False, default=0.05)
 	parser.add_argument('--title', nargs='?', type=str, help='title on the html', required=False, default="My Analyzed wg/cg MLST Schema - Rate My Schema")
 	parser.add_argument('--cpu', nargs='?', type=int, help='number of cpu to use', required=True)
-	parser.add_argument('-s', nargs='?', type=int, help='Threshold', required=False, default=False)
+	parser.add_argument('-s', nargs='?', type=int, help='Threshold', required=False, default=500)
 	parser.set_defaults(logScale=False)
 	
 	args=parser.parse_args()
@@ -33,6 +34,9 @@ def main():
 	OneBadGeneNotConserved=bool(args.p)
 	splited=int(args.s)
 	title=str(args.title)
+	
+	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
+	print (starttime)
 	
 	try:
 		f=open( genes, 'r')
@@ -63,7 +67,7 @@ def main():
 	#genebasename=genebasename[0]
 	
 		
-	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath,splited)
+	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot,listgenesBoxOrdered,totalnumberofgenes,boxListLink=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath,splited)
 	
 	#boxplot=str(json.dumps(boxplot))
 	histplot=str(json.dumps(histplot))
@@ -73,24 +77,30 @@ def main():
 	statsPerGene=CheckCDS.analyzeCDS(genes,transTable,True,outputpath,cpuToUse)
 	
 	# stats values are ordered in a list allelesNotMultiple3,listStopcodonsInside,listnotStartCodon,numberOfAlleles
-
+	
+	htmlgenespath=os.path.join(outputpath,"genes_html/")
+	relpath=os.path.relpath(htmlgenespath,outputpath)
+	
+	if not os.path.exists(htmlgenespath):
+		os.makedirs(htmlgenespath)
+	
 	
 	with open(htmlFile, "wb") as f:
-		f.write("<!DOCTYPE html>\n<html>\n<head><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script><script type='text/javascript' src='https://mpld3.github.io/js/mpld3.v0.2.js'></script>\n")
+		f.write("<!DOCTYPE html>\n<html>\n<head><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script>\n")
 		f.write("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>")
 		f.write("""<!-- Latest compiled and minified JavaScript -->
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>""")
 		f.write("""<style type="text/css">
       body {
-        padding-top: 10px;
         padding-bottom: 60px;
         padding-left: 20px;
+        padding-right: 20px;
       }
 
       /* Custom container */
       .container {
         margin: 0 auto;
-        max-width: 1000px;
       }
       .container > hr {
         margin: 60px 0;
@@ -98,7 +108,6 @@ def main():
 
       /* Main marketing message and sign up button */
       .jumbotron {
-        margin: 80px 0;
         text-align: center;
       }
       .jumbotron h1 {
@@ -129,42 +138,6 @@ function openList1(documentid) {
 }
 </script>""")
 		
-		f.write("""<script type='text/javascript'>
-    mpld3.register_plugin("clickinfo", ClickInfo);
-    ClickInfo.prototype = Object.create(mpld3.Plugin.prototype);
-    ClickInfo.prototype.constructor = ClickInfo;
-    ClickInfo.prototype.requiredProps = ["id"];
-    ClickInfo.prototype.defaultProps = {labels:null}
-    function ClickInfo(fig, props){
-        mpld3.Plugin.call(this, fig, props);
-    };
-    
-    ClickInfo.prototype.draw = function(){
-        var obj = mpld3.get_element(this.props.id);
-        var labels = this.props.labels;
-        obj.elements().on("mousedown",function(d, i){ 
-                            window.open(labels, '_blank')});
-    }
-    </script>""")
-    
-		f.write("""<script type='text/javascript'>
-    mpld3.register_plugin("clickinfo2", ClickInfo2);
-    ClickInfo2.prototype = Object.create(mpld3.Plugin.prototype);
-    ClickInfo2.prototype.constructor = ClickInfo2;
-    ClickInfo2.prototype.requiredProps = ["id"];
-    ClickInfo2.prototype.defaultProps = {labels:null}
-    function ClickInfo2(fig, props){
-        mpld3.Plugin.call(this, fig, props);
-    };
-
-    ClickInfo2.prototype.draw = function(){
-        var obj = mpld3.get_element(this.props.id);
-        labels = this.props.labels;
-        obj.elements().on("mousedown",
-                          function(d, i){ 
-                            window.open(labels[i], '_blank')});
-    }
-    </script>""")
 		
 		f.write("""<style type="text/css">
 		ul {
@@ -231,34 +204,70 @@ li a {
 					</div>
 				</div>""")
 		
-		f.write("""<div id="fig03" style="display:none"><h2>Distribution of number of alleles per gene by mode/mean/median</h2><div id="plot1"></div></div><div id="fig01" style="display:none">
+		f.write("""<div id="fig03" style="display:none;width: 1300px; height: 700px;">
+		</div><div id="fig01" style="display:none; width: 100%;">
 		<h2>Size boxplot for all loci</h2><p>Box plot for each locus on a descending order of the median allele sizes</p>
-		<p>Use the zoom button and hover the mouse over a box/median to see the gene name</p>
-		<p>-->Blue line represent the median, maximum and minimum</p><p>-->Red line represent the mean</p>
-		<button id='buttonbackward' > < </button>
-		<button id='buttonforward' > > </button>
+		<p>Use the zoom button and hover the mouse over a box/median to see the locus name and points data</p>
+		<p>-->Use the following buttons to navigate through all loci</p>
+		<button id='buttonbackward' > Previous 500 loci < </button>
+		<button id='buttonforward' > Next 500 loci > </button>
 		""")
 		
-		i=0
-		for elem in boxplot:
-			f.write("""<div id="figbox"""+str(i)+"""" style="display:none"></div>""")
-			i+=1
-		f.write("""</div><div id="fig02" style="display:none"><h2>Distribution of allele mode sizes per gene</h2></div>""")
+		f.write("""<div id="figbox0" classe="container" style="display:none;width: 1500px; height: 1000px;"></div>""")
+
+		f.write("""</div><div id="fig02" classe="container" style="display:none;width: 1000px; height: 600px;"></div>""")
 		
 		f.write("""<script type="text/javascript">
-					var boxplotPage=0;
+					
 					$("#buttonforward").click(function(){
 					  boxplotPage=boxplotPage+1;
-					  if ($("#figbox"+boxplotPage).length){
-						  if ($("#figbox"+boxplotPage).children().length < 1){
-							$.getScript("jsonbox"+boxplotPage+".js");}
-						  $("#figbox"+boxplotPage).css({"display":"block"});
-						  $("#figbox"+(boxplotPage-1)).css({"display":"none"});
-					   }
-					   else{
-					    boxplotPage=boxplotPage-1;
-					    }
-					$('html, body').animate({scrollTop:$(document).height()}, 1);
+					  $.ajax({
+									async: false,
+									url: "jsonbox"+boxplotPage+".js",
+									dataType: "script",
+									
+									error: function(){
+										  boxplotPage=boxplotPage-1;
+											},
+								  success: function(){
+						  										
+										numberofgenes=numberofgenes+jsonboxList.length
+										var listboxes=[];
+										var i = 0;
+										var len = jsonboxList.length;
+										for (; i < len; i++) { 
+											var trace = {
+														  y: jsonboxList[i],
+														  name: listgenes[i],
+														  text: listlinks[i],
+														  type: 'box',
+														  marker: {size: 2},
+														};
+											listboxes.push(trace)
+										}
+										var layout = {
+													  title: numberofgenes+'/'+totalGenes,
+													  showlegend: false,
+													  xaxis: {
+																autotick: false,
+																showgrid: true,
+																showticklabels: false
+															  },
+													};
+										Plotly.newPlot('figbox0', listboxes,layout);
+						
+						var myPlot = document.getElementById('figbox0');
+							myPlot.on('plotly_click', function(data){
+								link = '';
+								for(var i=0; i < data.points.length; i++){
+									link = data.points[i].data.text;
+								}
+								window.open(link, '_blank');
+							});
+						
+						}
+					    
+					});
 					return false;
 					}); 
 					</script>""")
@@ -266,46 +275,179 @@ li a {
 		f.write("""<script type="text/javascript">
 					$("#buttonbackward").click(function(){
 					  boxplotPage=boxplotPage-1;
-					  if ($("#figbox"+boxplotPage).length){
-						  if ($("#figbox"+boxplotPage).children().length < 1){
-							$.getScript("jsonbox"+boxplotPage+".js");}
-						  $("#figbox"+boxplotPage).css({"display":"block"});
-						  $("#figbox"+(boxplotPage+1)).css({"display":"none"});
-					   }
-					   else{
-					    boxplotPage=boxplotPage+1;
-					    }
-					$('html, body').animate({scrollTop:$(document).height()}, 1);
+					  numberofgenes=numberofgenes-jsonboxList.length;
+					  $.ajax({
+									async: false,
+									url: "jsonbox"+boxplotPage+".js",
+									dataType: "script",
+									
+									error: function(){
+										numberofgenes=numberofgenes+jsonboxList.length;
+										  boxplotPage=boxplotPage+1;
+											},
+								  success: function(){
+						  										
+										var listboxes=[];
+										var i = 0;
+										var len = jsonboxList.length;
+										for (; i < len; i++) { 
+											var trace = {
+														  y: jsonboxList[i],
+														  name: listgenes[i],
+														  text: listlinks[i],
+														  type: 'box',
+														  marker: {size: 2},
+														};
+											listboxes.push(trace)
+										}
+										var layout = {
+													  title: numberofgenes+'/'+totalGenes,
+													  showlegend: false,
+													  xaxis: {
+																autotick: false,
+																showgrid: true,
+																showticklabels: false
+															  },
+													};
+										Plotly.newPlot('figbox0', listboxes,layout);
+						
+						var myPlot = document.getElementById('figbox0');
+							myPlot.on('plotly_click', function(data){
+								link = '';
+								for(var i=0; i < data.points.length; i++){
+									link = data.points[i].data.text;
+								}
+								window.open(link, '_blank');
+							});
+						
+						}
+					    
+					});
 					return false;
 					}); 
 					</script>""")
 		
 		f.write("""<script type="text/javascript">
-					$("#button2").click(function(){
-					  if ($("#fig02 .mpld3-figure").length < 1){
-						$.getScript("json2.js");}
-					  $("#fig02").css({"display":"block"});
-					  $("#fig01").css({"display":"none"});
-					  $("#fig03").css({"display":"none"});
-					  $("#fig04").css({"display":"none"});
-					}); 
-					</script>""")
-		
-		f.write("""<script type="text/javascript">
 					$("#button3").click(function(){
-					if ($("#fig03 .mpld3-figure").length < 1){
-						$.getScript("json3.js");}
+					  if ($("#fig03").firstChild==undefined){
+					  $.ajax({
+								async: false,
+								url: "json3.js",
+								dataType: "script"
+							});
+						var listTraces=[];
+						var i = 0;
+						var len = jsonsScatterPlot.length;
+						var listName=['Mode','Mean','Median']
+						for (; i < len; i++) { 
+							var aux=jsonsScatterPlot[i]
+							var trace = {
+									x: aux[0],
+									  y: aux[1],
+									  name: listName[i],
+									  text: aux[2],
+									  mode: 'markers',
+									  type: 'scattergl'
+									};
+							listTraces.push(trace)
+								}
+						var layout = {
+									  title: 'Distribution of number of alleles per gene by mode/mean/median',
+									  yaxis: {title: "Number of alleles"},
+									  xaxis: {
+												title: "Allele size in bp",
+											  },
+									};
+						Plotly.newPlot('fig03', listTraces,layout);
+					  }
 					  $("#fig03").css({"display":"block"});
+					  $("#fig01").css({"display":"none"});
 					  $("#fig02").css({"display":"none"});
+					  $("#fig04").css({"display":"none"});
+					}); 
+					</script>""")
+		
+		f.write("""<script type="text/javascript">
+					$("#button2").click(function(){
+					 if ($("#fig02").firstChild==undefined){
+						$.ajax({
+								async: false,
+								url: "json2.js",
+								dataType: "script"
+							});
+						
+	
+						var trace = [{
+									  x: jsonHistPlot,
+									  type: 'histogram'
+									}];
+						var layout = {
+									  title: 'Distribution of allele mode sizes per gene',
+									  barmode: "stack",
+									  showlegend: false,
+									  yaxis: {title: "Number of occurrences"},
+									  xaxis: {
+												autotick: true,
+												showgrid: true,
+												title: "Allele Size",
+												showticklabels: true
+											  },
+									};
+						Plotly.newPlot('fig02', trace,layout);
+					}
+					  $("#fig02").css({"display":"block"});
+					  $("#fig03").css({"display":"none"});
 					  $("#fig01").css({"display":"none"});
 					  $("#fig04").css({"display":"none"});
 					}); 
 					</script>""")
 		
 		f.write("""<script type="text/javascript">
+					var boxplotPage=0;
+					var numberofgenes=0
+					var totalGenes="""+str(totalnumberofgenes)+"""
 					$("#button1").click(function(){
-					if ($("#fig01 .mpld3-figure").length < 1){
-						$.getScript("jsonbox0.js");}
+					 if ($("#figbox0").firstChild==undefined){
+						$.ajax({
+								async: false,
+								url: "jsonbox0.js",
+								dataType: "script"
+							});
+						var listboxes=[];
+						var i = 0;
+						numberofgenes=jsonboxList.length;
+						var len = jsonboxList.length;
+						for (; i < len; i++) { 
+							var trace = {
+										  y: jsonboxList[i],
+										  name: listgenes[i],
+										  text: listlinks[i],
+										  type: 'box',
+										  marker: {size: 2},
+										};
+							listboxes.push(trace);
+						}
+						var layout = {
+									  title: numberofgenes+'/'+totalGenes,
+									  showlegend: false,
+									  xaxis: {
+												autotick: false,
+												showgrid: true,
+												showticklabels: false
+											  },
+									};
+						Plotly.newPlot('figbox0', listboxes,layout);
+						
+						var myPlot = document.getElementById('figbox0');
+							myPlot.on('plotly_click', function(data){
+								link = '';
+								for(var i=0; i < data.points.length; i++){
+									link = data.points[i].data.text;
+								}
+								window.open(link, '_blank');
+							});
+						}
+						
 					  $("#fig01").css({"display":"block"});
 					  $("#figbox0").css({"display":"block"});
 					  $("#fig02").css({"display":"none"});
@@ -323,15 +465,22 @@ li a {
 					</script>""")
 		
 		
-		f.write("""<div id="fig04" style="display:none"><title>Schema Validation Results</title>\n<h1>Allele CDS analysis results</h1>\n<p>Summary table of the alleles with issues per gene using the <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG11'>NCBI translation table 11</a></p><p>Click on the gene name to open the fasta file</p><p>click on the boxes with the % to get the index of the alleles with issues</p><table class="tg">
-  <tr>
-    <th class="tg-031e">Gene</th>
-    <th class="tg-031e">Number alleles not multiple of 3</th>
-    <th class="tg-031e">Number alleles w/ >1 stop codons</th>
-    <th class="tg-031e">Number alleles wo/ Start/Stop Codon</th>
-    <th class="tg-qpvr" .background-color='#59b300'>Number of alleles (% alleles w/ issues) </th>
-  </tr>""")
+		f.write("""<div id="fig04" classe="container" style="display:none">
+		<title>Schema Validation Results</title>
+		<h3>Summary of problematic alleles per locus using the <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG11'>NCBI translation table 11</a></h3>
+		<div id="fig04B" classe="container" style="width: 1200px; height: 700px;"></div>
+		<p>Click the locus name to open the locus info page</p>
+		<p>click the boxes with % to get the index of the alleles with problems</p>
+		<table class="tg">
+		  <tr>
+			<th class="tg-031e">Gene</th>
+			<th class="tg-031e">Number alleles not multiple of 3</th>
+			<th class="tg-031e">Number alleles w/ >1 stop codons</th>
+			<th class="tg-031e">Number alleles wo/ Start/Stop Codon</th>
+			<th class="tg-qpvr" .background-color='#59b300'>Number of alleles (% alleles w/ issues) </th>
+		  </tr>""")
 		ordered=[]
+		orderedBySize=[]
 		for key, value in statsPerGene.iteritems():
 			aux=[]
 			numberMultip=float(len(value[0]))
@@ -342,11 +491,18 @@ li a {
 			aux.append(key)
 			aux.append(totalpercent)
 			ordered.append(aux)
+			orderedBySize.append([key,total])
 		ordered=sorted(ordered, key=itemgetter(-1))
 		ordered.reverse()
+		orderedBySize=sorted(orderedBySize, key=itemgetter(-1))
 		
-		newlist=[]	
-		for item in ordered:	
+		
+		newlist=[]
+		auxHistList=[[],[],[],[],[]]
+		i=0
+		while i<len(ordered):
+			item=ordered[i]
+			item2=orderedBySize[i]
 			
 			aux=[]
 			aux.append(item[0])
@@ -354,6 +510,7 @@ li a {
 			
 			
 			value=statsPerGene[item[0]]
+			value2=statsPerGene[item2[0]]
 			numberMultip=float(len(value[0]))
 			numberStop=float(len(value[1]))
 			numberStart=float(len(value[2]))
@@ -365,11 +522,76 @@ li a {
 			name=name.split(".")
 			name=name[0]
 			if (numberMultip>0 or numberStop>0 or numberStart>0):
-				f.write("<tr id="+str(item[0])+""">\n<td class='tg-vn4c' onclick="window.open('"""+str(item[0])+"""')" style='cursor:pointer'>"""+name+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberMultip))+" ("+str('{0:.2f}'.format((numberMultip/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStop))+" ("+str('{0:.2f}'.format((numberStop/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStart))+" ("+str('{0:.2f}'.format((numberStart/total)*100))+"%)"+"</td>\n<td class='tg-14d4' onclick='a(this);'>"+str(int(total))+" ("+str('{0:.2f}'.format(((numberMultip+numberStart+numberStop)/total)*100))+"%)"+"</td>\n</tr>")
-		
-		
+				locusHTML=os.path.join(relpath,(os.path.basename(str(item[0]))).replace(".fasta",".html"))
+				locusHTML2=os.path.join(relpath,(os.path.basename(str(item2[0]))).replace(".fasta",".html"))
+				f.write("<tr id="+str(item[0])+""">\n<td class='tg-vn4c' onclick="window.open('"""+locusHTML+"""')" style='cursor:pointer'>"""+name+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberMultip))+" ("+str('{0:.2f}'.format((numberMultip/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStop))+" ("+str('{0:.2f}'.format((numberStop/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStart))+" ("+str('{0:.2f}'.format((numberStart/total)*100))+"%)"+"</td>\n<td class='tg-14d4' onclick='a(this);'>"+str(int(total))+" ("+str('{0:.2f}'.format(((numberMultip+numberStart+numberStop)/total)*100))+"%)"+"</td>\n</tr>")
+				auxHistList[0].append(locusHTML2)
+				auxHistList[1].append(float(len(value2[0])))
+				auxHistList[2].append(float(len(value2[1])))
+				auxHistList[3].append(float(len(value2[2])))
+				auxHistList[4].append(float(value2[3])-float(len(value2[2]))-float(len(value2[1]))-float(len(value2[0])))
+			i+=1
+			
+		auxHistList=str(json.dumps(auxHistList))
 		f.write("</table>")
 		f.write("""<div id='AllelesWissues'></div><button onclick="$('#AllelesWissues').empty();">clean</button></div>""")
+		f.write("""\n<script type='text/javascript'>
+		var histCDSanalysis="""+auxHistList+""";
+		var listTraces=[];
+		var trace = {
+					  x: histCDSanalysis[1],
+					  name: 'Non multiple 3',
+					  link: histCDSanalysis[0],
+					  orientation: 'h',
+					  type: 'bar'
+					};
+		var trace1 = {
+					  x: histCDSanalysis[2],
+					  name: '> 1 stop codon',
+					  link: histCDSanalysis[0],
+					  orientation: 'h',
+					  type: 'bar'
+					};
+		var trace2 = {
+					  x: histCDSanalysis[3],
+					  name: 'No Start/Stop codon',
+					  link: histCDSanalysis[0],
+					  orientation: 'h',
+					  type: 'bar'
+					};
+		var trace3 = {
+					  x: histCDSanalysis[4],
+					  name: 'CDS Alleles',
+					  link: histCDSanalysis[0],
+					  orientation: 'h',
+					  type: 'bar'
+					};			
+		
+					
+		var layout = {
+					  barmode: "stack",
+					  yaxis: {
+								autotick: false,
+								showgrid: false,
+								showticklabels: false
+					  
+							},
+					  xaxis: {title: "Number of occurrences"},
+								
+					};
+					
+		listTraces.push(trace3,trace2,trace,trace1);			
+		Plotly.newPlot('fig04B', listTraces,layout);
+		
+		var myPlot = document.getElementById('fig04B');
+					myPlot.on('plotly_click', function(data){
+						i= data.points[0].y
+						link = data.points[0].data.link[i];
+						window.open(link, '_blank');
+					});
+		
+		</script>
+		""")
 		f.write("""\n<script type='text/javascript'>function a(element) {
 	var id = $(element).closest("tr").attr("id");
 	var badalleles=[];
@@ -384,7 +606,7 @@ li a {
 	var startcodon=(badalleles[2]).join('; ');
 	var name=(id.split("/")).slice(-1)[0]
 	name=(name.split("."))[0]
-	$('#AllelesWissues').append('<h2> Gene: '+name+'</h2>');
+	$('#AllelesWissues').append('<h2> Locus: '+name+'</h2>');
 	$('#AllelesWissues').append('<p> Alleles not multiple of 3: '+notmulti+'</p><p> Alleles with >1 stop codon: '+stopcodon+'</p><p>Alleles without start codon: '+startcodon+'</p>');
 
 	$('html,body').animate({
@@ -397,28 +619,35 @@ li a {
 		f.write("</body>\n</html>")
 	
 	i=0
+		
+	filename="jsonbox0.js"
 	for elem in boxplot:
 		
 		boxplotElem=str(json.dumps(elem))
+		listGenesJson=str(json.dumps(listgenesBoxOrdered[i]))
+		listLinkGenesJson=str(json.dumps(boxListLink[i]))
 		filename="jsonbox"+str(i)+(".js")
 		with open((os.path.join(outputpath,filename)), "wb") as f:
 			
-			f.write("var jsonbox"+str(i)+" ="+str(boxplotElem)+";mpld3.draw_figure('figbox"+str(i)+"', jsonbox"+str(i)+");")
+			f.write("var jsonboxList ="+str(boxplotElem)+";var listgenes="+str(listGenesJson)+";var listlinks="+str(listLinkGenesJson))
 		i+=1
 		
 	with open((os.path.join(outputpath,"json2.js")), "wb") as f:
 		
-		f.write("var json02 ="+str(histplot)+";mpld3.draw_figure('fig02', json02);")
+		f.write("var jsonHistPlot ="+str(histplot))
 	
 	with open((os.path.join(outputpath,"json3.js")), "wb") as f:
 		
-		f.write("var json03 ="+str(allelenumberplot)+";mpld3.draw_figure('plot1', json03);")
+		f.write("var jsonsScatterPlot ="+str(allelenumberplot))
 
 
 	try:
 		os.remove("listGenes"+listbasename+".txt")
 	except:
 		pass
+	
+	print (starttime)
+	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
 if __name__ == "__main__":
     main()

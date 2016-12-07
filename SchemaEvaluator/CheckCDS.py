@@ -1,17 +1,12 @@
 #!/usr/bin/python
 import HTSeq
 from Bio.Seq import Seq
-from Bio import Phylo
 import os
 import argparse
-import mpld3
-import matplotlib.pyplot as plt
-plt.switch_backend('agg')
 import json
 from Bio.Align.Applications import MafftCommandline
 from Bio.Align.Applications import ClustalwCommandline
 import multiprocessing
-from mpld3 import utils, plugins
 
 def reverseComplement(strDNA):
 
@@ -173,21 +168,28 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 		
 		alleleSizes=[]
 		alleleNames=[]
+		alleleSizesNotMultiple=[]
+		alleleSizesNotMultipleNames=[]
+		alleleSizesTransError=[]
+		alleleSizesTransErrorNames=[]		
 		# translate each allele and report the error if unable to translate
 		for allele in gene_fp2: 
 			
 			k+=1
-			alleleNames.append(str(allele.name))
-			alleleSizes.append(len(allele.seq))
+			
 			# if allele is not multiple of 3 it's useless to try to translate
 			if (len(allele.seq) % 3 != 0):
 				multiple=False
 				listnotMultiple.append(str(k))
+				alleleSizesNotMultipleNames.append(k)
+				alleleSizesNotMultiple.append(len(allele.seq))
 				print "allele "+str(k)+" is not multiple of 3"
 				pass
 			else:
 				try:
 					protseq,seq,reversedSeq=translateSeq(allele.seq, transTable)
+					alleleNames.append(str(k))
+					alleleSizes.append(len(allele.seq))
 					
 				except Exception, err:
 					if "Extra in frame stop codon found" in str(err):
@@ -201,8 +203,12 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 						listnotStart.append(str(k))
 					else:
 						print err
+					
+					alleleSizesTransErrorNames.append(k)
+					alleleSizesTransError.append(len(allele.seq))
 					print "allele "+str(k)+" is not translating"
 					pass
+		
 		
 		relpath=os.path.relpath(gene,outputpath)
 		statsPerGene[relpath]=listnotMultiple,listStopc,listnotStart,k
@@ -253,24 +259,8 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
       <!-- Latest compiled and minified CSS -->
       <script type="application/javascript" src="https://cdn.rawgit.com/phylocanvas/phylocanvas-quickstart/v2.3.0/phylocanvas-quickstart.js"></script>
 			<script src="https://cdn.bio.sh/msa/latest/msa.min.gz.js"></script>
-		<script type='text/javascript'>
-			mpld3.register_plugin("clickinfo2", ClickInfo2);
-			ClickInfo2.prototype = Object.create(mpld3.Plugin.prototype);
-			ClickInfo2.prototype.constructor = ClickInfo2;
-			ClickInfo2.prototype.requiredProps = ["id"];
-			ClickInfo2.prototype.defaultProps = {labels:null}
-			function ClickInfo2(fig, props){
-				mpld3.Plugin.call(this, fig, props);
-			};
-
-			ClickInfo2.prototype.draw = function(){
-				var obj = mpld3.get_element(this.props.id);
-				labels = this.props.labels;
-				obj.elements().on("mousedown",
-								  function(d, i){ 
-									window.open(labels[i], '_blank')});
-			}
-		</script>
+			<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">""")
 			
 			f.write("""<div class="jumbotron">
@@ -310,21 +300,21 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
             </div>
 			
 			</div><div id='histdiv'></div>\n""")
-			fig, ax = plt.subplots(figsize=(20,10))
-			points=ax.scatter(list(range(1,len(alleleSizes)+1,1)),alleleSizes)
-
-			plt.grid(True)
+			#~ fig, ax = plt.subplots(figsize=(20,10))
+			#~ points=ax.scatter(list(range(1,len(alleleSizes)+1,1)),alleleSizes)
+#~ 
+			#~ plt.grid(True)
+			#~ 
+			#~ mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points,labels=alleleNames))
+			#~ 
+			#~ plt.ylabel('DNA bp allele length ')
+			#~ plt.xlabel('Allele number')
+			#~ plt.title('Allele size scatter plot')
+			#~ ax.yaxis.labelpad = 40
+			#~ 
+			#~ 
+			#~ histplothtml=mpld3.fig_to_dict(fig)
 			
-			mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points,labels=alleleNames))
-			
-			plt.ylabel('DNA bp allele length ')
-			plt.xlabel('Allele number')
-			plt.title('Allele size scatter plot')
-			ax.yaxis.labelpad = 40
-			
-			
-			histplothtml=mpld3.fig_to_dict(fig)
-			histplothtml=str(json.dumps(histplothtml))
 			
 			f.write("""
 			
@@ -489,8 +479,61 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 						  $("#histdiv").css({"display":"none"});
 						}); 
 						</script>""")
-			f.write("<script type='text/javascript'>var hist ="+str(histplothtml)+";mpld3.draw_figure('histdiv', hist);</script></body></html>")
-			plt.close('all')
+			
+
+			if len(alleleSizes)<1:
+				alleleNames=[0]
+				alleleSizes=[0]
+			if len(alleleSizesTransError)<1:
+				alleleSizesTransError=[0]
+				alleleSizesTransErrorNames=[0]
+			if len(alleleSizesNotMultiple)<1:
+				alleleSizesNotMultiple=[0]
+				alleleSizesNotMultipleNames=[0]
+			alleleSizes=str(json.dumps([alleleNames,alleleSizes]))
+			alleleSizesNotMultiple=str(json.dumps([alleleSizesNotMultipleNames,alleleSizesNotMultiple]))
+			alleleSizesTransError=str(json.dumps([alleleSizesTransErrorNames,alleleSizesTransError]))
+						
+			f.write("<script type='text/javascript'>var jsonScat1 ="+alleleSizes+";var jsonScat2 ="+alleleSizesNotMultiple+";var jsonScat3 ="+alleleSizesTransError+""";
+						
+						var listTrace=[];
+						var trace1 = {
+									x: jsonScat1[0],
+									  y: jsonScat1[1],
+									  text: jsonScat1[0],
+									  name: 'CDS alleles',
+									  mode: 'markers',
+									  type: 'scattergl'
+									};
+						var trace2 = {
+									x: jsonScat2[0],
+									  y: jsonScat2[1],
+									  text: jsonScat2[0],
+									  name: 'Alleles not multiple of 3',
+									  mode: 'markers',
+									  type: 'scattergl'
+									};
+						
+							var trace3 = {
+									x: jsonScat3[0],
+									  y: jsonScat3[1],
+									  text: jsonScat3[0],
+									  name: 'Non translatable alleles',
+									  mode: 'markers',
+									  type: 'scattergl'
+									};
+						listTrace.push(trace1,trace2,trace3)
+						var layout = {
+									  title: 'Allele size scatter plot',
+									  yaxis: {title: "DNA bp allele length"},
+									  xaxis: {
+												title: "Allele number",
+											  },
+									};
+						Plotly.newPlot('histdiv', listTrace,layout);
+			
+			
+					</script>"""+"</body></html>")
 			
 	print str(stopc) + " alleles have stop codons inside"
 	print str(notStart) + " alleles don't have start codons"

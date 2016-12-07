@@ -1,6 +1,4 @@
 HTSeq==0.6.1p1
 biopython==1.66
-matplotlib==1.5.3
-mpld3==0.2
 numpy==1.8.2
 scipy==0.13.3

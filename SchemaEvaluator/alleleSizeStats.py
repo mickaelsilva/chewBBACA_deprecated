@@ -1,14 +1,7 @@
 import os
 import argparse
-import matplotlib.pyplot as plt
-plt.switch_backend('agg')
-from matplotlib import colors
-import matplotlib.patches as mpatches
 import HTSeq
 from operator import itemgetter
-from collections import OrderedDict
-import mpld3
-from mpld3 import utils, plugins
 import numpy
 import math
 
@@ -43,128 +36,6 @@ def main():
 	
 	return getStats(genes,threshold,OneNotConserved,ReturnValues)
 
-class ClickInfo(plugins.PluginBase):
-    """Plugin for getting info on click"""
-    
-    JAVASCRIPT = """
-    mpld3.register_plugin("clickinfo", ClickInfo);
-    ClickInfo.prototype = Object.create(mpld3.Plugin.prototype);
-    ClickInfo.prototype.constructor = ClickInfo;
-    ClickInfo.prototype.requiredProps = ["id"];
-    ClickInfo.prototype.defaultProps = {labels:null}
-    function ClickInfo(fig, props){
-        mpld3.Plugin.call(this, fig, props);
-    };
-    
-    ClickInfo.prototype.draw = function(){
-        var obj = mpld3.get_element(this.props.id);
-        var labels = this.props.labels;
-        obj.elements().on("mousedown",function(d, i){ 
-                            window.open(labels, '_blank')});
-    }
-    """
-    def __init__(self, points, labels):
-		self.points = points
-		self.labels = labels
-		self.dict_ = {"type": "clickinfo","id": utils.get_id(points),"labels": labels}
-
-class ClickInfo2(plugins.PluginBase):
-    """Plugin for getting info on click"""
-    
-    JAVASCRIPT = """
-    mpld3.register_plugin("clickinfo2", ClickInfo2);
-    ClickInfo2.prototype = Object.create(mpld3.Plugin.prototype);
-    ClickInfo2.prototype.constructor = ClickInfo2;
-    ClickInfo2.prototype.requiredProps = ["id"];
-    ClickInfo2.prototype.defaultProps = {labels:null}
-    function ClickInfo2(fig, props){
-        mpld3.Plugin.call(this, fig, props);
-    };
-
-    ClickInfo2.prototype.draw = function(){
-        var obj = mpld3.get_element(this.props.id);
-        labels = this.props.labels;
-        obj.elements().on("mousedown",
-                          function(d, i){ 
-                            window.open(labels[i], '_blank')});
-    }
-    """
-    def __init__(self, points, labels):
-        self.points = points
-        self.labels = labels
-        """if isinstance(points, matplotlib.lines.Line2D):
-            suffix = "pts"
-        else:
-            suffix = None"""
-        self.dict_ = {"type": "clickinfo2","id": utils.get_id(points, "pts"),"labels": labels}
-
-
-def buildPlot(nparray,ReturnValues,labellist,relpath):
-	
-	try:
-		plt.close('all')
-	except:
-		pass
-	if not ReturnValues	:
-		plt.figure()
-	else:
-		fig,ax = plt.subplots(figsize=(20,10))
-
-		#bp=plt.boxplot(nparray, 1,bootstrap=1000)
-		bp=plt.violinplot(nparray, showmeans=True, showextrema=True, showmedians=True, bw_method='silverman')
-	
-	#print cbook.boxplot_stats(nparray)
-	#asdasd
-	#mpld3.show()	
-	handles, labels = plt.gca().get_legend_handles_labels()
-
-	#print labels
-	handle_list, label_list = [], []
-	by_label = OrderedDict(zip(labels, handles))
-	
-	frame1 = plt.gca()			
-	frame1.axes.get_xaxis().set_visible(False)
-	frame1.axes.get_xaxis().set_ticks([])
-	plt.ylabel('nucleotide length of the gene')
-	plt.title("allele size comparison per gene for "+str(len(nparray))+"genes")
-	
-
-	
-	#plt.setp(bp['boxes'], color='blue')
-	#plt.setp(bp['whiskers'], color='blue')
-	plt.setp(bp['cmedians'], color='blue')
-	plt.setp(bp['cbars'], color='blue')
-	plt.setp(bp['cmins'], color='blue')
-	plt.setp(bp['cmaxes'], color='blue')
-	for pc in bp['bodies']:
-		#pc.set_color('black')
-		pc.set_facecolor('green')
-		pc.set_edgecolor('black')
-	#plt.setp(bp['fliers'],marker='o', markerfacecolor='green',linestyle='none')
-	
-	
-	#allboxes=bp.get('boxes')
-	allboxes=bp.get('bodies')
-	i=0
-	for box in allboxes:
-		mpld3.plugins.connect(fig, plugins.LineLabelTooltip(box,label=os.path.basename(labellist[i]),voffset=50, hoffset=10))
-		mpld3.plugins.connect(fig, ClickInfo(box,(os.path.join(relpath,(os.path.basename(labellist[i])).replace(".fasta",".html")))))
-		i+=1
-	#allmedians=bp.get('medians')
-	allmedians=bp.get('cmedians')
-	"""i=0
-	for median in allmedians:
-		mpld3.plugins.connect(fig, plugins.LineLabelTooltip(median,label=os.path.basename(orderedlistgene[i]),voffset=50, hoffset=10))
-		mpld3.plugins.connect(fig, ClickInfo(median,(os.path.join(relpath,(os.path.basename(orderedlistgene[i])).replace(".fasta",".html")))))
-		i+=1"""
-	
-	
-	ax.yaxis.labelpad = 40
-
-	boxplothtml=mpld3.fig_to_dict(fig)
-	
-	
-	return plt,boxplothtml
 	
 
 def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,split_thresh):
@@ -203,7 +74,6 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 		allelenumber=0
 		aux=[0,0]
 		sizes=[]
-		
 
 
 		#per gene get all sizes, minimin size, maximum size, media and mode
@@ -313,19 +183,19 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 	orderedlistgene2=[]
 	sortbyNumberAllelesx=[]
 	for elem in sortbyNumberAlleles:
-		orderedlistgene2.append(elem.pop(0))
+		orderedlistgene2.append(os.path.basename(elem.pop(0)))
 		sortbyNumberAllelesx.append(elem.pop(0))
 	
 	orderedlistgene3=[]
 	sortbyNumberAllelesMeanx=[]
 	for elem in sortbyNumberAllelesMean:
-		orderedlistgene3.append(elem.pop(0))
+		orderedlistgene3.append(os.path.basename(elem.pop(0)))
 		sortbyNumberAllelesMeanx.append(elem.pop(0))
 	
 	orderedlistgene4=[]
 	sortbyNumberAllelesMedianx=[]
 	for elem in sortbyNumberAllelesMedian:
-		orderedlistgene4.append(elem.pop(0))
+		orderedlistgene4.append(os.path.basename(elem.pop(0)))
 		sortbyNumberAllelesMedianx.append(elem.pop(0))
 	
 	
@@ -341,57 +211,8 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 			for gene in notconservedlengthgenes:
 				f.write(str(gene)+"\n")
 
-
-	
-
-	#create the boxplot and build the html representation	
-	if not ReturnValues	:
-		aplot=buildPlot(sortbymedia,ReturnValues)
-		
-		plt.show()	
-		plt.close('all')
 	else:
-		print "Creating the boxplot files"
-		
-		genebasename=str(os.path.basename(genes))
-		genebasename=genebasename.split(".")
-		genebasename=genebasename[0]
-		
-		#do boxplot plot for each 500 subset of genes
-		switch=True
-		if not split_thresh:
-			split_thresh=len(orderedlistgene)
-
-		boxplothtml=[]
-		
-		#create largest boxplot
-		plt,boxplothtmlDict=buildPlot(sortbymedia,ReturnValues,orderedlistgene,relpath)
-		boxplothtml.append(boxplothtmlDict)
-		plt.close('all')
-		print "Created the main boxplot file"
-		
-		if split_thresh>=len(orderedlistgene):
-			switch=False
-		#create a box plot for each subset
-		
-		print "Creating the sub boxplots"
-		while switch:
-			
-			if len(orderedlistgene)<=split_thresh:
-				switch=False
-			auxList=sortbymedia[0:split_thresh]
-			sortbymedia=sortbymedia[split_thresh:]
-			auxLabels=orderedlistgene[0:split_thresh]
-			orderedlistgene=orderedlistgene[split_thresh:]
-			#plt,ax,fig,bp=buildPlot(sortbymedia,ReturnValues)
-			plt,boxplothtmlDict=buildPlot(auxList,ReturnValues,auxLabels,relpath)
-			
-			boxplothtml.append(boxplothtmlDict)
-			
-					
-			plt.close('all')
-		print "Created the sub boxplots"
-		
+				
 		print "Creating the allele number plot"
 		
 		orderedlistgene2_basename=[]
@@ -403,84 +224,55 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 			orderedlistgene2_html.append(os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html")))
 		
 		
-		fig, ax= plt.subplots(figsize=(20,10))
-		points1 = ax.plot(sortbyNumberAllelesx,sortbyNumberAlleles,'o',label='Mode')
+		sortbyNumberAlleles=[item for sublist in sortbyNumberAlleles for item in sublist]
+		sortbyNumberAllelesMean=[item for sublist in sortbyNumberAllelesMean for item in sublist]
+		sortbyNumberAllelesMedian=[item for sublist in sortbyNumberAllelesMedian for item in sublist]
 		
+		numberallelesplotMedianhtml=[[sortbyNumberAllelesx,sortbyNumberAlleles,orderedlistgene2],[sortbyNumberAllelesMeanx,sortbyNumberAllelesMean,orderedlistgene3],[sortbyNumberAllelesMedianx,sortbyNumberAllelesMedian,orderedlistgene4]]
+		
+		
+		print "Creating the allele size histogram"
+		
+		
+		histplothtml=modaStats
 
+		finalList=[]
+		finalNameList=[]
+		finalLinkList=[]
+		subList=[]
+		nameSublist=[]
+		linkSublist=[]
+		i=0
+		j=0
+		os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html"))
+		while j<len(sortbymedia):
+			
+			if i >= split_thresh:
+				#print len(subList)
+				finalList.append(subList)
+				subList=[]
+				finalNameList.append(nameSublist)
+				nameSublist=[]
+				finalLinkList.append(linkSublist)
+				linkSublist=[]
+				i=0
+				j-=1
+			else:
+				subList.append(sortbymedia[j])
+				nameSublist.append(os.path.basename(orderedlistgene[j]))
+				linkSublist.append(os.path.join(relpath,(os.path.basename(orderedlistgene[j])).replace(".fasta",".html")))
+				i+=1
+			j+=1
 		
+		if len(subList)>0:
+			finalList.append(subList)
+			finalNameList.append(nameSublist)
+			finalLinkList.append(linkSublist)
+		
+		orderedlistgene=finalNameList
+		boxplothtml=finalList
 
-		
-		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points1[0],labels=orderedlistgene2_basename))
-		
-		#mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
-		
-	
-		
-		orderedlistgene2_basename=[]
-		for elem in orderedlistgene3:
-			orderedlistgene2_basename.append(os.path.basename(elem))
-		
-		orderedlistgene2_html=[]
-		for elem in orderedlistgene3:
-			orderedlistgene2_html.append(os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html")))
-		
-		
-		#fig, ax= plt.subplots(figsize=(20,10))
-		points2 = ax.plot(sortbyNumberAllelesMeanx,sortbyNumberAllelesMean,'go',label='Mean')
-		
-
-
-		
-		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points2[0],labels=orderedlistgene2_basename))
-
-		#mpld3.plugins.connect(fig, ClickInfo2(points[0], orderedlistgene2_html))
-		
-		
-		orderedlistgene2_basename=[]
-		for elem in orderedlistgene4:
-			orderedlistgene2_basename.append(os.path.basename(elem))
-		
-		orderedlistgene2_html=[]
-		for elem in orderedlistgene4:
-			orderedlistgene2_html.append(os.path.join(relpath,(os.path.basename(elem)).replace(".fasta",".html")))
-		
-		
-		#fig, ax= plt.subplots(figsize=(20,10))
-		points3 = ax.plot(sortbyNumberAllelesMedianx,sortbyNumberAllelesMedian,'ro',label='Median')
-		
-		plt.ylabel('Number of alleles')
-		plt.xlabel('Allele size in bp')
-		plt.grid(True)
-		ax.yaxis.labelpad = 40
-		
-
-		
-		mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points3[0],labels=orderedlistgene2_basename))
-		mpld3.plugins.connect(fig, ClickInfo2(points3[0], orderedlistgene2_html))
-
-		ax.legend(numpoints=1,title='')
-
-		numberallelesplotMedianhtml=mpld3.fig_to_dict(fig)
-		
-		plt.close('all')
-		print "Created the allele number plot"
-	
-		
-		fig, ax = plt.subplots(figsize=(20,10))
-		bp=plt.hist(modaStats,100,rwidth=0.8)
-		plt.ylabel('Number of occurrences')
-		plt.xlabel('Allele Size')
-		ax.yaxis.labelpad = 40
-		start, end = ax.get_xlim()
-		#ticks=range(int(start),int(end),250)
-		#plt.xticks(ticks)
-		plt.grid(True)
-		
-		
-		histplothtml=mpld3.fig_to_dict(fig)
-
-
-		return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplotMedianhtml
+		return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplotMedianhtml,orderedlistgene,j,finalLinkList
 
 if __name__ == "__main__":
     main()
