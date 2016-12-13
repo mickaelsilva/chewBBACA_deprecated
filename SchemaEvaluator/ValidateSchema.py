@@ -482,15 +482,12 @@ li a {
 		ordered=[]
 		orderedBySize=[]
 		for key, value in statsPerGene.iteritems():
-			aux=[]
 			numberMultip=float(len(value[0]))
 			numberStop=float(len(value[1]))
 			numberStart=float(len(value[2]))
 			total=float(value[3])
 			totalpercent=((numberMultip+numberStart+numberStop)/total)*100
-			aux.append(key)
-			aux.append(totalpercent)
-			ordered.append(aux)
+			ordered.append([key,totalpercent])
 			orderedBySize.append([key,total])
 		ordered=sorted(ordered, key=itemgetter(-1))
 		ordered.reverse()
@@ -502,15 +499,11 @@ li a {
 		i=0
 		while i<len(ordered):
 			item=ordered[i]
-			item2=orderedBySize[i]
 			
 			aux=[]
 			aux.append(item[0])
 			
-			
-			
 			value=statsPerGene[item[0]]
-			value2=statsPerGene[item2[0]]
 			numberMultip=float(len(value[0]))
 			numberStop=float(len(value[1]))
 			numberStart=float(len(value[2]))
@@ -523,14 +516,22 @@ li a {
 			name=name[0]
 			if (numberMultip>0 or numberStop>0 or numberStart>0):
 				locusHTML=os.path.join(relpath,(os.path.basename(str(item[0]))).replace(".fasta",".html"))
-				locusHTML2=os.path.join(relpath,(os.path.basename(str(item2[0]))).replace(".fasta",".html"))
 				f.write("<tr id="+str(item[0])+""">\n<td class='tg-vn4c' onclick="window.open('"""+locusHTML+"""')" style='cursor:pointer'>"""+name+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberMultip))+" ("+str('{0:.2f}'.format((numberMultip/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStop))+" ("+str('{0:.2f}'.format((numberStop/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStart))+" ("+str('{0:.2f}'.format((numberStart/total)*100))+"%)"+"</td>\n<td class='tg-14d4' onclick='a(this);'>"+str(int(total))+" ("+str('{0:.2f}'.format(((numberMultip+numberStart+numberStop)/total)*100))+"%)"+"</td>\n</tr>")
-				auxHistList[0].append(locusHTML2)
+			i+=1
+		i=0
+		while i<len(orderedBySize):
+			item2=orderedBySize[i]
+			value2=statsPerGene[item2[0]]
+			
+			if (len(value2[0])>0 or len(value2[1])>0 or len(value2[2])>0):			
+				locusHTML=os.path.join(relpath,(os.path.basename(str(item2[0]))).replace(".fasta",".html"))
+				auxHistList[0].append(locusHTML)
 				auxHistList[1].append(float(len(value2[0])))
 				auxHistList[2].append(float(len(value2[1])))
 				auxHistList[3].append(float(len(value2[2])))
 				auxHistList[4].append(float(value2[3])-float(len(value2[2]))-float(len(value2[1]))-float(len(value2[0])))
 			i+=1
+			
 			
 		auxHistList=str(json.dumps(auxHistList))
 		f.write("</table>")
