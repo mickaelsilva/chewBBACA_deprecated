@@ -481,20 +481,14 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 						</script>""")
 			
 
-			if len(alleleSizes)<1:
-				alleleNames=[0]
-				alleleSizes=[0]
-			if len(alleleSizesTransError)<1:
-				alleleSizesTransError=[0]
-				alleleSizesTransErrorNames=[0]
-			if len(alleleSizesNotMultiple)<1:
-				alleleSizesNotMultiple=[0]
-				alleleSizesNotMultipleNames=[0]
+			
 			alleleSizes=str(json.dumps([alleleNames,alleleSizes]))
 			alleleSizesNotMultiple=str(json.dumps([alleleSizesNotMultipleNames,alleleSizesNotMultiple]))
 			alleleSizesTransError=str(json.dumps([alleleSizesTransErrorNames,alleleSizesTransError]))
 						
-			f.write("<script type='text/javascript'>var jsonScat1 ="+alleleSizes+";var jsonScat2 ="+alleleSizesNotMultiple+";var jsonScat3 ="+alleleSizesTransError+""";
+			f.write("<script type='text/javascript'>var jsonScat1 ="+alleleSizes+""";
+			
+			
 						
 						var listTrace=[];
 						var trace1 = {
@@ -505,6 +499,12 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 									  mode: 'markers',
 									  type: 'scattergl'
 									};
+						listTrace.push(trace1);""")
+			if 	len(alleleSizesNotMultipleNames)>0:
+				
+				
+				f.write("var jsonScat2 ="+alleleSizesNotMultiple+""";
+				
 						var trace2 = {
 									x: jsonScat2[0],
 									  y: jsonScat2[1],
@@ -513,7 +513,11 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 									  mode: 'markers',
 									  type: 'scattergl'
 									};
-						
+						listTrace.push(trace2);
+						""")
+			if 	len(alleleSizesTransErrorNames)>0:	
+				
+				f.write("var jsonScat3 ="+alleleSizesTransError+""";
 							var trace3 = {
 									x: jsonScat3[0],
 									  y: jsonScat3[1],
@@ -522,8 +526,10 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 									  mode: 'markers',
 									  type: 'scattergl'
 									};
-						listTrace.push(trace1,trace2,trace3)
-						var layout = {
+						listTrace.push(trace3);
+						""")
+						
+			f.write("""var layout = {
 									  title: 'Allele size scatter plot',
 									  yaxis: {title: "DNA bp allele length"},
 									  xaxis: {
