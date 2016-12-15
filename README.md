@@ -213,7 +213,7 @@ NC_011595.fna	gi|215481761|ref|NC_011595.1|&2897154-2897985&-	LNF
 
 
 
-1. Run the `ParalogPrunning.py.` script using `contigsInfo.txt` output as input from step 3.
+1. Run the `ParalogPrunning.py.` script using `contigsInfo.txt` output.
 
 **TODO@JAC** : Reavaluate paralog prunnig after wgMLST schema is created? - Paralog prunning allows the detection of loci representing the same locus that weren't detected on the wgMLST schema creation.
 
@@ -239,8 +239,6 @@ gi_406708523_ref_NC_018646.1_:c1944065-1941807.fasta	1	2
 In this example the allele call was ran for 3 genomes.
 Both locus presented had an exact match or an infered allele for one genome, while 2 genomes had issues or didn't have the locus. The CDS returned for the first locus is present in another locus, while the same happens for the second locus, from which we may clearly infer that a locus is being overrepresented by this two locus, since both are catching the same CDS.
 **TODO@JAC: Explain better this section. E**
-
-7. Run the Extract_cgAlleles.py using the outputs from 5. and 6.
 
 
 ----------
@@ -277,12 +275,12 @@ Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This 
 
  **6.1 Creating a clean allelic profile for PHYLOViZ** 
  
-Clean a raw output file from an allele calling to a phyloviz readable file. Keep the locus with only Exact matches or new alleles found for all genomes.
+Clean an alleles.txt raw output file from an allele calling to a phyloviz readable file. Keep the locus with only Exact matches or new alleles found for all genomes.
 
 
 Basic usage:
 
-	% Extract_cgAlleles.py -i rawDataToClean.txt -o cleanedOutput.txt -r removeLocusList.txt -g removeGenomesList.txt
+	% Extract_cgAlleles.py -i Alleles.txt -o cleanedOutput.txt -r removeLocusList.txt -g removeGenomesList.txt
 	
 `-i` raw output file from an allele calling
 
