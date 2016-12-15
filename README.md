@@ -212,11 +212,8 @@ NC_011595.fna	gi|215481761|ref|NC_011595.1|&2897154-2897985&-	LNF
 ### 4. Selecting a cgMLST schema from the wgMLST schema 
 
 
-1. Create a list .txt file containing one draft genome file per line with full paths (similar to 3.)
 
-2. Run the allelecall script (local or cluster version) using the list files created at 3. and 4.
-
-3. Run the `ParalogPrunning.py.` script using `contigsInfo.txt` output as input from step 5.
+1. Run the `ParalogPrunning.py.` script using `contigsInfo.txt` output as input from step 3.
 
 **TODO@JAC** : Reavaluate paralog prunnig after wgMLST schema is created? - Paralog prunning allows the detection of loci representing the same locus that weren't detected on the wgMLST schema creation.
 
