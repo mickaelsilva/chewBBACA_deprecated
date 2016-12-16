@@ -349,11 +349,11 @@ def main():
 							if reverse:
 								alleleMatchid=(int(fullAlleleList.index(reversedcds)))+1
 								perfectMatchIdAllele.append(str(alleleMatchid))
-								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"+")
+								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"-")
 							else:
 								alleleMatchid=(int(fullAlleleList.index(cds)))+1
 								perfectMatchIdAllele.append(str(alleleMatchid))
-								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"-")
+								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation)+"&"+"+")
 							resultsList.append('EXC:' + str(alleleMatchid) )
 							raise ValueError("EQUAL")
 						

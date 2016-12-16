@@ -3,13 +3,11 @@ import csv
 import numpy as np
 from numpy import array
 import argparse
-import collections
 from collections import OrderedDict
-import matplotlib.pyplot as plt
 import Counter
 import time
-#matplotlib.use('Agg')
-plt.switch_backend('agg')
+import plotly
+import plotly.graph_objs as go
 
 def presAbs (d2c):	
 
@@ -223,9 +221,6 @@ def clean (d2,iterations,ythreshold):
 	while i<=iterations:
 		
 		
-		#print "genomes to be removed:"
-		#print toremovegenomes
-		
 		for elem in toremovegenomes:
 			removedlistgenomes.append(elem)
 
@@ -319,7 +314,6 @@ def main():
 		
 	i=iterationNumber
 	while i<=iterationNumber:
-		fig, ax1 = plt.subplots(figsize=(30.5,20.0))
 		threshindex=0
 		
 		aux2=[]
@@ -327,7 +321,6 @@ def main():
 			aux=[]
 			
 			for result in resultPerThresh:
-				#resultPerThresh[i]
 				aux.append(result[i])
 			aux2.append(aux)
 			
@@ -339,32 +332,60 @@ def main():
 		d2 = np.delete (d2,(4), axis=0)
 		d2 = np.delete (d2,(4), axis=0)
 		
-		ax2 = ax1.twinx()
 		
-		
+		listtraces=[]
 		for line in d2:
 			
 			if(linenmbr==0):
-				ax2.plot(thresholdlist,line,linestyle='-',color='#663300', marker='v')
+				trace = go.Scatter(
+							x = thresholdlist,
+							y = line,
+							name = "Number of genomes used",
+							mode = 'lines+markers',
+							yaxis='y2',
+							marker = dict(symbol = 'diamond-dot',size = 10)
+							
+						)
+				
+				
 			else:	
-				ax1.plot(thresholdlist,line, label = labels[linenmbr], linestyle='--', linewidth=1, marker='o')
-
+				trace = go.Scatter(
+							x = thresholdlist,
+							name = labels[linenmbr],
+							mode = 'lines+markers',
+							y = line,
+							marker = dict(symbol = 'star-dot',size = 10),
+							line = dict(dash = 'dash')
+						)
+				
+			listtraces.append(trace)	
 			linenmbr+=1
 		
+		layout = go.Layout(
+					title='Test genomes quality',
+					xaxis=dict(
+						title='Threshold'
+					),
+					yaxis=dict(
+						title='Number of loci'
+					),
+					yaxis2=dict(
+						title='Number of genomes',
+						#~ titlefont=dict(
+							#~ color='rgb(148, 103, 189)'
+						#~ ),
+						#~ tickfont=dict(
+							#~ color='rgb(148, 103, 189)'
+						#~ ),
+						overlaying='y',
+						side='right'
+					)
+				)
 		
-		for tl in ax2.get_yticklabels():
-			tl.set_color('#663300')
-			
-		plt.xticks(thresholdlist)
 		
-		ax1.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05))
-		ax1.set_xlabel('Threshold')
+		fig = go.Figure({"data":listtraces,"layout":layout})
+		plot_url = plotly.offline.plot(fig, filename='GenomeQualityPlot')
 
-		ax2.set_ylabel('Number of genomes in use', color='#663300')
-		#plt.title('Iteration number '+str(i),loc='left')
-
-		
-		plt.savefig('GenomeQualityPlot.png')
 		i+=1
 		
 	
@@ -373,10 +394,7 @@ def main():
 		
 		print "At threshold "+str(thresholdlist[i]) + " it stabilized at the iteration number "+str(stableiter)
 		i+=1
-	
-	
-	#plt.show()
-	plt.close()		
+		
 	print (starttime)
 	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 	
