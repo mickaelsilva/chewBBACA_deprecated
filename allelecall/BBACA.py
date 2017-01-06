@@ -557,16 +557,18 @@ def main():
 			statswrite+=('\t'.join(map(str,auxList)))	
 			genome+=1
 		
-		outputpath=os.path.dirname(gOutFile)
-		outputfolder= os.path.join(outputpath,str(gOutFile)+"_"+str(time.strftime("%Y%m%dT%H%M%S")) )
+		if not os.path.exists(gOutFile):
+			os.makedirs(gOutFile)
+		#outputpath=os.path.dirname(gOutFile)
+		outputfolder= os.path.join(gOutFile,"results_"+str(time.strftime("%Y%m%dT%H%M%S")) )
 		os.makedirs(outputfolder)
 		print statswrite
 		if not divideOutput:
-			with open(os.path.join(outputfolder,gOutFile+"_alleles.txt"), 'wb') as f:
+			with open(os.path.join(outputfolder,"results__alleles.txt"), 'wb') as f:
 				f.write(finalphylovinput)
 				
 				
-			with open(os.path.join(outputfolder,gOutFile+"_statistics.txt"), 'wb') as f:
+			with open(os.path.join(outputfolder,"results__statistics.txt"), 'wb') as f:
 				f.write(str(statswrite))
 				f.write("\n_________________________________________\n")
 				f.write(starttime)
@@ -576,7 +578,7 @@ def main():
 				f.write ("\nused this number of cpus: "+str(cpuToUse))
 				f.write("\nused a bsr of : " +str(BSRTresh))
 			
-			with open(os.path.join(outputfolder,gOutFile+"_contigsInfo.txt"), 'wb') as f:
+			with open(os.path.join(outputfolder,"results__contigsInfo.txt"), 'wb') as f:
 				f.write(str(finalphylovinput2))
 		else:
 			for genome in listOfGenomesBasename:

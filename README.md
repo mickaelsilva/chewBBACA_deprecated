@@ -135,7 +135,7 @@ The second step is grouping all the genes by BLASTIng all the genes against each
 
 Having defined the wgMLST schema with one allele per locus, we can proceed to use it to call alleles on the target genomes.  The command is the following:
 
-	% BBACA.py -i listGenomes.txt -g listGenes.txt -o Results --cpu 3 --bsr 0.9 --so -b /home/user/blast2.5.0/blastp
+	% BBACA.py -i listGenomes.txt -g listGenes.txt -o Results --cpu 3 -b /home/user/blast2.5.0/blastp
 
 **Parameters** 
 `-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
