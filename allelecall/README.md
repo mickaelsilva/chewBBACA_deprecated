@@ -46,32 +46,29 @@ Python dependencies:
 
 Other dependencies:
 * BLAST 2.5.0+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.5.0/
-* [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/)
+* [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/) or above
 
 ----------
 
 ## 2. wgMLST schema creation
 
-Create your own wgMLST schema. The command is the following:
+Create your own wgMLST schema based on a set of genomes fasta files. The command is the following:
 
-`CreateSchema.py -i allffnfile.fasta -l 200 --cpu 4`
+`PPanGen.py -i listGenomes -o OutputFolderName --cpu 4`
 
-**Parameters:**
+**Parameters**
 
-`-i`  Input file with concatenated gene sequences
+`-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
-`-l` minimum locus lenght (removes any loci with length equal or less the specified value
+`-o` prefix for the output folder for the schema, chewBBACA ready
 
-`--cpu` (optional) number of cpus to use for BLAST, will work for the latest BLAST releases
+`--cpu` Number of cpus to use
 
-
-**Input file :**
-
- `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation, [Prokka](https://github.com/tseemann/prokka), also provide *.ffn* files with its output. Another source for bacteria .ffn files is NCBI at ftp://ftp.ncbi.nih.gov/genomes/archive/old_genbank/Bacteria/
+`--bsr` (Optional) Minimum BSR for locus similarity. Default at 0.6. 
 
 **Outputs:** 
 
-One fasta file per gene in the `schema_seed/`directory that is created in the dir where the files are found. 
+One fasta file per gene in the `-o`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`. It will also create the necessary files for the allele call, by creating the directory named short. The contents of this dir is already explained in the folder structure subsection.
 
 ----------
 

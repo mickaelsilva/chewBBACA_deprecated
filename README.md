@@ -1,21 +1,6 @@
-# chewBBACA: BSR-Based Allele Calling Algorithm
+# chewBBACA: Quick Usage
 
-**chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. BSR stands for BLAST Score Ratio as proposed by  [Rasko DA et al.](http://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-6-2) 
-
-chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ratio that can be run in multiprocessor settings and a set of functions to visualize and validate allele variation in the loci.
-
-This page was created with the dual purpose of serving as readme file and tutorial for the software.
-
-Use [BBACA gitter](https://gitter.im/BBACA/Lobby) for direct chat interaction.
-
-## Tutorial contents
- 
- 1. Setting up the analysis  
- 2. wgMLST schema creation  
- 3. Allele call using the wgMLST schema
- 4. Selecting a cgMLST schema from the wgMLST schema
- 5. Validating the cgMLST schema
- 6. Defining the cgMLST schema
+*Check the wiki for a much more thorough chewBBACA walktrought*
 
 **Important Notes before starting:**
 
@@ -25,34 +10,33 @@ Use [BBACA gitter](https://gitter.im/BBACA/Lobby) for direct chat interaction.
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
 ----------
+##FAQ
 
-### 1. Setting up the analysis
+###Q: Step 2 is taking hours, will it ever end?  
+A: Depending on the variability of the strains you are using to create the schema and the number of cpu you are using. The more variable the strains, the more BLAST comparisons are made.
 
-**1.1 Installing chewBBACA**
+###Q: Step 3 just crashed at 99% after 2 days running, do I need to start over :(?  
+A: chewBBACA shoul allow you to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
 
-To install chewBBACA, simply select the directory where you want it to be installed and run the following command:
+###Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
+A: Try to run step 5, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises from the ashes.
 
-```
- git clone https://github.com/mickaelsilva/chewBBACA.git
-``` 
+----------
 
-This will create the chewBBACA dir in the present directory with all the needed scripts. 
+## 1. Setting up the analysis
 
-to update chewBBACA you simply 
+**Installing chewBBACA**
 
-```
- git pull
-```
+Git clone the whole repository.
 
-You will also need to install all the all the following dependencies. Prodigal and BLAST must be added to the PATH variables.
+You need to install the following dependencies. Prodigal and BLAST must be added to the PATH variables.
 
-You may use this pip command to install the python dependencies automatically (cd to the chewBBACA folder):
+You may use this pip command to install the python dependencies automatically :
 
 ```
 pip install -r requirements.txt
 ```
 
-* [git](https://git-scm.com/)
 
 Python dependencies:
 * [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
@@ -61,35 +45,14 @@ Python dependencies:
 
 Other dependencies:
 * BLAST 2.5.0+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.5.0/
-* [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/)
-
-**1.2 PATH settings for chewBBACA**
-
-All the subdirectories in the chewBBACA dir  must be on the PATH if you want to be able to access the scripts from any dir. Replace the `<install_dir>` with the full path to chewBBACA instalation directory
-
-```
-export PATH="<install_dir>/chewBBACA/utils/:$PATH"
-export PATH="<install_dir>/chewBBACA/allelecall/:$PATH"
-export PATH="<install_dir>/chewBBACA/createschema/:$PATH"
-export PATH="<install_dir>/SchemaEvaluator/:$PATH"
-```
-**1.3 Folder structure**
-
-*This step is optional and is directed to users without much experience in running scripts.*
-We suggest that  for each analysis for a given schema, chewBBACA should be run in a directory (chewbacca_wrkDIR) containing the following directory structure: 
-```
-	.../chewbacca_wrkDIR/
-    .../chewbacca_wrkDIR/genomes 
-    .../chewbacca_wrkDIR/schema
-```
-the `.../chewbacca_wrkDIR/genomes` dir will contain the fasta files with the genomes to be analysed (complete or draft genomes).
-In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for each loci. This directory will also contain a subdir named ` .../chewbacca_wrkDIR/schema/short ` with the fasta file with all the alleles to be used in the BLAST step of the allele call. This files should have the  name "< gene >_short.fasta" with < gene > matching the filenames in `.../chewbacca_wrkDIR/schema`. All auxiliary temporary files will be contained in the `.../chewbacca_wrkDIR/schema ` on the folder "temp".
-
+* [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/) or above
 
 ----------
 
-### 2. wgMLST schema creation
-#####Define your pan genome schema based on a set of genomes:
+## 2. wgMLST schema creation
+
+Create your own wgMLST schema based on a set of genomes fasta files. The command is the following:
+
 `PPanGen.py -i listGenomes -o OutputFolderName --cpu 4`
 
 **Parameters**
@@ -107,157 +70,47 @@ In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for
 One fasta file per gene in the `-o`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`. It will also create the necessary files for the allele call, by creating the directory named short. The contents of this dir is already explained in the folder structure subsection.
 
 ----------
-#####Or create a wgMLST schema from a set of pre-determined annotated genomes. The command is the following:
 
-`CreateSchema.py -i allffnfile.fasta -l 200 --cpu 4`
+## 3.  Allele call using the wgMLST schema 
 
-**Parameters:**
+Create two list of files with the full paths (one path per line), one list for genomes and another for genes (genes are located on the schema seed created in the last step, ignore the short folder)
 
-`-i`  Input file with concatenated gene sequences
+Then run is the following:
 
-`-l` minimum locus lenght (removes any loci with length equal or less the specified value
-
-`--cpu` (optional) number of cpus to use for BLAST, will work for the latest BLAST releases
-
-`--bsr` (Optional) Minimum BSR for locus similarity. Default at 0.6. 
-
-
-**Input file definition:**
-
- `allffnfile.fasta` : a fasta file resulting from concatenating all the fasta files containing all the genes for the genomes we want to use for the creating the wgMLST schema. In Genebank this files usually have the *.fnn*  extension. A commonly used and highly efficient software for bacterial genome annotation, [Prokka](https://github.com/tseemann/prokka), also provide *.ffn* files with its output. Another source for bacteria .ffn files is NCBI at ftp://ftp.ncbi.nih.gov/genomes/archive/old_genbank/Bacteria/
-
-**Outputs:** 
-
-One fasta file per gene in the `schema_seed/`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`. It will also create the necessary files for the allele call, by creating the directory named short. The contents of this dir is already explained in the folder structure subsection.
-
-The script creates a selection of unique loci present in the input file. Firstly, it removes genes that are substring of larger genes (i.e. the CDS are identical but  are annotated with different start codons) and genes with DNA sequences smaller than chosen in the `-g` parameter. 
-The second step is grouping all the genes by BLASTIng all the genes against each other. Pairwise gene comparisons with Blast Score Ratio (BSR) greater than 0.6 are considered alleles of the same locus and the allele with larger gene length is kept in the list.
-
-----------
-
-### 3.  Allele call using the wgMLST schema 
-
-Having defined the wgMLST schema with one allele per locus, we can proceed to use it to call alleles on the target genomes.  The command is the following:
-
-	% BBACA.py -i listGenomes.txt -g listGenes.txt -o Results --cpu 3 -b /home/user/blast2.5.0/blastp
+	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 
 
 **Parameters** 
+
 `-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
 `-g` file containing the path to the list of alleles
 
 `-o` prefix for the output files. ID for the allele call run
 
-`--cpu` Number of cpus to use
+`--cpu` Number of cpus to use 
 
 `-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
 
-`-b` Blastp full path (optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
-
-`--bsr` BSR minimum value (optional). Default value is 0.6.
-
-`--so` Split output files by sample (optional). Default is all results concatenated.
+`-b` Blastp full path(optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
 
 
 This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  
 
-`srun -c 62 --mem 50G BBACA.py -i listgenomes.txt -g listgenes.txt -o OutPrefix --cpu 62`
-
-**Note:** If by some reason the process is interrupted (server crash, etc), running the command line with the same inputs  will display the option to resume the  allele call, avoiding lost computing time.   
-
+`srun -c 62 --mem 250G BBACA.py -i listgenomes.txt -g listgenes.txt -o OutPrefix --cpu 62`
 
 **Outputs files**:
 ```
-./< outPrefix >_< datestamp>/< outPrefix >_statistics.txt
-./< outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt
-./< outPrefix >_< datestamp>/< outPrefix >_Alleles.txt 
+./< outPrefix >_< datestamp>/< outPrefix >/results_statistics.txt
+./< outPrefix >_< datestamp>/< outPrefix >/results_contigsInfo.txt
+./< outPrefix >_< datestamp>/< outPrefix >/results_Alleles.txt 
 ```
-An abridged example `./< outPrefix >_< datestamp>/< outPrefix >_statistics.txt` file:
-
-```
-Stats:	EXC	INF	LNF	PLOT	NIPL	ALM	ASM
-NC_017162.fna	892	2319	1909	0	104	5	37	
-NC_011586.fna	1563	1697	1809	0	116	6	75	
-```
-
-The column headers stand for:
-* EXC - allele has exact match (100% identity)
-* INF - infered allele with prodigal
-* LNF - locus not found
-* PLOT - locus on the tip of the contig (partial match)
-* NIPL - Non informative paralogous locus . Two or more BLAST matches with BSR>0.6 for the protein, indicate that the locus could have paralogous and should be removed from the analysis. A high number of NIPL may also indicate a poor assembled genome, with a high number of smaller contigs.
-* ALM - allele 20% larger than locus size mode (match CDS lenght> locus mode length + locus mode length * 0.2)
-* ASM - allele 20% smaller than locus size mode (match CDS lenght < locus mode length - locus mode length * 0.2)
-
-The ALM and ASM control for the fact that, for the majority of the loci the allele lengths are quite conserved. However some loci can have larger variation in allele length and those should be manually curated.
-
-
-An abridged example of an output file for `< outPrefix >_< datestamp>/< outPrefix >_Alleles.txt`  with only two loci:
-
-```
-FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	
-NC_017162.fna	INF-2	LNF
-NC_011586.fna	INF-3	LNF
-NC_011595.fna	3	LNF
-```
-
-The first column has the filename for which the allele call was performed. The table headers have the filenames of files where the alleles are stored for each loci. (**TODO @JAC** : explain output result )
- 
-An abridged example of an output file for `< outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt`  with only two loci:
-
-```
-FILE	gi_126640115_ref_NC_009085.1_:1032446-1033294.fasta	gi_126640115_ref_NC_009085.1_:103903-104649.fasta	
-NC_017162.fna	gi|384129960|ref|NC_017162.1|&967461-968292&+	LNF
-NC_011586.fna	gi|213155370|ref|NC_011586.1|&997690-998521&+	LNF
-NC_011595.fna	gi|215481761|ref|NC_011595.1|&2897154-2897985&-	LNF
-```
-----------
-
-### 4. Selecting a cgMLST schema from the wgMLST schema 
-
-
-
-1. Run the `ParalogPrunning.py.` script using `contigsInfo.txt` output.
-
-**TODO@JAC** : Reavaluate paralog prunnig after wgMLST schema is created? - Paralog prunning allows the detection of loci representing the same locus that weren't detected on the wgMLST schema creation.
-
-	% ParalogPrunning.py -i contigsInfo.txt
-
-`-i` contigsInfo.txt file
-
-
-
-
-* PC -Paralog Count - number of times a CDS on this locus as been found in another locus
-* NDC - Non Determined Locus count -  Number of times the alleles the target locus was not exact match to an allele  (EXC) or a new inferred allele (INF). (i.e. locus can be a LNF,LOT, PLOT, NIPL, ASM, ALM). It helps to decide towards excluding the locus if this number is also large.  
-
-The output file `RepeatedLoci.txt`lists only loci where at least one paralogous was found. The file format is the following:
-
-```
-gene	PC	NDC
-gi_22536185_ref_NC_004116.1_:c2045049-2043157.fasta	1	2
-gi_406708523_ref_NC_018646.1_:c1944065-1941807.fasta	1	2
-
-```
-
-In this example the allele call was ran for 3 genomes.
-Both locus presented had an exact match or an infered allele for one genome, while 2 genomes had issues or didn't have the locus. The CDS returned for the first locus is present in another locus, while the same happens for the second locus, from which we may clearly infer that a locus is being overrepresented by this two locus, since both are catching the same CDS.
-**TODO@JAC: Explain better this section. E**
 
 
 ----------
+=============
 
-### 5. Validating the cgMLST schema
+## 4. Evaluate wgMLST call quality per genome
 
-** 5.1 Evaluate wgMLST call quality per genome **
-
-
-Usefull to determine a core genome and remove genomes that may have technical issues. The algorithm description is the following:
-
-1. For each allelic profile generated for a draft genome , let *nl* be the number of loci that are not present in the allelic profile but are present in 99%  or more of the remaining allelic profiles (97% if total number of genomes under 500 and 95% if under 200); Total number of genomes to be considered is recalculated each time any genome is removed by the exclusion threshold.
-2. For and exclusion threshold (*et*) remove all allelic profiles that have *nl* > *et*. If no allelic profiles are removed, proceed to Step 4;
-3. Return to Step 1.
-4. The locus present in all the draft genomes for the remaining allelic profiles, are defined as the cgMLST schema for the exclusion threshold (et)
 
 Usage:
 
@@ -274,17 +127,17 @@ The output consists in a set of plots per iteration and a removedGenomes.txt fil
 
 Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
-----------
-### 6. Defining the cgMLST schema
 
- **6.1 Creating a clean allelic profile for PHYLOViZ** 
+## 5. Defining the cgMLST schema
+
+ **Creating a clean allelic profile for PHYLOViZ** 
  
-Clean an alleles.txt raw output file from an allele calling to a phyloviz readable file. Keep the locus with only Exact matches or new alleles found for all genomes.
+Clean a raw output file from an allele calling to a phyloviz readable file. Use the Alleles.txt output file.
 
 
 Basic usage:
 
-	% Extract_cgAlleles.py -i Alleles.txt -o cleanedOutput.txt -r removeLocusList.txt -g removeGenomesList.txt
+	% Extract_cgAlleles.py -i rawDataToClean.txt -o cleanedOutput.txt -r removeLocusList.txt -g removeGenomesList.txt
 	
 `-i` raw output file from an allele calling
 
@@ -293,5 +146,6 @@ Basic usage:
 `-r` (optional) list of genes to remove, one per line, advised to use the detected overrepresented genes from ParalogPrunning.py
 
 `-g` (optional) list of genomes to remove, one per line, advised to use genomes that perform worst on statistics or use the result from the testGenomeQuality script
+
 
 =============
