@@ -100,6 +100,8 @@ In `.../chewbacca_wrkDIR/schema ` will contain a fasta file with the alleles for
 
 `--cpu` Number of cpus to use
 
+`--bsr` (Optional) Minimum BSR for locus similarity. Default at 0.6. 
+
 **Outputs:** 
 
 One fasta file per gene in the `-o`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`. It will also create the necessary files for the allele call, by creating the directory named short. The contents of this dir is already explained in the folder structure subsection.
@@ -116,6 +118,8 @@ One fasta file per gene in the `-o`directory that is created in the dir where th
 `-l` minimum locus lenght (removes any loci with length equal or less the specified value
 
 `--cpu` (optional) number of cpus to use for BLAST, will work for the latest BLAST releases
+
+`--bsr` (Optional) Minimum BSR for locus similarity. Default at 0.6. 
 
 
 **Input file definition:**

@@ -80,15 +80,17 @@ def main():
 	parser.add_argument('-p', nargs='?', type=str, help="file with protein", required=False, default=False)
 	parser.add_argument('-o', nargs='?', type=str, help="output filename", required=False, default=False)
 	parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False,default='blastp')
+	parser.add_argument('--bsr', nargs='?', type=float, help="minimum BSR similarity", required=False,default=0.6)
+
 	
 	args = parser.parse_args()
 	genes = args.i
 	sizethresh = args.l
 	cpuToUse = args.cpu
-	passSteps = True
 	proteinFIlePath=args.p
 	outputFIlePath=args.o
 	BlastpPath=args.b
+	bsr=args.bsr
 	
 	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
 	print ("\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
@@ -277,21 +279,21 @@ def main():
 					alleleLength2=len(geneDict[str(align.hit_def)])
 					
 					#if good match and gene B not in toremove list
-					if(scoreRatio>0.6 and not str(align.hit_def) == str(blast_record.query) and str(align.hit_def) not in toRemove):
+					if(scoreRatio>bsr and not str(align.hit_def) == str(blast_record.query) and str(align.hit_def) not in toRemove):
 						
 						#if gene B is bigger than gene A, keep bigger gene B
 						if alleleLength2>alleleLength :
 							genesToKeep.append(str(align.hit_def))
 							genesToKeep.remove(str(blast_record.query))
 							toRemove.append(str(blast_record.query))
-							log.append(str(blast_record.query)+"\t"+str(align.hit_def)+"\t"+"2 is bigger and bsr >0.6")
+							log.append(str(blast_record.query)+"\t"+str(align.hit_def)+"\t"+"2 is bigger and bsr >"+str(bsr))
 							
 							raise
 						#else add gene B to toremove list
 						elif str(align.hit_def) in genesToKeep:
 							genesToKeep.remove(str(align.hit_def))
 							toRemove.append(str(align.hit_def))
-							log.append(str(align.hit_def)+"\t"+str(blast_record.query)+"\t"+"2 is bigger and bsr >0.6")
+							log.append(str(align.hit_def)+"\t"+str(blast_record.query)+"\t"+"2 is bigger and bsr >"+str(bsr))
 							
 					i+=1
 			
@@ -311,9 +313,9 @@ def main():
 					match=(align.hsps)[0]
 					scoreRatio=float(match.score)/float(selfblastscore)
 					
-					if align.hit_def not in genesToKeep and not str(align.hit_def) == str(blast_record.query) and scoreRatio>0.6 :
+					if align.hit_def not in genesToKeep and not str(align.hit_def) == str(blast_record.query) and scoreRatio>bsr :
 						toRemove.append(align.hit_def)
-						#log.append(str(align.hit_def)+"\t"+str(blast_record.query)+"\t"+"2 was on the removed list and bsr >0.6")
+						#log.append(str(align.hit_def)+"\t"+str(blast_record.query)+"\t"+"2 was on the removed list and bsr >"+str(bsr))
 							
 					else:
 						pass
@@ -392,7 +394,7 @@ def main():
 			f.write(concatenatedFile)
 	elif not proteinFIlePath and outputFIlePath:
 		get_Short(listfiles)
-		print "\nRemoved %s with a high similarity (BSR>0.6)" % str(removedparalogs)
+		print "\nRemoved %s with a high similarity (BSR>%s)" % (str(removedparalogs),str(bsr))
 		print "Total of %s loci that constitute the schema" % str(rest)
 		os.remove(proteinfile)
 		
@@ -403,7 +405,7 @@ def main():
 				
 		#		f.write(str(elem)+"\n")
 		get_Short(listfiles)
-		print "\nRemoved %s with a high similarity (BSR>0.6)" % str(removedparalogs)
+		print "\nRemoved %s with a high similarity (BSR>%s)" % (str(removedparalogs),str(bsr))
 		print "Total of %s loci that constitute the schema" % str(rest)
 		os.remove(proteinfile)
 	

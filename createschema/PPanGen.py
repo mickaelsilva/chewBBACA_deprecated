@@ -303,6 +303,7 @@ def main():
 	parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
 	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=True)
 	parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False,default='blastp')
+	parser.add_argument('--bsr', nargs='?', type=float, help="minimum BSR similarity", required=False,default=0.6)
 	
 	
 	args = parser.parse_args()
@@ -311,6 +312,7 @@ def main():
 	cpuToUse=args.cpu
 	outputFile=args.o
 	BlastpPath=args.b
+	bsr=args.bsr
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
 	if cpuToUse > multiprocessing.cpu_count()-2:
@@ -453,7 +455,7 @@ def main():
 		if len(listOfGenomes)==1:
 			print "___________________\nFinal step : creating the schema"
 			lastFile=listOfGenomes.pop()
-			proc = subprocess.Popen([createSchemaPath, '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath,"-o",outputFile])
+			proc = subprocess.Popen([createSchemaPath, '-i', lastFile,'-l', "200",'--cpu', str(cpuToUse),"-b",BlastpPath,"-o",outputFile,"--bsr",bsr])
 			p_status = proc.wait()
 			print "Schema Created sucessfully"
 
