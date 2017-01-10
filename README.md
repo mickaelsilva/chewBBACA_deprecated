@@ -1,6 +1,6 @@
 # chewBBACA: Quick Usage
 
-*Check the wiki for a much more thorough chewBBACA walktrought*
+##Check the wiki for a much more thorough chewBBACA walktrought*
 
 **Important Notes before starting:**
 
@@ -19,7 +19,7 @@ A: Depending on the variability of the strains you are using to create the schem
 A: chewBBACA shoul allow you to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
 
 ###Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
-A: Try to run step 5, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises from the ashes.
+A: Try to run step 4, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises.
 
 ----------
 
@@ -67,7 +67,7 @@ Create your own wgMLST schema based on a set of genomes fasta files. The command
 
 **Outputs:** 
 
-One fasta file per gene in the `-o`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. For example the locus with the annotation ` >gi|193804931|gb|AE005672.3|:2864-3112 Streptococcus pneumoniae TIGR4, complete genome` will create the fasta file named  `gi_193804931_gb_AE005672.3_:2864-3112.fasta`. It will also create the necessary files for the allele call, by creating the directory named short. The contents of this dir is already explained in the folder structure subsection.
+One fasta file per gene in the `-o`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. 
 
 ----------
 
@@ -89,8 +89,6 @@ Then run is the following:
 
 `--cpu` Number of cpus to use 
 
-`-v`,`--verbose`  verbose mode(optional). Provides more output of the run.
-
 `-b` Blastp full path(optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
 
 
@@ -107,7 +105,6 @@ This will use by default, number of CPUs available minus 2 and can be called in 
 
 
 ----------
-=============
 
 ## 4. Evaluate wgMLST call quality per genome
 
@@ -127,7 +124,7 @@ The output consists in a set of plots per iteration and a removedGenomes.txt fil
 
 Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
-
+----------
 ## 5. Defining the cgMLST schema
 
  **Creating a clean allelic profile for PHYLOViZ** 
