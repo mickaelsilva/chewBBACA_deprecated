@@ -67,11 +67,12 @@ def main():
 	#genebasename=genebasename[0]
 	
 		
-	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot,listgenesBoxOrdered,totalnumberofgenes,boxListLink=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath,splited)
+	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot,listgenesBoxOrdered,totalnumberofgenes,boxListLink,allAllelesStats=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath,splited)
 	
 	#boxplot=str(json.dumps(boxplot))
 	histplot=str(json.dumps(histplot))
 	allelenumberplot=str(json.dumps(allelenumberplot))
+	allAllelesStats=str(json.dumps(allAllelesStats))
 
 
 	statsPerGene=CheckCDS.analyzeCDS(genes,transTable,True,outputpath,cpuToUse)
@@ -204,8 +205,8 @@ li a {
 					</div>
 				</div>""")
 		
-		f.write("""<div id="fig03" style="display:none;width: 1300px; height: 700px;">
-		</div><div id="fig01" style="display:none; width: 100%;">
+		f.write("""<div id="fig03" ><div id="fig03b" style="width: 1000px; height: 600px;"></div><div id="fig03a" style="width: 1300px; height: 700px;"></div></div>
+		<div id="fig01" style="display:none; width: 100%;">
 		<h2>Size boxplot for all loci</h2><p>Box plot for each locus on a descending order of the median allele sizes</p>
 		<p>Use the zoom button and hover the mouse over a box/median to see the locus name and points data</p>
 		<p>-->Use the following buttons to navigate through all loci</p>
@@ -329,7 +330,7 @@ li a {
 		
 		f.write("""<script type="text/javascript">
 					$("#button3").click(function(){
-					  if ($("#fig03").firstChild==undefined){
+					  if ($("#fig03a").firstChild==undefined){
 					  $.ajax({
 								async: false,
 								url: "json3.js",
@@ -352,13 +353,29 @@ li a {
 							listTraces.push(trace)
 								}
 						var layout = {
-									  title: 'Distribution of number of alleles per gene by mode/mean/median',
 									  yaxis: {title: "Number of alleles"},
 									  xaxis: {
 												title: "Allele size in bp",
 											  },
 									};
-						Plotly.newPlot('fig03', listTraces,layout);
+						Plotly.newPlot('fig03a', listTraces,layout);
+							
+						var trace = [{
+									  x: listNumberDifAlleles,
+									  type: 'histogram'
+									}];
+						var layout = {
+									  barmode: "stack",
+									  showlegend: false,
+									  yaxis: {title: "Number of Locus"},
+									  xaxis: {
+												autotick: true,
+												showgrid: true,
+												title: "Number of Different Alleles",
+												showticklabels: true
+											  },
+									};
+						Plotly.newPlot('fig03b', trace,layout);
 					  }
 					  $("#fig03").css({"display":"block"});
 					  $("#fig01").css({"display":"none"});
@@ -639,7 +656,7 @@ li a {
 	
 	with open((os.path.join(outputpath,"json3.js")), "wb") as f:
 		
-		f.write("var jsonsScatterPlot ="+str(allelenumberplot))
+		f.write("var jsonsScatterPlot ="+str(allelenumberplot)+";var listNumberDifAlleles="+allAllelesStats)
 
 
 	try:

@@ -1,6 +1,6 @@
 # chewBBACA: Quick Usage
 
-##Check the wiki for a much more thorough chewBBACA walktrought*
+##Check the wiki for a much more thorough chewBBACA walktrought
 
 **Important Notes before starting:**
 

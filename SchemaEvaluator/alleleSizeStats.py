@@ -54,6 +54,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 	modaStats=[]
 	allsizes=[]
 	tabStats=[]
+	allAllelesStats=[]
 	allNumberAlleles=[]
 	allNumberAllelesMean=[]
 	allNumberAllelesMedian=[]
@@ -90,7 +91,8 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 				aux.append(allelesize)
 			sizesum+=allelesize
 			allelenumber+=1
-
+		
+		allAllelesStats.append(allelenumber)	
 
 		aux[0]=	minsize
 		#mean=float(sizesum)/allelenumber
@@ -272,7 +274,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 		orderedlistgene=finalNameList
 		boxplothtml=finalList
 
-		return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplotMedianhtml,orderedlistgene,j,finalLinkList
+		return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplotMedianhtml,orderedlistgene,j,finalLinkList,allAllelesStats
 
 if __name__ == "__main__":
     main()
