@@ -685,7 +685,10 @@ def main():
 						resultsList.append('PLOT5:-1')
 						perfectMatchIdAllele.append('PLOT5')
 						#perfectMatchIdAllele2.append('PLOT5')
-						
+						if not Reversed:
+							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+						else:
+							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
 						
 						verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 5' tip of the contig \n")
 						
