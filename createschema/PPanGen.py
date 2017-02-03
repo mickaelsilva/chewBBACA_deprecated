@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import HTSeq
 import sys
 from Bio.Seq import Seq
@@ -304,6 +304,7 @@ def main():
 	parser.add_argument('--cpu', nargs='?', type=int, help="Number of cpus, if over the maximum uses maximum -2", required=True)
 	parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False,default='blastp')
 	parser.add_argument('--bsr', nargs='?', type=float, help="minimum BSR similarity", required=False,default=0.6)
+	parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False,default=False)
 	
 	
 	args = parser.parse_args()
@@ -313,12 +314,31 @@ def main():
 	outputFile=args.o
 	BlastpPath=args.b
 	bsr=args.bsr
+	chosenTaxon=args.t
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
 	if cpuToUse > multiprocessing.cpu_count()-2:
 		print "Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action"
 		
-	
+	taxonList={'Campylobacter_Jejuni':'trained_campyJejuni.trn',
+				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn'
+				}	
+	if isinstance(chosenTaxon, basestring):
+		trainingFolderPAth=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'TrainingFiles4Prodigal'))
+		try:
+			chosenTaxon=os.path.join(trainingFolderPAth,taxonList[chosenTaxon])
+			
+			if os.path.isfile(chosenTaxon):
+				print "will use this training file : "+chosenTaxon
+			else:
+				print "training file don't exist"
+				print chosenTaxon
+				return "retry"
+		except :
+			print "Your chosen taxon is not attributed, select one from:"
+			for elem in taxonList.keys():
+				print elem
+			return "retry"
 		
 	scripts_path=os.path.dirname(os.path.realpath(__file__))
 	
@@ -363,10 +383,11 @@ def main():
 
 	
 	#Prodigal run on the genomes, one genome per core using n-2 cores (n number of cores)
-
+	print chosenTaxon
 	pool = multiprocessing.Pool(cpuToUse)
 	for genome in listOfGenomes:
-		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath],))
+			
+		pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,str(chosenTaxon)],))
 		
 	pool.close()
 	pool.join()
@@ -459,7 +480,6 @@ def main():
 			p_status = proc.wait()
 			print "Schema Created sucessfully"
 
-	
 	shutil.rmtree(basepath)		
 	
 	print (starttime)

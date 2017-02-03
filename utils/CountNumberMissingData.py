@@ -44,10 +44,10 @@ def main():
 		numberASM=genomeSchema.count("ASM")
 		numberALM=genomeSchema.count("ALM")
 		
-		numberMissingData=numberLOT+numberLNF+numberNIPL+numberASM+numberALM
-		if numberMissingData>0:
-			pontuationDict[(genomeslist[i])[0]]=numberMissingData
-			genomeslist2.append((genomeslist[i])[0])
+		numberMissingData=numberLOT+numberLNF+numberNIPL+numberASM+numberALM+0
+		#if numberMissingData>0:
+		pontuationDict[(genomeslist[i])[0]]=numberMissingData
+		genomeslist2.append((genomeslist[i])[0])
 		i+=1	
 	
 	for k,v in pontuationDict.items():

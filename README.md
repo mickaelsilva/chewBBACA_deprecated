@@ -63,6 +63,8 @@ Create your own wgMLST schema based on a set of genomes fasta files. The command
 
 `--cpu` Number of cpus to use
 
+`-t` (Optional) taxon to use for prodigal training input
+
 `--bsr` (Optional) Minimum BSR for locus similarity. Default at 0.6. 
 
 **Outputs:** 
@@ -88,6 +90,8 @@ Then run is the following:
 `-o` prefix for the output files. ID for the allele call run
 
 `--cpu` Number of cpus to use 
+
+`-t` (Optional) taxon to use for prodigal training input
 
 `-b` Blastp full path(optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
 

@@ -115,11 +115,11 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 			allverygood.append(geneslist[column])
 		elif value==0:
 			allverybad.append(geneslist[column])
-		if value>0.95:
+		if value>=0.95:
 			plus95+=1
-		if value>0.99:
+		if value>=0.99:
 			plus99+=1
-		if value>0.995:
+		if value>=0.995:
 			plus995+=1
 
 		totals.append(float(float(d2d.shape[0]-notfound)/float(d2d.shape[0])))

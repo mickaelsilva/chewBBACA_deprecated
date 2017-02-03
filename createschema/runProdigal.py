@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import sys
 import os
 import string
@@ -10,6 +10,7 @@ def main():
 	try:
 		input_file = sys.argv[1]
 		tempPath = sys.argv[2]
+		choosenTaxon = sys.argv[3]
 
 	except IndexError:
 		print "usage: list_pickle_obj"
@@ -22,7 +23,13 @@ def main():
         # RUN PRODIGAL #
         # ------------ #  
 	#prodigal_path='prodigal'
-	proc = subprocess.Popen(['prodigal', '-i', contigsFasta, '-c', '-m', '-g', '11', '-p', 'single', '-f', 'sco', '-q'], stdout=subprocess.PIPE)
+	
+	if choosenTaxon == "False":
+		
+		proc = subprocess.Popen(['prodigal', '-i', contigsFasta, '-c', '-m', '-g', '11', '-p', 'single', '-f', 'sco', '-q'], stdout=subprocess.PIPE)
+	else:	
+		proc = subprocess.Popen(['prodigal', '-i', contigsFasta, '-c', '-m', '-g', '11', '-p', 'single', '-f', 'sco', '-q', '-t',choosenTaxon ], stdout=subprocess.PIPE)
+
 	
 	cdsDict = {}
 	tempList = []

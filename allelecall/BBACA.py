@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import HTSeq
 import sys
 from Bio.Seq import Seq
@@ -185,6 +185,7 @@ def main():
 	parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False,default='blastp')
 	parser.add_argument('--bsr', nargs='?', type=float, help="minimum BSR score", required=False,default=0.6)
 	parser.add_argument("--so", help="split the output per genome",dest='divideOutput', action="store_true",default=False)
+	parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False,default=False)
 	
 	args = parser.parse_args()
 	
@@ -196,13 +197,32 @@ def main():
 	BlastpPath=args.b
 	divideOutput=args.divideOutput
 	gOutFile = args.o
+	chosenTaxon=args.t
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
 	if cpuToUse > multiprocessing.cpu_count()-2:
 		print "Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action"
-		
 	
-	
+	taxonList={'Campylobacter_Jejuni':'trained_campyJejuni.trn',
+				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn'
+				}	
+	if isinstance(chosenTaxon, basestring):
+		trainingFolderPAth=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'TrainingFiles4Prodigal'))
+		try:
+			chosenTaxon=os.path.join(trainingFolderPAth,taxonList[chosenTaxon])
+			
+			if os.path.isfile(chosenTaxon):
+				print "will use this training file : "+chosenTaxon
+			else:
+				print "training file don't exist"
+				print chosenTaxon
+				return "retry"
+		except :
+			print "Your chosen taxon is not attributed, select one from:"
+			for elem in taxonList.keys():
+				print elem
+			return "retry"
+
 	print BlastpPath
 	
 	scripts_path=os.path.dirname(os.path.realpath(__file__))
@@ -332,14 +352,15 @@ def main():
 
 		
 		#Prodigal run on the genomes, one genome per core using n-2 cores (n number of cores)
-	
+		
 		pool = multiprocessing.Pool(cpuToUse)
 		for genome in listOfGenomes:
-			pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath],))
+			
+			pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,str(chosenTaxon)],))
 			
 		pool.close()
 		pool.join()
-	
+		
 	
 		print "\nChecking all prodigal processes created the necessary files..."
 		
@@ -429,17 +450,20 @@ def main():
 	#delete all temp files
 	shutil.rmtree(basepath)
 	
-	print "##################################################\n %s genomes used for %s loci" % (len(output[0][0]),len(output) )
+	print "##################################################\n %s genomes used for %s loci" % (len(output[0][1]),len(output) )
 	numberexactmatches=0
 	for gene in output:
-		for gAllele in gene[0]:
-			if("EXC:" in gAllele):
+		for gAllele in gene[1]:
+			try:
+				int(gAllele)
 				numberexactmatches+=1
+			except:
+				pass
 					
 	
 	print "\n used a bsr of : " +str(BSRTresh)	
-	print "\n %s exact matches found out of %s" % (numberexactmatches,(len(output[0][0])*len(output)) )	
-	print "\n %s percent of exact matches \n##################################################" % (float((numberexactmatches*100)/(len(output[0][0])*len(output))) )	
+	print "\n %s exact matches found out of %s" % (numberexactmatches,(len(output[0][1])*len(lGenesFiles)) )	
+	print "\n %s percent of exact matches \n##################################################" % (float((numberexactmatches*100)/(len(output[0][1])*len(lGenesFiles))) )	
 		
 	print "\nWriting output files\n"
 	
@@ -457,20 +481,29 @@ def main():
 			genename=gene.split("/")
 			genename=genename[len(genename)-1]
 			genesnames.append(genename)
+		gene=0
+		
+		containedOutpWrite=''
 		for geneOut in output:
-			gene=0
+			genome=0
 			alleleschema=[]
-			while gene<len(output[0][0]): 
-
-				genename=(geneOut[1][gene]).split("_")
-
+			
+			while genome<len(output[0][1]): 
+				
+				genename=(geneOut[1][genome]).split("_")
 				if(len(genename)!=1):
 					alleleschema.append(genename[1])
 				else:
 					alleleschema.append(genename[0])
-				gene+=1
+				genome+=1
+			
 			phylovout.append(alleleschema)
-
+			if len(geneOut[0])>0:
+				containedOutpWrite+= lGenesFiles[gene]+"\n"
+			for contained in geneOut[0]:
+				containedOutpWrite+=contained[0]+"\t"+contained[1]+"-->"+contained[2]+"\n"
+			gene+=1
+		
 		for geneOut in output2:
 			gene=0
 			alleleschema=[]
@@ -496,24 +529,26 @@ def main():
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = listOfGenomesBasename[genome]
-			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
+			statsaux=[0]*8 # EXC INF INFC LNF PLOT NIPL ALM ASM
 			finalphylovinput+= "\n" + currentGenome + "\t"
 			for gene in phylovout:
 				
 				val= str(gene[genome])
 				auxList.append(val)
-				if "INF" in val:
+				if "INFC" in val:
+					statsaux[2]+=1
+				elif "INF" in val:
 					statsaux[1]+=1
 				elif "LNF" in val:
-					statsaux[2]+=1
-				elif "PLOT" in val:
 					statsaux[3]+=1
-				elif "NIPL" in val:
+				elif "PLOT" in val:
 					statsaux[4]+=1
-				elif "ALM" in val:
+				elif "NIPL" in val:
 					statsaux[5]+=1
-				elif "ASM" in val:
+				elif "ALM" in val:
 					statsaux[6]+=1
+				elif "ASM" in val:
+					statsaux[7]+=1
 				else:
 					statsaux[0]+=1
 			
@@ -541,13 +576,13 @@ def main():
 			
 		
 		
-		statsHeader='Genome\tEXC\tINF\tLNF\tPLOT\tNIPL\tALM\tASM'
+		statsHeader='Genome\tEXC\tINF\tINFC\tLNF\tPLOT\tNIPL\tALM\tASM'
 		statswrite=statsHeader
 		genome=0
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = listOfGenomesBasename[genome]
-			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
+			statsaux=[0]*8 # EXC INF LNF PLOT NIPL ALM ASM
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[genome]:
 				auxList.append(str(k))
@@ -563,12 +598,14 @@ def main():
 		outputfolder= os.path.join(gOutFile,"results_"+str(time.strftime("%Y%m%dT%H%M%S")) )
 		os.makedirs(outputfolder)
 		print statswrite
+		print
+		print containedOutpWrite
 		if not divideOutput:
-			with open(os.path.join(outputfolder,"results__alleles.txt"), 'wb') as f:
+			with open(os.path.join(outputfolder,"results_alleles.txt"), 'wb') as f:
 				f.write(finalphylovinput)
 				
 				
-			with open(os.path.join(outputfolder,"results__statistics.txt"), 'wb') as f:
+			with open(os.path.join(outputfolder,"results_statistics.txt"), 'wb') as f:
 				f.write(str(statswrite))
 				f.write("\n_________________________________________\n")
 				f.write(starttime)
@@ -578,8 +615,10 @@ def main():
 				f.write ("\nused this number of cpus: "+str(cpuToUse))
 				f.write("\nused a bsr of : " +str(BSRTresh))
 			
-			with open(os.path.join(outputfolder,"results__contigsInfo.txt"), 'wb') as f:
+			with open(os.path.join(outputfolder,"results_contigsInfo.txt"), 'wb') as f:
 				f.write(str(finalphylovinput2))
+			with open(os.path.join(outputfolder,"results_contained.txt"), 'wb') as f:
+				f.write(str(containedOutpWrite))
 		else:
 			for genome in listOfGenomesBasename:
 				currentGenome = os.path.splitext(genome)[0]

@@ -39,6 +39,7 @@ def presAbs (d3,listgenomesRemove):
 	
 	print "building the presence and abscence matrix..."
 	row=1
+	row2Del=[]
 	while row<d2c.shape[0]:
 		column=1
 		while column<d2c.shape[1]:
@@ -49,6 +50,7 @@ def presAbs (d3,listgenomesRemove):
 					d2c[row,column]=1
 				else :
 					d2c[row,column]=0
+					row2Del.append(int(column))
 			except:
 				try:
 					aux=str((d2c[row,column])).replace ("INF-","")
@@ -56,6 +58,7 @@ def presAbs (d3,listgenomesRemove):
 					d2c[row,column]=1
 				except Exception as e:
 					d2c[row,column]=0
+					row2Del.append(int(column))
 				
 			column+=1
 		row+=1
@@ -68,9 +71,11 @@ def presAbs (d3,listgenomesRemove):
 		
 		writer = csv.writer(f,delimiter='	')
 		writer.writerows(d2d)
-		
 	
-	return d2c,d3
+	row2Del=set(row2Del)
+	row2Del=list(row2Del)	
+	
+	return d2c,d3,row2Del
 
 def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes,toremovegenomes):
 	
@@ -83,74 +88,102 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes,torem
 	originald2 = array(d)
 	
 	#get presence abscence matrix
-	d2,originald2=presAbs (originald2,toremovegenomes)
+	d2,originald2,del2CG=presAbs (originald2,toremovegenomes)
 	
 	genomeslist= d2[1:,:1]
+	geneslist= (d2[:1,1:])[0]
 	
 	originald2=originald2.T
 	d2=d2.T
-	rowid=1
+	rowid=(d2.shape[0])-1
 	deleted=0
 	abscenceMatrix=True
-	lnfdel=0
 	balldel=0
-	
-	
+	cgMLST=0
 	
 	numbergenomes=len(genomeslist)
 	pontuationmatrix=[0]*numbergenomes	
 	lostgenesList=[]
 	
 	#clean the original matrix, using the information on the presence/abscence matrix
-	
-	while rowid< d2.shape[0]:
+	print "processing the matrix"
+	while rowid> 0:
 		columnid=1
 		genomeindex=0
+		print str(rowid)+"/"+str(d2.shape[0])
+		#~ print type((d2[rowid,1:])[0]
+		if rowid in del2CG:
+			originald2=np.delete(originald2, rowid, 0)
+			d2=np.delete(d2, rowid, 0)
+			totaldeletedgenes+=1
+			deleted+=1
+			#~ rowid-=1
+			columnid=1
 		
+		elif geneslist[rowid-1] in toremovegenes:
+				
+			originald2=np.delete(originald2, rowid, 0)
+			#~ d2=np.delete(d2, rowid, 0)
+			totaldeletedgenes+=1
+			deleted+=1
+			#~ rowid-=1
+			columnid=1
+			#~ break
+		else:
+			cgMLST+=1
+		#~ elif "0" in d2[rowid,1:]:
+			#~ originald2=np.delete(originald2, rowid, 0)
+			#~ d2=np.delete(d2, rowid, 0)
+			#~ totaldeletedgenes+=1
+			#~ deleted+=1
+			#~ rowid-=1
+			#~ columnid=1
+			#~ lnfdel+=1
 		
-		while columnid< d2.shape[1]:
+		#~ while columnid< d2.shape[1]:
+			#~ print str(genomeindex)+"/"+str(d2.shape[1])
+			#~ if d2[rowid][0] in toremovegenes:
+				#~ 
+				#~ originald2=np.delete(originald2, rowid, 0)
+				#~ d2=np.delete(d2, rowid, 0)
+				#~ totaldeletedgenes+=1
+				#~ deleted+=1
+				#~ rowid-=1
+				#~ columnid=1
+				#~ lnfdel+=1
+				#~ break
+			#~ 
+			#~ elif not abscenceMatrix:
+				#~ 
+				#~ if ( "PLOT" in d2[rowid][columnid] or "NIPL" in d2[rowid][columnid] or "LNF" in d2[rowid][columnid] or "LOT" in d2[rowid][columnid]  or "ALM" in d2[rowid][columnid]  or "ASM" in d2[rowid][columnid] or "ERROR" in d2[rowid][columnid]  or "ABM" in d2[rowid][columnid]) or "undefined allele" in d2[rowid][columnid] or "small match" in d2[rowid][columnid] or "allele incomplete" in d2[rowid][columnid]:	
+					#~ 
+					#~ originald2=np.delete(originald2, rowid, 0)
+					#~ d2=np.delete(d2, rowid, 0)
+					#~ totaldeletedgenes+=1
+					#~ deleted+=1
+					#~ rowid-=1
+					#~ columnid=1
+					#~ lnfdel+=1
+					#~ break
+			#~ 
+			#~ else:
+				#~ if int(d2[rowid,columnid]) == 0:
+					#~ 
+					#~ originald2=np.delete(originald2, rowid, 0)
+					#~ d2=np.delete(d2, rowid, 0)
+					#~ totaldeletedgenes+=1
+					#~ deleted+=1
+					#~ rowid-=1
+					#~ columnid=1
+					#~ lnfdel+=1
+					#~ break
+#~ 
+#~ 
+			#~ 
+			#~ columnid+=1
+			#~ genomeindex+=1
 
-			if d2[rowid][0] in toremovegenes:
-				
-				originald2=np.delete(originald2, rowid, 0)
-				d2=np.delete(d2, rowid, 0)
-				totaldeletedgenes+=1
-				deleted+=1
-				rowid-=1
-				columnid=1
-				lnfdel+=1
-				break
-			
-			elif not abscenceMatrix:
-				
-				if ( "PLOT" in d2[rowid][columnid] or "NIPL" in d2[rowid][columnid] or "LNF" in d2[rowid][columnid] or "LOT" in d2[rowid][columnid]  or "ALM" in d2[rowid][columnid]  or "ASM" in d2[rowid][columnid] or "ERROR" in d2[rowid][columnid]  or "ABM" in d2[rowid][columnid]) or "undefined allele" in d2[rowid][columnid] or "small match" in d2[rowid][columnid] or "allele incomplete" in d2[rowid][columnid]:	
-					
-					originald2=np.delete(originald2, rowid, 0)
-					d2=np.delete(d2, rowid, 0)
-					totaldeletedgenes+=1
-					deleted+=1
-					rowid-=1
-					columnid=1
-					lnfdel+=1
-					break
-			else:
-				if int(d2[rowid,columnid]) == 0:
-					
-					originald2=np.delete(originald2, rowid, 0)
-					d2=np.delete(d2, rowid, 0)
-					totaldeletedgenes+=1
-					deleted+=1
-					rowid-=1
-					columnid=1
-					lnfdel+=1
-					break
-
-
-			
-			columnid+=1
-			genomeindex+=1
-
-		rowid+=1
+		rowid-=1
 	
 	originald2=originald2.T
 	originald2=originald2.tolist()
@@ -172,7 +205,7 @@ def clean (inputfile,outputfile,totaldeletedgenes,rangeFloat,toremovegenes,torem
 	
 
 	print "deleted : %s loci" % totaldeletedgenes
-	print "total loci remaining : "+ str(rowid-2)
+	print "total loci remaining : "+ str(cgMLST)
 
 
 def main():
@@ -202,9 +235,9 @@ def main():
 
 			geneFile = geneFile.rstrip('\n')
 			geneFile = geneFile.rstrip('\r')
+			geneFile = (geneFile.split('\t'))[0]
 			
 			genesToRemove.append( geneFile )
-			
 	except:		
 		pass
 	
