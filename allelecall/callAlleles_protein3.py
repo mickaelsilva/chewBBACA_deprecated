@@ -29,6 +29,7 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 	alleleList=[]
 	alleleI=0
 	alleleIlist=[]
+	listAllelesNames=[]
 	#calculate bsr for each allele
 	for allele in gene_fp: 
 		
@@ -42,6 +43,7 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 		#try to translate the allele
 		alleleIlist.append(alleleI)
 		alleleList.append(allele.seq)
+		listAllelesNames.append(allele.name)
 		translatedSequence,x,y=translateSeq(allele.seq)
 		
 		if translatedSequence =='':
@@ -101,9 +103,9 @@ def getBlastScoreRatios(genefile,basepath,doAll,verbose,blastPath):
 			f.write(alleleAllProt)
 			
 	#returning all allele BSR scores and list of alleles for this gene
-	return var,alleleList
+	return var,alleleList,listAllelesNames
 	
-def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blast_DB_name,alleleList2,picklepath,verbose,blastPath):
+def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blast_DB_name,alleleList2,picklepath,verbose,blastPath,listAllelesNames):
 	
 	if verbose:
 		def verboseprint(*args):
@@ -145,7 +147,7 @@ def reDogetBlastScoreRatios(genefile,basepath,alleleI,allelescores2,newGene_Blas
 	with open(picklepath,'wb') as f:
 		pickle.dump(allelescores2, f)
 	
-	return allelescores2,alleleList2
+	return allelescores2,alleleList2,listAllelesNames
 
 def reverseComplement(strDNA):
 
@@ -272,6 +274,7 @@ def main():
 	perfectMatchIdAllele=[]
 	perfectMatchIdAllele2=[]
 	allelescores=[]
+	listShortAllelesNames=[]
 	
 	verboseprint ("Getting BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
@@ -281,10 +284,10 @@ def main():
 
 	if os.path.isfile(geneScorePickle) :
 		
-		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,False,verbose,blastPath)
+		allelescores,alleleList,listShortAllelesNames=getBlastScoreRatios(shortgeneFile,basepath,False,verbose,blastPath)
 		
 	else:	
-		allelescores,alleleList=getBlastScoreRatios(shortgeneFile,basepath,True,verbose,blastPath)
+		allelescores,alleleList,listShortAllelesNames=getBlastScoreRatios(shortgeneFile,basepath,True,verbose,blastPath)
 		
 			
 			
@@ -433,10 +436,13 @@ def main():
 						# select the best match
 						for match in alignment.hsps:
 							
-							alleleMatchid=str(blast_record.query_id).split("_")[-1]
+							#query id comes with query_id, not name of the allele
+							alleleMatchid=int((blast_record.query_id.split("_"))[-1])
 							
 							#~ scoreRatio=float(match.score)/float(allelescores[int(alleleMatchid)-1])
-							scoreRatio=float(match.score)/float(allelescores[int(alleleMatchid)])
+							#query_id starts with 1
+							alleleMatchid2=((listShortAllelesNames[alleleMatchid-1]).split("_"))[-1]
+							scoreRatio=float(match.score)/float(allelescores[int(alleleMatchid2)])
 
 							cdsStrName=((alignment.title).split(" "))[1]
 							
@@ -654,7 +660,7 @@ def main():
 							
 							alleleI+=1
 							#appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_" + str(alleleI) + "_" + str(os.path.basename(genomeFile)) + '\n'
-							appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_"+tagAuxC+"_"+ str(os.path.basename(genomeFile)) + "_" + str(alleleI) + '\n'
+							appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_"+tagAuxC+"_"+ (str(os.path.basename(genomeFile))).replace("_","-") + "_" + str(alleleI) + '\n'
 							fG = open( geneFile, 'a' )
 							fG.write(appendAllele)
 							fG.write( alleleStr + '\n')
@@ -682,11 +688,12 @@ def main():
 								
 								# --- remake blast DB and recalculate the BSR for the locus --- #
 								alleleList.append(alleleStr)
+								listShortAllelesNames.append(appendAllele)
 
 								genefile2= geneTransalatedPath2
 								Gene_Blast_DB_name2 = Create_Blastdb( genefile2, 1, True )
 								verboseprint("Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-								allelescores,alleleList=reDogetBlastScoreRatios(genefile2,basepath,alleleI,allelescores,Gene_Blast_DB_name2,alleleList,geneScorePickle,verbose,blastPath)
+								allelescores,alleleList,listShortAllelesNames=reDogetBlastScoreRatios(genefile2,basepath,alleleI,allelescores,Gene_Blast_DB_name2,alleleList,geneScorePickle,verbose,blastPath,listShortAllelesNames)
 								verboseprint("Done Re-calculating BSR at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 			
 							
@@ -694,7 +701,6 @@ def main():
 			except Exception as e:
 				print "some error occurred"
 				print e
-
 				print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
 				perfectMatchIdAllele2.append("ERROR")
 				perfectMatchIdAllele.append("ERROR")

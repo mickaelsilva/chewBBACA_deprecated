@@ -321,8 +321,9 @@ def main():
 		print "Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action"
 		
 	taxonList={'Campylobacter_Jejuni':'trained_campyJejuni.trn',
-				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn'
-				}	
+				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn',
+				'Streptococcus_Agalactiae':'trained_strepAgalactiae.trn'
+				}
 	if isinstance(chosenTaxon, basestring):
 		trainingFolderPAth=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'TrainingFiles4Prodigal'))
 		try:

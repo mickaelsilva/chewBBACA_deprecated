@@ -204,7 +204,8 @@ def main():
 		print "Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action"
 	
 	taxonList={'Campylobacter_Jejuni':'trained_campyJejuni.trn',
-				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn'
+				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn',
+				'Streptococcus_Agalactiae':'trained_strepAgalactiae.trn'
 				}	
 	if isinstance(chosenTaxon, basestring):
 		trainingFolderPAth=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'TrainingFiles4Prodigal'))
@@ -529,26 +530,24 @@ def main():
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = listOfGenomesBasename[genome]
-			statsaux=[0]*8 # EXC INF INFC LNF PLOT NIPL ALM ASM
+			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
 			finalphylovinput+= "\n" + currentGenome + "\t"
 			for gene in phylovout:
 				
 				val= str(gene[genome])
 				auxList.append(val)
-				if "INFC" in val:
-					statsaux[2]+=1
-				elif "INF" in val:
+				if "INF" in val:
 					statsaux[1]+=1
 				elif "LNF" in val:
-					statsaux[3]+=1
+					statsaux[2]+=1
 				elif "PLOT" in val:
-					statsaux[4]+=1
+					statsaux[3]+=1
 				elif "NIPL" in val:
-					statsaux[5]+=1
+					statsaux[4]+=1
 				elif "ALM" in val:
-					statsaux[6]+=1
+					statsaux[5]+=1
 				elif "ASM" in val:
-					statsaux[7]+=1
+					statsaux[6]+=1
 				else:
 					statsaux[0]+=1
 			
@@ -576,13 +575,13 @@ def main():
 			
 		
 		
-		statsHeader='Genome\tEXC\tINF\tINFC\tLNF\tPLOT\tNIPL\tALM\tASM'
+		statsHeader='Genome\tEXC\tINF\tLNF\tPLOT\tNIPL\tALM\tASM'
 		statswrite=statsHeader
 		genome=0
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = listOfGenomesBasename[genome]
-			statsaux=[0]*8 # EXC INF LNF PLOT NIPL ALM ASM
+			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[genome]:
 				auxList.append(str(k))
