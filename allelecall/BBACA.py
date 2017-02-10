@@ -56,7 +56,7 @@ def prepGenomes(genomeFile,basepath):
 				listOfCDS[idstr]=seq
 				genomeProts+=str(protseq)+"\n"
 			except Exception as e:
-				print str(e)+" "+str(genomeFile)
+				print (str(e)+" "+str(genomeFile))
 				pass
 
 	filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
