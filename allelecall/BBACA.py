@@ -55,6 +55,7 @@ def prepGenomes(genomeFile,basepath):
 				genomeProts+=idstr+"\n"
 				listOfCDS[idstr]=seq
 				genomeProts+=str(protseq)+"\n"
+				asdsad
 				
 			except Exception as e:
 				print str(e)+" "+str(genomeFile)

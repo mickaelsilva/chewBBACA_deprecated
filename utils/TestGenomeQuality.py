@@ -67,6 +67,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 	plus99=0
 	plus995=0
 	badGenomesScoreDict={}
+	listgenes2show=[]
 	
 	# if a locus has one problematic call, check how many genomes have problem in that call
 	
@@ -97,16 +98,24 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 					d2d[row,column]=1
 					pass
 				
+			
 				
 			row+=1
 		
 		value=float(d2d.shape[0]-notfound)/float(d2d.shape[0])
+		
+		
+			
 		if len(genomeslist)>500:
 			xthreshold=0.99
 		elif len(genomeslist)>200:
 			xthreshold=0.97
 		else:
 			xthreshold=0.95
+
+		#~ if value>xthreshold:
+			#~ listgenes2show.append(geneslist[column])
+
 
 		if(value>xthreshold and value<1):
 			for badgenome in badgenomes:
@@ -171,6 +180,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 	
 	print "checked loci with missing data"
 	
+	#~ return d2d,reallybadgenomes,vector,True,listgenes2show
 	return d2d,reallybadgenomes,vector,True
 	
 
@@ -217,6 +227,8 @@ def clean (d2,iterations,ythreshold):
 	lastremovedgenomesCount=0
 	iterationStabilizedat=None
 	isStable=False
+	#~ listgenes2show=[]
+	#~ listgenes2showtotal=[]
 	
 	while i<=iterations:
 		
@@ -230,10 +242,12 @@ def clean (d2,iterations,ythreshold):
 			iterationStabilizedat=i
 			print "stabilized at "+str(i)
 			isStable=True
+			#~ listgenes2showtotal.append(listgenes2show)
 		if not isStable:
 			print "\n########## ITERATION NUMBER %s  ##########  \n" % str(i)
 			print "total removed genomes :" +str(len(removedlistgenomes))
 			d2=removegenomes(d2,toremovegenomes)
+			#~ matrix3,toremovegenomes,statsvector,abscencematrix,listgenes2show=presence3(d2,ythreshold,statsvector,abscencematrix)
 			matrix3,toremovegenomes,statsvector,abscencematrix=presence3(d2,ythreshold,statsvector,abscencematrix)
 		
 		else:
@@ -249,6 +263,11 @@ def clean (d2,iterations,ythreshold):
 		for x in removedlistgenomes:
 			f.write(x+"\n")
 	
+	#~ with open("missingdata.txt", "a") as f:
+		#~ f.write("using a threshold of "+ str(ythreshold)+" at iteration number " +str(i)+"\n")
+		#~ 
+		#~ for x in listgenes2showtotal:
+			#~ f.write(str(x)+"\n")
 	
 	
 	return statsvector,iterationStabilizedat
