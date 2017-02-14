@@ -237,9 +237,9 @@ def main():
 	
 	proc = subprocess.Popen([BlastpPath, '-version'], stdout=subprocess.PIPE)
 	line = proc.stdout.readline()
-	if not "blastp: 2.5." in str(line):
+	if not "blastp: 2.5." in str(line) or not "blastp: 2.6." in str(line):
 		print "your blast version is " + str(line)
-		print "update your blast to 2.5.0, will exit program"
+		print "update your blast to 2.5.0 or above, will exit program"
 		sys.exit()
 	else:
 		print "blast version is up to date, the program will continue"

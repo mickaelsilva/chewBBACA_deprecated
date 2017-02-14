@@ -555,11 +555,11 @@ def main():
 					
 						#~ resultsList.append('PLOTSC:-1')
 						perfectMatchIdAllele.append('LOTSC')
-						#perfectMatchIdAllele2.append('LOTSC')
-						if not Reversed:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
-						else:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
+						perfectMatchIdAllele2.append('LOTSC')
+						#~ if not Reversed:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+						#~ else:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
 						
 						verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is bigger than the contig \n")
 						
@@ -569,11 +569,11 @@ def main():
 						
 						#~ resultsList.append('PLOT3:-1')
 						perfectMatchIdAllele.append('PLOT3')
-						#perfectMatchIdAllele2.append('PLOT3')
-						if not Reversed:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
-						else:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
+						perfectMatchIdAllele2.append('PLOT3')
+						#~ if not Reversed:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+						#~ else:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
 						
 						verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 3' tip of the contig \n")
 						
@@ -582,11 +582,11 @@ def main():
 						
 						#~ resultsList.append('PLOT5:-1')
 						perfectMatchIdAllele.append('PLOT5')
-						#perfectMatchIdAllele2.append('PLOT5')
-						if not Reversed:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
-						else:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
+						perfectMatchIdAllele2.append('PLOT5')
+						#~ if not Reversed:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+						#~ else:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
 						
 						verboseprint(match,contigname,geneFile,leftmatchAllele,rightmatchAllele,"Locus is on the 5' tip of the contig \n")
 						
@@ -598,11 +598,11 @@ def main():
 		
 						#~ resultsList.append('ALM')
 						perfectMatchIdAllele.append('ALM')
-						#perfectMatchIdAllele2.append('ALM')
-						if not Reversed:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
-						else:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
+						perfectMatchIdAllele2.append('ALM')
+						#~ if not Reversed:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+						#~ else:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
 					
 					elif len(alleleStr) < moda-(moda*0.2):
 						
@@ -610,11 +610,11 @@ def main():
 			
 						#~ resultsList.append('ASM')
 						perfectMatchIdAllele.append('ASM')
-						#perfectMatchIdAllele2.append('ASM')
-						if not Reversed:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
-						else:
-							perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
+						perfectMatchIdAllele2.append('ASM')
+						#~ if not Reversed:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+						#~ else:
+							#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
 				
 						
 					else:
