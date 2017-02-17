@@ -204,7 +204,8 @@ def main():
 	
 	taxonList={'Campylobacter_Jejuni':'trained_campyJejuni.trn',
 				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn',
-				'Streptococcus_Agalactiae':'trained_strepAgalactiae.trn'
+				'Streptococcus_Agalactiae':'trained_strepAgalactiae.trn',
+				'Haemophilus_Influenziae':'trained_haemoInfluenzae_A.trn'
 				}	
 	if isinstance(chosenTaxon, basestring):
 		trainingFolderPAth=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'TrainingFiles4Prodigal'))
@@ -450,7 +451,9 @@ def main():
 	#delete all temp files
 	shutil.rmtree(basepath)
 	
-	print "##################################################\n %s genomes used for %s loci" % (len(output[0][1]),len(output) )
+	numberOfLoci=len(output[0][1])
+	
+	print "##################################################\n %s genomes used for %s loci" % (numberOfLoci,len(output) )
 	numberexactmatches=0
 	for gene in output:
 		for gAllele in gene[1]:
@@ -463,7 +466,7 @@ def main():
 	
 	print "\n used a bsr of : " +str(BSRTresh)	
 	print "\n %s exact matches found out of %s" % (numberexactmatches,(len(output[0][1])*len(lGenesFiles)) )	
-	print "\n %s percent of exact matches \n##################################################" % (float((numberexactmatches*100)/(len(output[0][1])*len(lGenesFiles))) )	
+	print "\n %s percent of exact matches \n##################################################" % (float((numberexactmatches*100)/(numberOfLoci*len(lGenesFiles))) )	
 		
 	print "\nWriting output files\n"
 	
@@ -488,7 +491,7 @@ def main():
 			genome=0
 			alleleschema=[]
 			
-			while genome<len(output[0][1]): 
+			while genome<numberOfLoci: 
 				
 				genename=(geneOut[1][genome]).split("_")
 				if(len(genename)!=1):
@@ -529,7 +532,7 @@ def main():
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = listOfGenomesBasename[genome]
-			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
+			statsaux=[0]*7 # EXC INF LNF PLOT NIPH ALM ASM
 			finalphylovinput+= "\n" + currentGenome + "\t"
 			for gene in phylovout:
 				
@@ -541,7 +544,7 @@ def main():
 					statsaux[2]+=1
 				elif "PLOT" in val:
 					statsaux[3]+=1
-				elif "NIPL" in val:
+				elif "NIPH" in val:
 					statsaux[4]+=1
 				elif "ALM" in val:
 					statsaux[5]+=1
@@ -574,13 +577,13 @@ def main():
 			
 		
 		
-		statsHeader='Genome\tEXC\tINF\tLNF\tPLOT\tNIPL\tALM\tASM'
+		statsHeader='Genome\tEXC\tINF\tLNF\tPLOT\tNIPH\tALM\tASM'
 		statswrite=statsHeader
 		genome=0
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = listOfGenomesBasename[genome]
-			statsaux=[0]*7 # EXC INF LNF PLOT NIPL ALM ASM
+			statsaux=[0]*7 # EXC INF LNF PLOT NIPH ALM ASM
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[genome]:
 				auxList.append(str(k))
@@ -596,8 +599,8 @@ def main():
 		outputfolder= os.path.join(gOutFile,"results_"+str(time.strftime("%Y%m%dT%H%M%S")) )
 		os.makedirs(outputfolder)
 		print statswrite
-		print
-		print containedOutpWrite
+		#~ print
+		#~ print containedOutpWrite
 		if not divideOutput:
 			with open(os.path.join(outputfolder,"results_alleles.txt"), 'wb') as f:
 				f.write(finalphylovinput)

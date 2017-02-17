@@ -1,35 +1,41 @@
 import csv
-import numpy as np
-from numpy import array
 import argparse
-import collections
-import operator
 
 def main():
 
 	parser = argparse.ArgumentParser(description="This program removes gens from a tab separated allele profile file")
 	parser.add_argument('-i', nargs='?', type=str, help='main matrix file from which to remove', required=True)
 	parser.add_argument('-o', nargs='?', type=str, help='list of genes to remove', required=True)
+	parser.add_argument("--inverse", help="list to remove is actually the one to keep",dest='inverse', action="store_true",default=False)
 	
 	args = parser.parse_args()
 	mainListFile = args.i
 	toRemoveListFile = args.o
+	inverse=args.inverse
 	
-	FilesToRemove=[]
+	if inverse:
+		FilesToRemove=['File','FILE','file']
+	else:
+		FilesToRemove=[]
 	with open(toRemoveListFile) as f:
 		for File in f:
-			FilesToRemove.append( File.replace("\n",'' ))
+			File = File.rstrip('\n')
+			File = File.rstrip('\r')
+			File = (File.split('\t'))[0]
+			FilesToRemove.append(File)
 	#print FilesToRemove
 	
-	
-	with open(mainListFile,'rb') as tsvin, open("new.tsv", "a") as csvout:
+	with open(mainListFile,'rb') as tsvin, open("new.tsv", "wb") as csvout:
 		tsvin = csv.reader(tsvin, delimiter='\t')
 
 		listindextoremove=[]
 		for firstline in tsvin:
 			for gene in firstline:
-				if gene in FilesToRemove:
+				if gene in FilesToRemove and not inverse:
 					listindextoremove.append(firstline.index(gene))
+				elif gene not in FilesToRemove and inverse:
+					listindextoremove.append(firstline.index(gene))
+					
 			for elem in reversed(listindextoremove):
 				del firstline[elem]
 			csvout.write(('\t'.join(firstline))+"\n")

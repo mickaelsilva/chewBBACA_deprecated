@@ -322,7 +322,8 @@ def main():
 		
 	taxonList={'Campylobacter_Jejuni':'trained_campyJejuni.trn',
 				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn',
-				'Streptococcus_Agalactiae':'trained_strepAgalactiae.trn'
+				'Streptococcus_Agalactiae':'trained_strepAgalactiae.trn',
+				'Haemophilus_Influenziae':'trained_haemoInfluenzae_A.trn'
 				}
 	if isinstance(chosenTaxon, basestring):
 		trainingFolderPAth=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'TrainingFiles4Prodigal'))

@@ -325,6 +325,8 @@ def main():
 
 		#check if any CDS is completely equal to an allele without blast -FASTER
 		try:
+			numberExactAlleles=0
+			tempExactResult=[]
 			equalmatches=False
 			reverse=False
 			for alleleAux in fullAlleleList:
@@ -347,6 +349,8 @@ def main():
 							equalmatches=True
 							reverse=True
 						if equalmatches:
+							
+							numberExactAlleles+=1
 							################################################
 							# EXACT MATCH --- MATCH == GENE --- GENE FOUND #
 							################################################
@@ -362,27 +366,50 @@ def main():
 								alleleName=fullAlleleNameList[fullAlleleList.index(reversedcds)]
 								alleleMatchid=int((alleleName.split("_"))[-1])
 								
-								perfectMatchIdAllele.append(str(alleleMatchid))
-								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
+								#~ perfectMatchIdAllele.append(str(alleleMatchid))
+								tempExactResult.append(str(alleleMatchid))
+								#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
+								tempExactResult.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
 							else:
 								alleleName=fullAlleleNameList[fullAlleleList.index(cds)]
 								alleleMatchid=int((alleleName.split("_"))[-1])
 								
-								perfectMatchIdAllele.append(str(alleleMatchid))
-								perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+								#~ perfectMatchIdAllele.append(str(alleleMatchid))
+								tempExactResult.append(str(alleleMatchid))
+								#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+								tempExactResult.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
 								
 							#check if atributed allele is contained or contains
 							containedInfo=(alleleName.split("_"))[1]
 							if "CD" in containedInfo:
-								resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
+								#~ resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
+								tempExactResult.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
 							elif "CS" in containedInfo:
-								resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
+								#~ resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
+								tempExactResult.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
 							else:
 								pass
-								
-								#~ resultsList.append('EXC:' + str(alleleMatchid) )
-							raise ValueError("EQUAL")
-						
+							
+							equalmatches=False
+							reverse=False	
+							#~ resultsList.append('EXC:' + str(alleleMatchid) )
+			
+			if numberExactAlleles>1:
+				perfectMatchIdAllele.append('NIPHEM')
+				perfectMatchIdAllele2.append('NIPHEM')
+				print os.path.basename(genomeFile)+" has "+str(numberExactAlleles)+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH"
+				raise ValueError("MULTIPLE ALLELES as EXACT MATCH")
+				
+			elif numberExactAlleles==1:
+				perfectMatchIdAllele.append(tempExactResult[0])
+				perfectMatchIdAllele2.append(tempExactResult[1])
+				try:
+					resultsList.append(tempExactResult[2])
+				except:
+					pass
+				raise ValueError("EQUAL")
+			
+							
 		
 		except Exception, e:
 			#~ exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -497,10 +524,10 @@ def main():
 				
 				#if more than one BSR >0.6 in two different CDSs it's a Non Paralog Locus
 				elif len(list(set(locationcontigs)))>1:
-					verboseprint("NIPL","")
-					#~ resultsList.append('NIPL')            
-					perfectMatchIdAllele.append('NIPL')
-					perfectMatchIdAllele2.append('NIPL')
+					verboseprint("NIPH","")
+					#~ resultsList.append('NIPH')            
+					perfectMatchIdAllele.append('NIPH')
+					perfectMatchIdAllele2.append('NIPH')
 					for elem in locationcontigs:
 						verboseprint(elem)
 					

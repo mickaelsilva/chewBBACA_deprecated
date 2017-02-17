@@ -79,7 +79,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 			
 			if not abscenceMatrix:
 				
-				if  "LNF" in d2d[row,column] or d2d[row,column] =="NIPL" or "LOT" in d2d[row][column]  or "ALM" in d2d[row][column]  or "ASM" in d2d[row][column] or "ABM" in d2d[row][column] or "ERROR" in d2d[row][column] or "undefined" in d2d[row][column] or "small match" in d2d[row][column] or "allele incomplete" in d2d[row][column]:	
+				if  "LNF" in d2d[row,column] or d2d[row,column] =="NIPH" or "LOT" in d2d[row][column]  or "ALM" in d2d[row][column]  or "ASM" in d2d[row][column] or "ABM" in d2d[row][column] or "ERROR" in d2d[row][column] or "undefined" in d2d[row][column] or "small match" in d2d[row][column] or "allele incomplete" in d2d[row][column]:	
 
 				#if d2d[row,column] == "LNF" :
 					d2d[row,column]=0
@@ -107,14 +107,14 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 		
 			
 		if len(genomeslist)>500:
-			xthreshold=0.99
+			xthreshold=0.95
 		elif len(genomeslist)>200:
-			xthreshold=0.97
+			xthreshold=0.95
 		else:
 			xthreshold=0.95
 
-		#~ if value>xthreshold:
-			#~ listgenes2show.append(geneslist[column])
+		if value>xthreshold:
+			listgenes2show.append(geneslist[column])
 
 
 		if(value>xthreshold and value<1):
@@ -164,7 +164,7 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 	vector[2].append(plus99)
 	
 	#number of loci at 100%
-	vector[3].append(len(allverygood))
+	vector[6].append(len(allverygood))
 	
 	#number of loci at 0%
 	vector[4].append(len(allverybad))
@@ -176,12 +176,12 @@ def presence3(d2,ythreshold,vector,abscenceMatrix):
 		vector[5].append(len(reallybadgenomes))
 	
 		#number of loci at 99.5%
-	vector[6].append(plus995)
+	vector[3].append(plus995)
 	
 	print "checked loci with missing data"
 	
-	#~ return d2d,reallybadgenomes,vector,True,listgenes2show
-	return d2d,reallybadgenomes,vector,True
+	return d2d,reallybadgenomes,vector,True,listgenes2show
+	#~ return d2d,reallybadgenomes,vector,True
 	
 
 	
@@ -227,8 +227,8 @@ def clean (d2,iterations,ythreshold):
 	lastremovedgenomesCount=0
 	iterationStabilizedat=None
 	isStable=False
-	#~ listgenes2show=[]
-	#~ listgenes2showtotal=[]
+	listgenes2show=[]
+	listgenes2showtotal=[]
 	
 	while i<=iterations:
 		
@@ -242,13 +242,13 @@ def clean (d2,iterations,ythreshold):
 			iterationStabilizedat=i
 			print "stabilized at "+str(i)
 			isStable=True
-			#~ listgenes2showtotal.append(listgenes2show)
+			listgenes2showtotal.append(listgenes2show)
 		if not isStable:
 			print "\n########## ITERATION NUMBER %s  ##########  \n" % str(i)
 			print "total removed genomes :" +str(len(removedlistgenomes))
 			d2=removegenomes(d2,toremovegenomes)
-			#~ matrix3,toremovegenomes,statsvector,abscencematrix,listgenes2show=presence3(d2,ythreshold,statsvector,abscencematrix)
-			matrix3,toremovegenomes,statsvector,abscencematrix=presence3(d2,ythreshold,statsvector,abscencematrix)
+			matrix3,toremovegenomes,statsvector,abscencematrix,listgenes2show=presence3(d2,ythreshold,statsvector,abscencematrix)
+			#~ matrix3,toremovegenomes,statsvector,abscencematrix=presence3(d2,ythreshold,statsvector,abscencematrix)
 		
 		else:
 			for vector in statsvector:
@@ -263,11 +263,11 @@ def clean (d2,iterations,ythreshold):
 		for x in removedlistgenomes:
 			f.write(x+"\n")
 	
-	#~ with open("missingdata.txt", "a") as f:
-		#~ f.write("using a threshold of "+ str(ythreshold)+" at iteration number " +str(i)+"\n")
-		#~ 
-		#~ for x in listgenes2showtotal:
-			#~ f.write(str(x)+"\n")
+	with open("Genes_95%.txt", "a") as f:
+		f.write("using a threshold of "+ str(ythreshold)+" at iteration number " +str(i)+"\n")
+		
+		for x in listgenes2showtotal:
+			f.write(str(x)+"\n")
 	
 	
 	return statsvector,iterationStabilizedat
@@ -291,7 +291,7 @@ def main():
 	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
 		
 	allresults=[]
-	threshold=5
+	threshold=0
 	thresholdlist=[]
 	listStableIter=[]
 	
@@ -326,10 +326,10 @@ def main():
 	labels=["number of genomes",
 	"Number of Loci present in 95% genomes",
 	"Number of Loci present in 99% genomes",
-	"Number of Loci present in 100% genomes",
+	"Number of Loci present in 99.5% genomes",
 	#"Number of Loci present in 0% genomes",
 	#"Selected genomes to be removed",
-	"Number of Loci present in 99.5% genomes"]
+	"Number of Loci present in 100% genomes"]
 		
 	i=iterationNumber
 	while i<=iterationNumber:
