@@ -302,7 +302,8 @@ def main():
 	continueRun=False
 	
 	if testVar.lower()== "yes" or testVar.lower()== "y" or forceContinue:
-		continueRun=True
+		if os.path.isdir(basepath):
+			continueRun=True
 		
 	if continueRun:
 		print ("You chose to continue the allele call")
