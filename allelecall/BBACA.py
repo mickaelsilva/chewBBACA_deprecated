@@ -185,6 +185,7 @@ def main():
 	parser.add_argument('--bsr', nargs='?', type=float, help="minimum BSR score", required=False,default=0.6)
 	parser.add_argument("--so", help="split the output per genome",dest='divideOutput', action="store_true",default=False)
 	parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False,default=False)
+	parser.add_argument("--fc", help="force continue",required=False, action="store_true",default=False)
 	
 	args = parser.parse_args()
 	
@@ -197,6 +198,7 @@ def main():
 	divideOutput=args.divideOutput
 	gOutFile = args.o
 	chosenTaxon=args.t
+	forceContinue=args.fc
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
 	if cpuToUse > multiprocessing.cpu_count()-2:
@@ -295,11 +297,11 @@ def main():
 	genepath=os.path.dirname(first_gene)
 	basepath=os.path.join(genepath, "temp")
 	testVar=""
-	if os.path.isdir(basepath):
+	if os.path.isdir(basepath) and not forceContinue:
 		testVar = raw_input("We found files belonging to a previous run not finished, If they are yours and want to continue were it stopped type Y or yes")
 	continueRun=False
 	
-	if testVar.lower()== "yes" or testVar.lower()== "y":
+	if testVar.lower()== "yes" or testVar.lower()== "y" or forceContinue:
 		continueRun=True
 		
 	if continueRun:
