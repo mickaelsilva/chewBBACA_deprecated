@@ -64,6 +64,8 @@ def main():
 			equalelem.remove("PLOT")
 		if "NIPH" in equalelem:
 			equalelem.remove("NIPH")
+		if "NIPHEM" in equalelem:
+			equalelem.remove("NIPHEM")
 		if "ALM" in equalelem:
 			equalelem.remove("ALM")
 		if "ASM" in equalelem:
@@ -95,7 +97,7 @@ def main():
 		#give a +1(problem) point to a locus per each reapeated contig+position
 		for elem in genomeSchema:
 
-			if elem == "LNF" or "LOT" in elem or "PLOT" in elem or elem == "NIPH" or elem == "ALM" or elem == "ASM" or elem == "allele incomplete" or elem == "undefined" or elem == "small match":
+			if elem == "LNF" or "LOT" in elem or "PLOT" in elem or elem == "NIPH" or elem == "NIPHEM" or elem == "ALM" or elem == "ASM" or elem == "allele incomplete" or elem == "undefined" or elem == "small match":
 				if genelist[j] in pontuationDict2:
 					pontuationDict2[genelist[j]]+=1
 				else:

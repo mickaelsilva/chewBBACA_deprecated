@@ -348,7 +348,13 @@ def main():
 						elif str(alleleAux) == str(reversedcds):
 							equalmatches=True
 							reverse=True
-						if equalmatches:
+						if equalmatches and numberExactAlleles>0:
+							perfectMatchIdAllele.append('NIPHEM')
+							perfectMatchIdAllele2.append('NIPHEM')
+							print os.path.basename(genomeFile)+" has "+str(numberExactAlleles)+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH"
+							raise ValueError("MULTIPLE ALLELES as EXACT MATCH")
+							
+						elif equalmatches:
 							
 							numberExactAlleles+=1
 							################################################
