@@ -315,7 +315,7 @@ def main():
 					
 					if align.hit_def not in genesToKeep and not str(align.hit_def) == str(blast_record.query) and scoreRatio>bsr :
 						toRemove.append(align.hit_def)
-						#log.append(str(align.hit_def)+"\t"+str(blast_record.query)+"\t"+"2 was on the removed list and bsr >"+str(bsr))
+						log.append(str(align.hit_def)+"\t"+str(blast_record.query)+"\t"+"2 was on the removed list and bsr >"+str(bsr))
 							
 					else:
 						pass
@@ -400,10 +400,9 @@ def main():
 		
 	#create short folder
 	else:
-		#with open("schemacreation.log", "wb") as f:
-		#	for elem in log:
-				
-		#		f.write(str(elem)+"\n")
+		#~ with open("schemacreation.log", "wb") as f:
+			#~ for elem in log:
+				#~ f.write(str(elem)+"\n")
 		get_Short(listfiles)
 		print "\nRemoved %s with a high similarity (BSR>%s)" % (str(removedparalogs),str(bsr))
 		print "Total of %s loci that constitute the schema" % str(rest)

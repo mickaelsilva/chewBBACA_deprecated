@@ -21,6 +21,13 @@ A: chewBBACA shoul allow you to continue where you stopped, just re-run the same
 ###Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
 A: Try to run step 4, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises.
 
+###Q: Which species have already a training file?  
+A: At the moment:
+Campylobacter_Jejuni
+Acinetobacter_Baumannii
+Haemophilus_Influenziae
+Streptococcus_Agalactiae
+
 ----------
 
 ## 1. Setting up the analysis
@@ -44,7 +51,7 @@ Python dependencies:
 
 
 Other dependencies:
-* BLAST 2.5.0+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.5.0/
+* BLAST 2.5.0+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.5.0/ or above
 * [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/) or above
 
 ----------
@@ -96,9 +103,9 @@ Then run is the following:
 `-b` Blastp full path(optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
 
 
-This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  
+At the moment it can only run on a single node SLURM HPC by  srun  
 
-`srun -c 62 --mem 250G BBACA.py -i listgenomes.txt -g listgenes.txt -o OutPrefix --cpu 62`
+`srun -c 62 --mem 60G BBACA.py -i listgenomes.txt -g listgenes.txt -o OutPrefix --cpu 62`
 
 **Outputs files**:
 ```

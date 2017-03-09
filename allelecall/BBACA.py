@@ -9,6 +9,7 @@ import pickle
 import shutil
 import multiprocessing
 import subprocess
+import json
 
 def which(program):
     import os
@@ -186,6 +187,7 @@ def main():
 	parser.add_argument("--so", help="split the output per genome",dest='divideOutput', action="store_true",default=False)
 	parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False,default=False)
 	parser.add_argument("--fc", help="force continue",required=False, action="store_true",default=False)
+	parser.add_argument("--json", help="report in json file",required=False, action="store_true",default=False)
 	
 	args = parser.parse_args()
 	
@@ -199,6 +201,7 @@ def main():
 	gOutFile = args.o
 	chosenTaxon=args.t
 	forceContinue=args.fc
+	jsonReport=args.json
 	
 	# avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
 	if cpuToUse > multiprocessing.cpu_count()-2:
@@ -207,7 +210,7 @@ def main():
 	taxonList={'Campylobacter_Jejuni':'trained_campyJejuni.trn',
 				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn',
 				'Streptococcus_Agalactiae':'trained_strepAgalactiae.trn',
-				'Haemophilus_Influenziae':'trained_haemoInfluenzae_A.trn'
+				'Haemophilus_Influenzae':'trained_haemoInfluenzae_A.trn'
 				}	
 	if isinstance(chosenTaxon, basestring):
 		trainingFolderPAth=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'TrainingFiles4Prodigal'))
@@ -327,90 +330,99 @@ def main():
 	
 	if not continueRun:
 		
-		#user decided not to continue although there was a run that had been stopped before finishing, files will be removed for a new run
-		if os.path.isdir(basepath):
-			print ("You chose to do a new allele call")
-			print ("removing existing files...")
-			shutil.rmtree(basepath)
-	
-		#translate the loci
-		genepath,basepath,lGenesFiles,argumentsList, noShort=loci_translation (genes,listOfGenomes)
+		try:
+			#user decided not to continue although there was a run that had been stopped before finishing, files will be removed for a new run
+			if os.path.isdir(basepath):
+				print ("You chose to do a new allele call")
+				print ("removing existing files...")
+				shutil.rmtree(basepath)
 		
-		
-		#starting a fresh allele call process, going to run prodigal for all genomes on the list
-		
-		if len(argumentsList) ==0:
-			shutil.rmtree(basepath)
-			raise ValueError('ERROR! AT LEAST ONE GENE FILE MUST CONTAIN AN ALLELE REPRESENTING A CDS')
-		
-		if len(noShort)>0:
-			shutil.rmtree(basepath)
-			raise ValueError('ERROR! These loci have no short gene file: '+str(noShort))
+			#translate the loci
+			genepath,basepath,lGenesFiles,argumentsList, noShort=loci_translation (genes,listOfGenomes)
 			
-		# ------------------------------------------------- #
-		#           RUN PRODIGAL OVER ALL GENOMES           #
-		# ------------------------------------------------- #
-
-
-		print ("\nStarting Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-
-		
-		#Prodigal run on the genomes, one genome per core using n-2 cores (n number of cores)
-		
-		pool = multiprocessing.Pool(cpuToUse)
-		for genome in listOfGenomes:
 			
-			pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,str(chosenTaxon)],))
+			#starting a fresh allele call process, going to run prodigal for all genomes on the list
 			
-		pool.close()
-		pool.join()
-		
-	
-		print "\nChecking all prodigal processes created the necessary files..."
-		
-		listOfORFCreated=[]
-		for orffile in os.listdir(basepath):
-			if orffile.endswith("_ORF.txt"):
-				listOfORFCreated.append(orffile)
+			if len(argumentsList) ==0:
+				shutil.rmtree(basepath)
+				raise ValueError('ERROR! AT LEAST ONE GENE FILE MUST CONTAIN AN ALLELE REPRESENTING A CDS')
+			
+			if len(noShort)>0:
+				shutil.rmtree(basepath)
+				raise ValueError('ERROR! These loci have no short gene file: '+str(noShort))
 				
-		if len(listOfGenomes) >len(listOfORFCreated):
-			message="Missing some files from prodigal. "+str((len(listOfGenomes))-(len(listOfORFCreated)))+" missing files out of "+str(len(listOfGenomes))
-			shutil.rmtree(basepath)
-			raise ValueError(message)
-		else:
-			print "All prodigal files necessary were created\n"
-			
-		print ("Finishing Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-	
-	
-		#---CDS to protein---#
-				
-		#translate the genome CDSs, load them into dictionaries and fasta files to be used further ahead
-		
-		print "Translating genomes"
-		pool = multiprocessing.Pool(cpuToUse)
-		for genomeFile in listOfGenomes:
-			
-			pool.apply_async(prepGenomes,args=[str(genomeFile),basepath])
-		pool.close()
-		pool.join()
-		
-		
-		print ("Starting Genome Blast Db creation at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+			# ------------------------------------------------- #
+			#           RUN PRODIGAL OVER ALL GENOMES           #
+			# ------------------------------------------------- #
 
-		#creation of the Databases for each genome, one genome per core using n cores
+
+			print ("\nStarting Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+
+			
+			#Prodigal run on the genomes, one genome per core using n-2 cores (n number of cores)
+			
+			pool = multiprocessing.Pool(cpuToUse)
+			for genome in listOfGenomes:
+				
+				pool.apply_async(call_proc, args=([os.path.join(scripts_path,"runProdigal.py"),str(genome),basepath,str(chosenTaxon)],))
+				
+			pool.close()
+			pool.join()
+			
 		
-		pool = multiprocessing.Pool(cpuToUse)
-		for genomeFile in listOfGenomes:
-			filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
-			os.makedirs(os.path.join(basepath,str(os.path.basename(genomeFile)) ))
+			print "\nChecking all prodigal processes created the necessary files..."
 			
-			pool.apply_async(call_proc, args=([os.path.join(scripts_path,"Create_Genome_Blastdb.py"),filepath,os.path.join(basepath,str(os.path.basename(genomeFile)) ),str(os.path.basename(genomeFile))],))
+			listOfORFCreated=[]
+			for orffile in os.listdir(basepath):
+				if orffile.endswith("_ORF.txt"):
+					listOfORFCreated.append(orffile)
+					
+			if len(listOfGenomes) >len(listOfORFCreated):
+				message="Missing some files from prodigal. "+str((len(listOfGenomes))-(len(listOfORFCreated)))+" missing files out of "+str(len(listOfGenomes))
+				shutil.rmtree(basepath)
+				raise ValueError(message)
+			else:
+				print "All prodigal files necessary were created\n"
+				
+			print ("Finishing Prodigal at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+		
+		
+			#---CDS to protein---#
+					
+			#translate the genome CDSs, load them into dictionaries and fasta files to be used further ahead
+			
+			print "Translating genomes"
+			pool = multiprocessing.Pool(cpuToUse)
+			for genomeFile in listOfGenomes:
+				
+				pool.apply_async(prepGenomes,args=[str(genomeFile),basepath])
+			pool.close()
+			pool.join()
 			
 			
-		pool.close()
-		pool.join()
-	
+			print ("Starting Genome Blast Db creation at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
+
+			#creation of the Databases for each genome, one genome per core using n cores
+			
+			pool = multiprocessing.Pool(cpuToUse)
+			for genomeFile in listOfGenomes:
+				filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_Protein.fasta")
+				os.makedirs(os.path.join(basepath,str(os.path.basename(genomeFile)) ))
+				
+				pool.apply_async(call_proc, args=([os.path.join(scripts_path,"Create_Genome_Blastdb.py"),filepath,os.path.join(basepath,str(os.path.basename(genomeFile)) ),str(os.path.basename(genomeFile))],))
+				
+				
+			pool.close()
+			pool.join()
+		
+		except Exception as e:
+			if jsonReport:
+				runReport={'finalStatus':'error : '+str(e)}
+				with open('report1.txt', 'w') as outfile:
+					json.dump(runReport, outfile)
+			else:
+				print e
+			raise ValueError(e)
 	else:
 		
 		#user decided to continue the stopped run, finding out which genes were left to run
@@ -604,7 +616,13 @@ def main():
 		print statswrite
 		#~ print
 		#~ print containedOutpWrite
-		if not divideOutput:
+		
+		if jsonReport:
+			runReport={'finalStatus':'success'}
+			with open("report1.txt", 'w') as outfile:
+				json.dump(runReport, outfile)
+					
+		elif not divideOutput:
 			with open(os.path.join(outputfolder,"results_alleles.txt"), 'wb') as f:
 				f.write(finalphylovinput)
 				
@@ -623,6 +641,8 @@ def main():
 				f.write(str(finalphylovinput2))
 			with open(os.path.join(outputfolder,"results_contained.txt"), 'wb') as f:
 				f.write(str(containedOutpWrite))
+					
+			
 		else:
 			for genome in listOfGenomesBasename:
 				currentGenome = os.path.splitext(genome)[0]
@@ -643,11 +663,18 @@ def main():
 				
 	except Exception as e:
 		print e
-		
+		print lineno
 		exc_type, exc_obj, tb = sys.exc_info()
 		f = tb.tb_frame
 		lineno = tb.tb_lineno
-		print lineno
+		
+		if jsonReport:
+			runReport={'finalStatus':'error : '+e+' at line: '+str(lineno)}
+			with open('report1.txt', 'w') as outfile:
+				json.dump(runReport, outfile)
+		else:
+			print e
+			print lineno
 			
 	
 	print (starttime)

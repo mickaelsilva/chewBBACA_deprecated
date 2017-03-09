@@ -264,11 +264,12 @@ def clean (d2,iterations,ythreshold):
 			f.write(x+"\n")
 	
 	with open("Genes_95%.txt", "a") as f:
-		f.write("using a threshold of "+ str(ythreshold)+" at iteration number " +str(i)+"\n")
+		f.write("using a threshold of "+ str(ythreshold)+"\n")
 		
 		for x in listgenes2showtotal:
-			f.write(str(x)+"\n")
-	
+				
+			#~ f.write(str(x)+"\n")
+			f.write(('\t'.join(map(str,x)))+"\n")
 	
 	return statsvector,iterationStabilizedat
 
