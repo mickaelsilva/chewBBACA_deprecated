@@ -619,9 +619,26 @@ def main():
 		
 		if jsonReport:
 			runReport={'finalStatus':'success'}
-			with open("report1.txt", 'w') as outfile:
+			with open(os.path.join(outputfolder,"report1.json"), 'w') as outfile:
 				json.dump(runReport, outfile)
-					
+			
+			with open(os.path.join(outputfolder,"results_alleles.txt"), 'wb') as f:
+				f.write(finalphylovinput)
+			
+			aux=[]
+			runReport={}
+			for allelename in ((statswrite.splitlines()[0]).split('\t'))[1:]:
+				aux.append(allelename)
+			runReport['header']=aux
+			#~ print runReport
+			for line in (finalphylovinput.splitlines())[1:]:
+				aux2=line.split('\t')
+				genome=aux2[0]
+				runReport[genome]=aux2[1:]
+			
+			with open(os.path.join(outputfolder,"results_statistics.json"), 'wb') as outfile:
+				json.dump(runReport, outfile)
+			
 		elif not divideOutput:
 			with open(os.path.join(outputfolder,"results_alleles.txt"), 'wb') as f:
 				f.write(finalphylovinput)
@@ -663,14 +680,14 @@ def main():
 				
 	except Exception as e:
 		print e
-		print lineno
+		
 		exc_type, exc_obj, tb = sys.exc_info()
 		f = tb.tb_frame
 		lineno = tb.tb_lineno
-		
+		print lineno
 		if jsonReport:
 			runReport={'finalStatus':'error : '+e+' at line: '+str(lineno)}
-			with open('report1.txt', 'w') as outfile:
+			with open(os.path.join(outputfolder,'report1.json'), 'w') as outfile:
 				json.dump(runReport, outfile)
 		else:
 			print e

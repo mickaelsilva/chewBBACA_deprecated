@@ -351,7 +351,7 @@ def main():
 						if equalmatches and numberExactAlleles>0:
 							perfectMatchIdAllele.append('NIPHEM')
 							perfectMatchIdAllele2.append('NIPHEM')
-							print os.path.basename(genomeFile)+" has "+str(numberExactAlleles)+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH"
+							verboseprint( os.path.basename(genomeFile)+" has "+str(numberExactAlleles)+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH")
 							raise ValueError("MULTIPLE ALLELES as EXACT MATCH")
 							
 						elif equalmatches:
@@ -403,7 +403,7 @@ def main():
 			if numberExactAlleles>1:
 				perfectMatchIdAllele.append('NIPHEM')
 				perfectMatchIdAllele2.append('NIPHEM')
-				print os.path.basename(genomeFile)+" has "+str(numberExactAlleles)+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH"
+				verboseprint( os.path.basename(genomeFile)+" has "+str(numberExactAlleles)+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH")
 				raise ValueError("MULTIPLE ALLELES as EXACT MATCH")
 				
 			elif numberExactAlleles==1:
@@ -509,7 +509,7 @@ def main():
 					alleleStr=currentCDSDict[">"+bestmatch[3]]
 					listFoundAmbiguities=[]
 					listambiguousBases=['K','M','R','Y','S','W','B','V','H','D','X','N','-','.']
-					listFoundAmbiguities=[e for e in listambiguousBases if e in AlleleDNAstr]
+					listFoundAmbiguities=[e for e in listambiguousBases if e in alleleStr]
 				
 				if bestmatch[0]==0 or len(listFoundAmbiguities)>0 :
 							
