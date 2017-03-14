@@ -631,7 +631,7 @@ def main():
 				aux.append(allelename)
 			runReport['header']=aux
 			#~ print runReport
-			for line in (finalphylovinput.splitlines())[1:]:
+			for line in (statswrite.splitlines())[1:]:
 				aux2=line.split('\t')
 				genome=aux2[0]
 				runReport[genome]=aux2[1:]
