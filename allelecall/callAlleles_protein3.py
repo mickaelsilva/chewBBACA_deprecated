@@ -386,11 +386,14 @@ def main():
 								tempExactResult.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
 								
 							#check if atributed allele is contained or contains
-							containedInfo=(alleleName.split("_"))[1]
-							if "CD" in containedInfo:
+							try:
+								containedInfo=(alleleName.split("_"))[1]
+							except:
+								containedInfo=''
+							if containedInfo == "CD":
 								#~ resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
 								tempExactResult.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
-							elif "CS" in containedInfo:
+							elif containedInfo == "CS":
 								#~ resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
 								tempExactResult.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
 							else:
