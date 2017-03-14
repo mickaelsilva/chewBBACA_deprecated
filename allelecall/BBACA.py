@@ -418,7 +418,7 @@ def main():
 		except Exception as e:
 			if jsonReport:
 				runReport={'finalStatus':'error : '+str(e)}
-				with open('report1.txt', 'w') as outfile:
+				with open('reportStatus.txt', 'w') as outfile:
 					json.dump(runReport, outfile)
 			else:
 				print e
@@ -619,7 +619,7 @@ def main():
 		
 		if jsonReport:
 			runReport={'finalStatus':'success'}
-			with open(os.path.join(outputfolder,"report1.json"), 'w') as outfile:
+			with open(os.path.join(outputfolder,"reportStatus.json"), 'w') as outfile:
 				json.dump(runReport, outfile)
 			
 			with open(os.path.join(outputfolder,"results_alleles.txt"), 'wb') as f:
@@ -687,7 +687,7 @@ def main():
 		print lineno
 		if jsonReport:
 			runReport={'finalStatus':'error : '+e+' at line: '+str(lineno)}
-			with open(os.path.join(outputfolder,'report1.json'), 'w') as outfile:
+			with open(os.path.join(outputfolder,'reportStatus.json'), 'w') as outfile:
 				json.dump(runReport, outfile)
 		else:
 			print e
