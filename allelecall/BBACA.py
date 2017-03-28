@@ -622,8 +622,20 @@ def main():
 			with open(os.path.join(outputfolder,"reportStatus.json"), 'w') as outfile:
 				json.dump(runReport, outfile)
 			
-			with open(os.path.join(outputfolder,"results_alleles.txt"), 'wb') as f:
-				f.write(finalphylovinput)
+			aux=[]
+			runReport={}
+			for allelename in ((finalphylovinput.splitlines()[0]).split('\t'))[1:]:
+				aux.append(allelename)
+			runReport['header']=aux
+			#~ print runReport
+			for line in (finalphylovinput.splitlines())[1:]:
+				aux2=line.split('\t')
+				genome=aux2[0]
+				runReport[genome]=aux2[1:]
+			
+			
+			with open(os.path.join(outputfolder,"results_alleles.json"), 'wb') as outfile:
+				json.dump(runReport, outfile)
 			
 			aux=[]
 			runReport={}
