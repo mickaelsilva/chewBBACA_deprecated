@@ -28,10 +28,11 @@ A: Try to run step 4, your analysis may contain some genomes responsible for a c
 
 ###Q: Which species have already a training file?  
 A: At the moment:
-Campylobacter_Jejuni
-Acinetobacter_Baumannii
-Haemophilus_Influenzae
-Streptococcus_Agalactiae
+ - Campylobacter_Jejuni
+ - Acinetobacter_Baumannii
+ - Haemophilus_Influenzae
+ - Streptococcus_Agalactiae
+ - Yersinia_Enterocolitica
 
 ----------
 
