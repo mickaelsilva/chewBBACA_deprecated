@@ -309,117 +309,65 @@ def main():
 		#load the contig info of the genome to a dictionary
 		g_fp = HTSeq.FastaReader( genomeFile )
 		for contig in g_fp:
-			sequence=str(contig.seq)
-			currentGenomeDict[ contig.name ] = sequence
-		sequence=''
+			currentGenomeDict[ contig.name ] = len(str(contig.seq))
 		
-		
-		#create a dictionary with cds length, for future comparing only the alleles with cds of same size 
-		dictCDSLen={}
-		for contigTag,value in currentCDSDict.iteritems():
-			lengthofCDS=len(value)
-			try:
-				dictCDSLen[lengthofCDS].append(contigTag)
-			except:
-				dictCDSLen[lengthofCDS]=[contigTag]
-
-		#check if any CDS is completely equal to an allele without blast -FASTER
 		try:
-			numberExactAlleles=0
-			tempExactResult=[]
-			equalmatches=False
-			reverse=False
-			for alleleAux in fullAlleleList:
-				lengthofAllele=len(alleleAux)
-				#get list of all CDS with same size as the allele
-				if lengthofAllele in dictCDSLen.keys():
-					tempList=dictCDSLen[lengthofAllele]
-					#only compare the CDS with same size instead of all CDS
-					for elem in tempList:
-						cds=currentCDSDict[elem]
-						try:
-							reversedcds=reverseComplement(cds)
-						except:
-							reversedcds=''
-						#~ if reversedcds=='':
-							#~ pass
-						if str(alleleAux) == str(cds):
-							equalmatches=True
-						elif str(alleleAux) == str(reversedcds):
-							equalmatches=True
-							reverse=True
-						if equalmatches and numberExactAlleles>0:
-							perfectMatchIdAllele.append('NIPHEM')
-							perfectMatchIdAllele2.append('NIPHEM')
-							verboseprint( os.path.basename(genomeFile)+" has "+str(numberExactAlleles)+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH")
-							raise ValueError("MULTIPLE ALLELES as EXACT MATCH")
-							
-						elif equalmatches:
-							
-							numberExactAlleles+=1
-							################################################
-							# EXACT MATCH --- MATCH == GENE --- GENE FOUND #
-							################################################
-							contigname=elem.split("&")
-							matchLocation=contigname[2]	
-							#starting CDS base need to be +1
-							matchLocation=matchLocation.split("-")
-							matchLocation=[int(matchLocation[0])+1,matchLocation[1]]
-							contigname=(contigname[0]).replace(">","")
-							alleleName=''
-							alleleMatchid=0
-							if reverse:
-								alleleName=fullAlleleNameList[fullAlleleList.index(reversedcds)]
-								alleleMatchid=int((alleleName.split("_"))[-1])
-								
-								#~ perfectMatchIdAllele.append(str(alleleMatchid))
-								tempExactResult.append(str(alleleMatchid))
-								#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
-								tempExactResult.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
-							else:
-								alleleName=fullAlleleNameList[fullAlleleList.index(cds)]
-								alleleMatchid=int((alleleName.split("_"))[-1])
-								
-								#~ perfectMatchIdAllele.append(str(alleleMatchid))
-								tempExactResult.append(str(alleleMatchid))
-								#~ perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
-								tempExactResult.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
-								
-							#check if atributed allele is contained or contains
-							try:
-								containedInfo=(alleleName.split("_"))[1]
-							except:
-								containedInfo=''
-							if containedInfo == "CD":
-								#~ resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
-								tempExactResult.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
-							elif containedInfo == "CS":
-								#~ resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
-								tempExactResult.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
-							else:
-								pass
-							
-							equalmatches=False
-							reverse=False	
-							#~ resultsList.append('EXC:' + str(alleleMatchid) )
+			intersection=set(fullAlleleList).intersection(currentCDSDict.values())
+			intersection=list(intersection)
 			
-			if numberExactAlleles>1:
+			if len(intersection)>1:
 				perfectMatchIdAllele.append('NIPHEM')
 				perfectMatchIdAllele2.append('NIPHEM')
-				verboseprint( os.path.basename(genomeFile)+" has "+str(numberExactAlleles)+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH")
+				verboseprint( os.path.basename(genomeFile)+" has "+str(len(intersection))+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH")
 				raise ValueError("MULTIPLE ALLELES as EXACT MATCH")
+					
+
+			elif len(intersection)==1:
+				alleleStr=intersection[0]
+				#it doenst return both keys with equal values
+				#~ elem=currentCDSDict.keys()[currentCDSDict.values().index(alleleStr)]
+
+				elem=[key for key, value in currentCDSDict.items() if value == alleleStr]
+				if len(elem)>1:
+					perfectMatchIdAllele.append('NIPHEM')
+					perfectMatchIdAllele2.append('NIPHEM')
+					verboseprint( os.path.basename(genomeFile)+" has "+str(len(intersection))+" multiple exact match : "+os.path.basename(geneFile)+" MULTIPLE ALLELES as EXACT MATCH")
+					raise ValueError("MULTIPLE ALLELES as EXACT MATCH")
 				
-			elif numberExactAlleles==1:
-				perfectMatchIdAllele.append(tempExactResult[0])
-				perfectMatchIdAllele2.append(tempExactResult[1])
+				contigname=elem[0].split("&")
+				matchLocation=contigname[2]	
+				#starting CDS base need to be +1
+				matchLocation=matchLocation.split("-")
+				matchLocation=[int(matchLocation[0])+1,matchLocation[1]]
+				contigname=(contigname[0]).replace(">","")
+				alleleName=''
+				alleleMatchid=0
+				
+				
+				alleleName=fullAlleleNameList[fullAlleleList.index(alleleStr)]
+				alleleMatchid=int((alleleName.split("_"))[-1])
+				perfectMatchIdAllele.append(str(alleleMatchid))
+				
+				if matchLocation[0]>matchLocation[1]:
+					perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"-")
+				else:	
+					
+					perfectMatchIdAllele2.append(str(contigname)+"&"+str(matchLocation[0])+"-"+str(matchLocation[1])+"&"+"+")
+					
+				#check if atributed allele is contained or contains
 				try:
-					resultsList.append(tempExactResult[2])
+					containedInfo=(alleleName.split("_"))[1]
 				except:
+					containedInfo=''
+				if containedInfo == "CD":
+					resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
+				elif containedInfo == "CS":
+					resultsList.append([(os.path.basename(genomeFile)),str(alleleMatchid),containedInfo.rstrip()])
+				else:
 					pass
+				
+
 				raise ValueError("EQUAL")
-			
-							
-		
 		except Exception, e:
 			#~ exc_type, exc_obj, exc_tb = sys.exc_info()
 			#~ fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -427,7 +375,7 @@ def main():
 			#~ print e
 			continue
 		
-		else:	
+		else:
 			verboseprint("Blasting alleles on genome at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 			
 			blast_out_file = os.path.join(basepath,"blastdbs/"+os.path.basename(geneFile)+ '_List.xml')
@@ -520,13 +468,11 @@ def main():
 							# LOCUS NOT FOUND #
 							###################
 					if 	bestmatch[0]==0:		
-						#~ resultsList.append('LNF3:-1')
 						perfectMatchIdAllele.append('LNF')
 						perfectMatchIdAllele2.append('LNF')
 						verboseprint( "Locus not found, no matches \n")
 					else:
 
-						#~ resultsList.append('LNFN:-1')
 						perfectMatchIdAllele.append('LNF')
 						perfectMatchIdAllele2.append('LNF')
 						verboseprint( "Locus has strange base \n")
@@ -534,7 +480,6 @@ def main():
 				#if more than one BSR >0.6 in two different CDSs it's a Non Paralog Locus
 				elif len(list(set(locationcontigs)))>1:
 					verboseprint("NIPH","")
-					#~ resultsList.append('NIPH')            
 					perfectMatchIdAllele.append('NIPH')
 					perfectMatchIdAllele2.append('NIPH')
 					for elem in locationcontigs:
@@ -557,34 +502,43 @@ def main():
 					matchLocation=[int(matchLocation[0])+1,matchLocation[1]]
 					contigname=contigname[0]
 					
-					seq=currentGenomeDict[ contigname ]
-					bestMatchContigLen=len(seq)
-					seq=''
+					bestMatchContigLen=currentGenomeDict[ contigname ]
+					#~ bestMatchContigLen=len(seq)
+					#~ seq=''
 					
 					protSeq,alleleStr,Reversed=translateSeq(alleleStr)
 					
-					
-					rightmatchContig=bestMatchContigLen-int(matchLocation[1])	
-					leftmatchContig=int(matchLocation[0])
-					
-					
-					if Reversed:
-						aux=rightmatchContig
-						rightmatchContig=leftmatchContig
-						leftmatchContig=aux
-					
-									
 					
 					# get extra space to the right and left between the allele and match and check if it's still inside the contig
 					
 					rightmatchAllele=geneLen-((int(match.query_end)+1)*3)	
 					leftmatchAllele=((int(match.query_start)-1)*3)
 					
+					
+					#~ if Reversed and int(matchLocation[1])<int(matchLocation[0]):
+					if int(matchLocation[1])<int(matchLocation[0]):
+						rightmatchContig=bestMatchContigLen-int(matchLocation[0])	
+						leftmatchContig=int(matchLocation[1])
+						aux=rightmatchAllele
+						rightmatchAllele=leftmatchAllele
+						leftmatchAllele=aux
+						#~ print "reversed"
+					else:
+						rightmatchContig=bestMatchContigLen-int(matchLocation[1])	
+						leftmatchContig=int(matchLocation[0])
+					#~ else:
+						#~ print bestmatch[3]
+						#~ print alleleStr
+						#~ print "????????????????"
+									
+					
+					
+					
 
 							###########################
 							# LOCUS ON THE CONTIG TIP #
 							###########################
-					
+
 					
 					#check if contig is smaller than the matched allele
 					if leftmatchContig<leftmatchAllele and 	rightmatchContig < rightmatchAllele:

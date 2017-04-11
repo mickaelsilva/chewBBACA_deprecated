@@ -50,9 +50,12 @@ def prepGenomes(genomeFile,basepath):
 		for protein in value:
 			try:
 				seq= currentGenomeDict[ contigTag ][ protein[0]:protein[1] ].upper()
-				protseq=translateSeq(seq)
+				protseq,inverted,seq=translateSeq(seq)
 				j+=1
-				idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[0])+"-"+str(protein[1])
+				if inverted:
+					idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[1])+"-"+str(protein[0])
+				else:
+					idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[0])+"-"+str(protein[1])
 				genomeProts+=idstr+"\n"
 				listOfCDS[idstr]=seq
 				genomeProts+=str(protseq)+"\n"
@@ -89,6 +92,7 @@ def reverseComplement(strDNA):
 def translateSeq(DNASeq):
 	seq=DNASeq
 	tableid=11
+	inverted=False
 	try:
 		myseq= Seq(seq)
 		protseq=Seq.translate(myseq, table=tableid,cds=True)
@@ -97,23 +101,26 @@ def translateSeq(DNASeq):
 			seq=reverseComplement(seq)
 			myseq= Seq(seq)
 			protseq=Seq.translate(myseq, table=tableid,cds=True)
-						
+			inverted=True
 		except:
 			try:
 				seq=seq[::-1]
 				myseq= Seq(seq)
 				protseq=Seq.translate(myseq, table=tableid,cds=True)
+				inverted=True
 			except:
 				try:
 					seq=seq[::-1]							
 					seq=reverseComplement(seq)
 					myseq= Seq(seq)
 					protseq=Seq.translate(myseq, table=tableid,cds=True)
+					inverted=False
 				except Exception as e:
 					print "translation error"
 					print e
 					raise
-	return protseq
+	
+	return protseq,inverted,str(seq)
 	
 def loci_translation (genesList,listOfGenomes2):
 	
@@ -144,7 +151,7 @@ def loci_translation (genesList,listOfGenomes2):
 				break
 			else:
 				try:
-					protseq=translateSeq(allele.seq)
+					protseq,Inverted,seq=translateSeq(allele.seq)
 				except:
 					multiple=False
 					print "allele "+str(k)+" is not translating : "+ str(gene)+" this gene is to be removed"
