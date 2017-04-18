@@ -283,7 +283,6 @@ def main():
 	#check if bsr as arealdy been calculated and recalculate it if necessary
 
 	if os.path.isfile(geneScorePickle) :
-		
 		allelescores,alleleList,listShortAllelesNames=getBlastScoreRatios(shortgeneFile,basepath,False,verbose,blastPath)
 		
 	else:	
@@ -300,17 +299,12 @@ def main():
 		currentGenomeDict={}
 		currentCDSDict={}
 		
-		# load the translated CDS from the genome to a dictionary
+		# load the CDS from the genome to a dictionary
 		filepath=os.path.join(temppath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
 		
 		with open(filepath,'rb') as f:
 			currentCDSDict = pickle.load(f)
-
-		#load the contig info of the genome to a dictionary
-		g_fp = HTSeq.FastaReader( genomeFile )
-		for contig in g_fp:
-			currentGenomeDict[ contig.name ] = len(str(contig.seq))
-		
+	
 		try:
 			intersection=set(fullAlleleList).intersection(currentCDSDict.values())
 			intersection=list(intersection)
@@ -486,10 +480,13 @@ def main():
 						verboseprint(elem)
 					
 				
-
-				
 				# if match with BSR >0.6 and not equal DNA sequences
 				else:
+					
+					#load the contig info of the genome to a dictionary
+					g_fp = HTSeq.FastaReader( genomeFile )
+					for contig in g_fp:
+						currentGenomeDict[ contig.name ] = len(str(contig.seq))
 					
 					match=bestmatch[5]
 					geneLen=bestmatch[6]
@@ -503,8 +500,7 @@ def main():
 					contigname=contigname[0]
 					
 					bestMatchContigLen=currentGenomeDict[ contigname ]
-					#~ bestMatchContigLen=len(seq)
-					#~ seq=''
+
 					
 					protSeq,alleleStr,Reversed=translateSeq(alleleStr)
 					
@@ -515,25 +511,17 @@ def main():
 					leftmatchAllele=((int(match.query_start)-1)*3)
 					
 					
-					#~ if Reversed and int(matchLocation[1])<int(matchLocation[0]):
+					#~ if Reversed swap left and right contig extra
 					if int(matchLocation[1])<int(matchLocation[0]):
 						rightmatchContig=bestMatchContigLen-int(matchLocation[0])	
 						leftmatchContig=int(matchLocation[1])
 						aux=rightmatchAllele
 						rightmatchAllele=leftmatchAllele
 						leftmatchAllele=aux
-						#~ print "reversed"
+
 					else:
 						rightmatchContig=bestMatchContigLen-int(matchLocation[1])	
 						leftmatchContig=int(matchLocation[0])
-					#~ else:
-						#~ print bestmatch[3]
-						#~ print alleleStr
-						#~ print "????????????????"
-									
-					
-					
-					
 
 							###########################
 							# LOCUS ON THE CONTIG TIP #
@@ -642,9 +630,7 @@ def main():
 							
 							
 							verboseprint( "New allele! Adding allele "+ tagAux + str(alleleI+1) +" to the database\n")
-																								
-							#~ resultsList.append( tagAux + str(alleleI+1) )
-							
+																															
 
 														# --- add the new allele to the gene fasta --- #
 							
@@ -694,7 +680,6 @@ def main():
 				print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
 				perfectMatchIdAllele2.append("ERROR")
 				perfectMatchIdAllele.append("ERROR")
-				#~ resultsList.append('ERROR')  
 		
 		
 	final =	(resultsList,perfectMatchIdAllele)	
