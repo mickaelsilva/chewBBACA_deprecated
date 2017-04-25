@@ -324,7 +324,11 @@ def main():
 				'Acinetobacter_Baumannii':'trained_acinetoBaumannii.trn',
 				'Streptococcus_Agalactiae':'trained_strepAgalactiae.trn',
 				'Haemophilus_Influenzae':'trained_haemoInfluenzae_A.trn',
-				'Yersinia_Enterocolitica':'trained_yersiniaEnterocolitica.trn'
+				'Yersinia_Enterocolitica':'trained_yersiniaEnterocolitica.trn',
+				'Escherichia_Coli':'trained_eColi.trn',
+				'Enterococcus_Faecium':'trained_enteroFaecium.trn',
+				'Staphylococcus_Haemolyticus':'trained_staphHaemolyticus.trn',
+				'Salmonella_Enterica_enteritidis':'trained_salmonellaEnterica_enteritidis.trn'
 				}
 	if isinstance(chosenTaxon, basestring):
 		trainingFolderPAth=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'TrainingFiles4Prodigal'))
