@@ -432,14 +432,14 @@ def main():
 			f = tb.tb_frame
 			lineno = tb.tb_lineno
 			print lineno
-			print e
+			
 			
 			if jsonReport:
 				runReport={'finalStatus':'error : '+str(e)}
 				with open('reportStatus.txt', 'w') as outfile:
 					json.dump(runReport, outfile)
 			else:
-				
+				print e
 			raise ValueError(e)
 	else:
 		
