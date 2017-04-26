@@ -428,11 +428,16 @@ def main():
 			pool.join()
 		
 		except Exception as e:
+			exc_type, exc_obj, tb = sys.exc_info()
+			f = tb.tb_frame
+			lineno = tb.tb_lineno
+			
 			if jsonReport:
 				runReport={'finalStatus':'error : '+str(e)}
 				with open('reportStatus.txt', 'w') as outfile:
 					json.dump(runReport, outfile)
 			else:
+				print lineno
 				print e
 			raise ValueError(e)
 	else:
