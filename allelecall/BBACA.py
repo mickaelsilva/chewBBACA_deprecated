@@ -670,25 +670,23 @@ def main():
 				json.dump(runReport, outfile)
 			
 		elif not divideOutput:
-			with open(os.path.join(outputfolder,"results_alleles.txt"), 'wb') as f:
+			with open(os.path.join(outputfolder,"results_alleles.tsv"), 'wb') as f:
 				f.write(finalphylovinput)
 				
-				
-			with open(os.path.join(outputfolder,"results_statistics.txt"), 'wb') as f:
+			with open(os.path.join(outputfolder,"results_statistics.tsv"), 'wb') as f:
 				f.write(str(statswrite))
-				f.write("\n_________________________________________\n")
+				
+			with open(os.path.join(outputfolder,"results_contigsInfo.tsv"), 'wb') as f:
+				f.write(str(finalphylovinput2))
+			with open(os.path.join(outputfolder,"results_contained.txt"), 'wb') as f:
+				f.write(str(containedOutpWrite))
+			with open(os.path.join(outputfolder,"logging_info.txt"), 'wb') as f:
 				f.write(starttime)
 				f.write("\nFinished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 				f.write("\nnumber of genomes: "+str(len(listOfGenomes)))
 				f.write("\nnumber of loci: "+str(len(lGenesFiles)))
 				f.write ("\nused this number of cpus: "+str(cpuToUse))
-				f.write("\nused a bsr of : " +str(BSRTresh))
-			
-			with open(os.path.join(outputfolder,"results_contigsInfo.txt"), 'wb') as f:
-				f.write(str(finalphylovinput2))
-			with open(os.path.join(outputfolder,"results_contained.txt"), 'wb') as f:
-				f.write(str(containedOutpWrite))
-					
+				f.write("\nused a bsr of : " +str(BSRTresh))		
 			
 		else:
 			for genome in listOfGenomesBasename:
