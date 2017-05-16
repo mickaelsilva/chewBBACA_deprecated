@@ -4,8 +4,10 @@
 
 chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ration that can be run in multiprocessor settings and a set of functions to visualize and validate allele variation in the loci.
 
-
+----------
 ##Check the wiki for a much more thorough chewBBACA walktrough
+
+##Use [BBACA gitter](https://gitter.im/BBACA/Lobby) for direct chat interaction.
 
 **Important Notes before starting:**
 
@@ -33,6 +35,9 @@ A: At the moment:
  - Haemophilus_Influenzae
  - Streptococcus_Agalactiae
  - Yersinia_Enterocolitica
+ - Enterococcus_Faecium
+ - Staphylococcus_Haemolyticus
+ - Salmonella_Enterica_enteritidis
 
 ----------
 
