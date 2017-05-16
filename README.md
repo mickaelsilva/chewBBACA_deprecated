@@ -5,9 +5,9 @@
 chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ration that can be run in multiprocessor settings and a set of functions to visualize and validate allele variation in the loci.
 
 ----------
-##Check the wiki for a much more thorough chewBBACA walktrough
+## Check the wiki for a much more thorough chewBBACA walktrough
 
-##Use [BBACA gitter](https://gitter.im/BBACA/Lobby) for direct chat interaction.
+## Use [BBACA gitter](https://gitter.im/BBACA/Lobby) for direct chat interaction.
 
 **Important Notes before starting:**
 
@@ -17,18 +17,18 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
 ----------
-##FAQ
+## FAQ
 
-###Q: Step 2 is taking hours, will it ever end?  
+### Q: Step 2 is taking hours, will it ever end?  
 A: Depending on the variability of the strains you are using to create the schema and the number of cpu you are using. The more variable the strains, the more BLAST comparisons are made.
 
-###Q: Step 3 just crashed at 99% after 2 days running, do I need to start over :(?  
+### Q: Step 3 just crashed at 99% after 2 days running, do I need to start over :(?  
 A: chewBBACA shoul allow you to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
 
-###Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
+### Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
 A: Try to run step 4, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises.
 
-###Q: Which species have already a training file?  
+### Q: Which species have already a training file?  
 A: At the moment:
  - Campylobacter_Jejuni
  - Acinetobacter_Baumannii
