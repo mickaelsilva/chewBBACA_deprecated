@@ -1,4 +1,4 @@
-#Validate Schema
+# Validate Schema
 
 Analyze your alleles for a set of parameters, taking special consideration on the allele CDS and the allele sizes per gene/locus
 
@@ -21,7 +21,7 @@ The following visualization tools are later used on the html (not to install):
 * [MSAViewer](http://msa.biojs.net/)
 * [Phylocanvas](http://phylocanvas.org/)
 
-#How to run
+# How to run
 
 Main script that calls alleSizeStats.py and CheckCDS.py creating an html file for an easier results reading.
 

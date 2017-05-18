@@ -1,4 +1,4 @@
-#AutoAlleleCuration.py
+# AutoAlleleCuration.py
 
 Remove alleles from a specific list of genomes
 
@@ -10,7 +10,7 @@ Remove alleles from a specific list of genomes
 
 
 
-#CountNumberMissingData.py
+# CountNumberMissingData.py
 
 Program that prints the number of missing loci from a raw allele call output file, per genome
 
@@ -19,7 +19,7 @@ Program that prints the number of missing loci from a raw allele call output fil
 `-i` raw allele call output file
 
 
-#RemoveGenes.py
+# RemoveGenes.py
 
 This program removes genes from a tab separated allele profile file. Writes a file (oh the path the program is being run) called new.tsv .
 
@@ -29,7 +29,7 @@ This program removes genes from a tab separated allele profile file. Writes a fi
 
 `-o` list of genes to remove
 
-#RemoveGenomes.py
+# RemoveGenomes.py
 
 This program removes genomes from a tab separated allele profile file
 
@@ -41,7 +41,7 @@ This program removes genomes from a tab separated allele profile file
 
 `-o` output file name
 
-#TestGenomeQuality.py
+# TestGenomeQuality.py
 
 Evaluate wgMLST call quality per genome
 
@@ -58,7 +58,7 @@ Usefull to determine a core genome and remove genomes that may have technical is
 The output consists in a set of plots per iteration and a removedGenomes.txt file where its informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
 
 
-#init_schema_4_bbaca.py
+# init_schema_4_bbaca.py
 
 chewBBACA allele call requires a "short" version of each gene file, which regular public schemas d'ont provide. This script creates those files in order to prepare external schemas to be run with chewBBACCA.
 
