@@ -1,10 +1,7 @@
 #!/usr/bin/python
-import HTSeq
 import sys
-from Bio.Seq import Seq
 from Bio.Blast import NCBIXML
 import os
-import string
 
 def ensure_dir(f):
 	if not os.path.isdir(f):

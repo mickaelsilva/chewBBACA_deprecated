@@ -332,7 +332,7 @@ def main():
 				matchLocation=contigname[2]	
 				#starting CDS base need to be +1
 				matchLocation=matchLocation.split("-")
-				matchLocation=[int(matchLocation[0])+1,matchLocation[1]]
+				matchLocation=[int(matchLocation[0])+1,int(matchLocation[1])]
 				contigname=(contigname[0]).replace(">","")
 				alleleName=''
 				alleleMatchid=0
