@@ -104,6 +104,7 @@ This will use by default, number of CPUs available minus 2 and can be called in 
 ./< outPrefix >_< datestamp>/< outPrefix >_statistics.txt
 ./< outPrefix >_< datestamp>/< outPrefix >_contigsInfo.txt
 ./< outPrefix >_< datestamp>/< outPrefix >_Alleles.txt 
+./< outPrefix >_< datestamp>/< outPrefix >logging_info.txt 
 ```
 
 
@@ -147,6 +148,6 @@ Usage:
 
 The output consists in a set of plots per iteration and a removedGenomes.txt file where its informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
 
-Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
+Example of an output can be seen [here](http://i.imgur.com/jlTV2vg.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
 =============

@@ -5,12 +5,14 @@ def main():
 
 	parser = argparse.ArgumentParser(description="This program removes gens from a tab separated allele profile file")
 	parser.add_argument('-i', nargs='?', type=str, help='main matrix file from which to remove', required=True)
-	parser.add_argument('-o', nargs='?', type=str, help='list of genes to remove', required=True)
+	parser.add_argument('-g', nargs='?', type=str, help='list of genes to remove', required=True)
+	parser.add_argument('-o', nargs='?', type=str, help='output file name', required=True)
 	parser.add_argument("--inverse", help="list to remove is actually the one to keep",dest='inverse', action="store_true",default=False)
 	
 	args = parser.parse_args()
 	mainListFile = args.i
-	toRemoveListFile = args.o
+	toRemoveListFile = args.g
+	outputfileName = args.o
 	inverse=args.inverse
 	
 	if inverse:
@@ -25,7 +27,7 @@ def main():
 			FilesToRemove.append(File)
 	#print FilesToRemove
 	
-	with open(mainListFile,'rb') as tsvin, open("new.tsv", "wb") as csvout:
+	with open(mainListFile,'rb') as tsvin, open(outputfileName+".tsv", "wb") as csvout:
 		tsvin = csv.reader(tsvin, delimiter='\t')
 
 		listindextoremove=[]

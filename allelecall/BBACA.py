@@ -12,39 +12,39 @@ import subprocess
 import json
 
 def which(program):
-    import os
-    def is_exe(fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+	import os
+	def is_exe(fpath):
+		return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
-    fpath, fname = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return True
-    else:
-        for path in os.environ["PATH"].split(os.pathsep):
-            path = path.strip('"')
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return True
+	fpath, fname = os.path.split(program)
+	if fpath:
+		if is_exe(program):
+			return True
+	else:
+		for path in os.environ["PATH"].split(os.pathsep):
+			path = path.strip('"')
+			exe_file = os.path.join(path, program)
+			if is_exe(exe_file):
+				return True
 
-    return "Not found"
+	return "Not found"
 
-def prepGenomes(genomeFile,basepath):
+def prepGenomes(genomeFile, basepath):
 	
-	listOfCDS={}
-	genomeProts=""
+	listOfCDS = {}
+	genomeProts = ""
 	currentCDSDict = {}
 	currentGenomeDict = {}
-	filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF.txt")
-	with open(filepath,'rb') as f:
+	filepath = os.path.join(basepath, str(os.path.basename(genomeFile))+"_ORF.txt")
+	with open(filepath, 'rb') as f:
 		currentCDSDict = pickle.load(f)
 		
-	g_fp = HTSeq.FastaReader( genomeFile )
+	g_fp = HTSeq.FastaReader(genomeFile)
 	for contig in g_fp:
 		sequence=str(contig.seq)
-		currentGenomeDict[ contig.name ] = sequence
+		currentGenomeDict[contig.name] = sequence
 	
-	j=0
+	j = 0
 	for contigTag,value in currentCDSDict.iteritems():
 
 		for protein in value:
@@ -82,12 +82,12 @@ def prepGenomes(genomeFile,basepath):
 def reverseComplement(strDNA):
 
 	basecomplement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
-        strDNArevC = ''
-        for l in strDNA:
+	strDNArevC = ''
+	for l in strDNA:
 
-        	strDNArevC += basecomplement[l]
+		strDNArevC += basecomplement[l]
 
-        return strDNArevC[::-1]
+	return strDNArevC[::-1]
 
 def translateSeq(DNASeq):
 	seq=DNASeq
@@ -145,7 +145,7 @@ def loci_translation (genesList,listOfGenomes2):
 		gene_fp2 = HTSeq.FastaReader(shortgene)
 		for allele in gene_fp2: 
 			k+=1
-			if (len(allele.seq) % 3 != 0):
+			if len(allele.seq) % 3 != 0:
 				multiple=False
 				print "allele "+str(k)+" is not multiple of 3: "+str(gene)+" this gene is to be removed"
 				break
@@ -264,12 +264,9 @@ def main():
 	
 	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
 	print (starttime)
+
 	
-	
-	
-	listOfCDSDicts = []
 	listOfGenomes = []
-	listOfGenomesDict = []
 	listOfGenomesBasename = []
 	
 	print "checking if genome files exist.."
@@ -283,7 +280,6 @@ def main():
 				listOfGenomesBasename.append(os.path.basename(genomeFile) )
 			else:
 				print "File does not exist, will not be used : "+str(genomeFile)
-			genomeDict = {}
 
 	
 	if len(listOfGenomes) ==0:
@@ -429,7 +425,6 @@ def main():
 		
 		except Exception as e:
 			exc_type, exc_obj, tb = sys.exc_info()
-			f = tb.tb_frame
 			lineno = tb.tb_lineno
 			print lineno
 			
@@ -527,7 +522,7 @@ def main():
 			while genome<numberOfLoci: 
 				
 				genename=(geneOut[1][genome]).split("_")
-				if(len(genename)!=1):
+				if len(genename)!=1:
 					alleleschema.append(genename[1])
 				else:
 					alleleschema.append(genename[0])
@@ -616,7 +611,6 @@ def main():
 		while genome<len(listOfGenomes):
 			auxList=[]
 			currentGenome = listOfGenomesBasename[genome]
-			statsaux=[0]*7 # EXC INF LNF PLOT NIPH ALM ASM
 			statswrite+= "\n" + currentGenome + "\t"
 			for k in statistics[genome]:
 				auxList.append(str(k))
@@ -710,11 +704,10 @@ def main():
 		print e
 		
 		exc_type, exc_obj, tb = sys.exc_info()
-		f = tb.tb_frame
 		lineno = tb.tb_lineno
 		print lineno
 		if jsonReport:
-			runReport={'finalStatus':'error : '+e+' at line: '+str(lineno)}
+			runReport={'finalStatus':'error : '+str(e)+' at line: '+str(lineno)}
 			with open(os.path.join(outputfolder,'reportStatus.json'), 'w') as outfile:
 				json.dump(runReport, outfile)
 		else:
@@ -726,4 +719,4 @@ def main():
 	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
 
 if __name__ == "__main__":
-    main()
+	main()

@@ -367,6 +367,7 @@ def main():
 				namefile=namefile.replace(")","")
 				namefile=namefile.replace("'","")
 				namefile=namefile.replace("\"","")
+				namefile=namefile.replace(":","")
 				
 				if not proteinFIlePath and not outputFIlePath:
 					newFile=os.path.join(schema_folder_path,namefile+".fasta")

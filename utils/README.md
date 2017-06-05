@@ -27,7 +27,9 @@ This program removes genes from a tab separated allele profile file. Writes a fi
 	
 `-i` main matrix file from which to remove
 
-`-o` list of genes to remove
+`-g` list of genes to remove
+
+`-o` output file name
 
 # RemoveGenomes.py
 
