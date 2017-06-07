@@ -73,7 +73,7 @@ Other dependencies:
 
 ## 1.1 Fast run
 
-### Run all analysis in a single command**
+### Run all analysis in a single command
 
 **if you have no schema**
 
@@ -98,9 +98,9 @@ folder 2 : target genes fasta files
 
 `--genes` path to folder with target genes
 
-`--genes` path to folder with target genomes
+`--genomes` path to folder with target genomes
 
-`--cpu` Number of cpus to use
+`--cpu` Number of cpus to use (dont use all your cpu if using a laptop)
 
 `-o` folder name with the analysis files
 
