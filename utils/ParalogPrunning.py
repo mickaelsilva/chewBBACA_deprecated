@@ -1,21 +1,25 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import csv
 import numpy as np
 from numpy import array
 import argparse
-import collections
 import operator
 import Counter
+import os
 
 def main():
 
 	parser = argparse.ArgumentParser(description="Check if locus are being represented more than once")
 	parser.add_argument('-i', nargs='?', type=str, help='contig info file', required=True)
+	parser.add_argument('-o', nargs='?', type=str, help="Folder for the analysis files", required=False,default=".")
 	
 	
 	args = parser.parse_args()
 	contigsfile = args.i
-	
+	out_folder = args.o
+
+	if not os.path.exists(out_folder):
+		os.makedirs(out_folder)
 	
 	with open(contigsfile) as f:
 		reader = csv.reader(f, delimiter="\t")
@@ -27,7 +31,6 @@ def main():
 	genelist=genelist.tolist()[0]
 	genomeslist= d2[:,:1]
 	genomeslist=genomeslist.tolist()
-	genomeslist2=[]
 
 	i=1
 	paralogs=[]
@@ -111,7 +114,7 @@ def main():
 	
 	#write file with a overrepresented locus per line, the number of times the locus is overrepresented, problems and total of overrepresentation+problems
 	
-	with open("RepeatedLoci.txt", "wb") as f:
+	with open(os.path.join(out_folder,"RepeatedLoci.txt"), "wb") as f:
 		f.write("gene\tPC\tNDC\n")
 		for k,v in ordered:
 			try:

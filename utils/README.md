@@ -23,7 +23,7 @@ Program that prints the number of missing loci from a raw allele call output fil
 
 This program removes genes from a tab separated allele profile file. Writes a file (oh the path the program is being run) called new.tsv .
 
-	% RemoveGenes.py -i raw_output.tsv
+	% RemoveGenes.py -i raw_output.tsv -g listGenes2Remove.txt -o newFile
 	
 `-i` main matrix file from which to remove
 

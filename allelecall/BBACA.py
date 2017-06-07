@@ -29,8 +29,16 @@ def which(program):
 
 	return "Not found"
 
-def prepGenomes(genomeFile, basepath):
-	
+def prepGenomes(genomeFile, basepath,verbose):
+
+	if verbose:
+		def verboseprint(*args):
+			for arg in args:
+				print arg,
+			print
+	else:
+		verboseprint = lambda *a: None  # do-nothing function
+
 	listOfCDS = {}
 	genomeProts = ""
 	currentCDSDict = {}
@@ -50,7 +58,7 @@ def prepGenomes(genomeFile, basepath):
 		for protein in value:
 			try:
 				seq= currentGenomeDict[ contigTag ][ protein[0]:protein[1] ].upper()
-				protseq,inverted,seq=translateSeq(seq)
+				protseq,inverted,seq=translateSeq(seq,verbose)
 				j+=1
 				if inverted:
 					idstr=">"+contigTag+"&protein"+str(j)+"&"+str(protein[1])+"-"+str(protein[0])
@@ -60,7 +68,7 @@ def prepGenomes(genomeFile, basepath):
 				listOfCDS[idstr]=seq
 				genomeProts+=str(protseq)+"\n"
 			except Exception as e:
-				print (str(e)+" "+str(genomeFile))
+				verboseprint( (str(e)+" "+str(genomeFile)))
 				pass
 
 	filepath=os.path.join(basepath,str(os.path.basename(genomeFile))+"_ORF_Protein.txt")
@@ -89,7 +97,16 @@ def reverseComplement(strDNA):
 
 	return strDNArevC[::-1]
 
-def translateSeq(DNASeq):
+def translateSeq(DNASeq,verbose):
+
+	if verbose:
+		def verboseprint(*args):
+			for arg in args:
+				print arg,
+			print
+	else:
+		verboseprint = lambda *a: None  # do-nothing function
+
 	seq=DNASeq
 	tableid=11
 	inverted=False
@@ -116,13 +133,13 @@ def translateSeq(DNASeq):
 					protseq=Seq.translate(myseq, table=tableid,cds=True)
 					inverted=False
 				except Exception as e:
-					print "translation error"
-					print e
+					verboseprint( "translation error" )
+					verboseprint(e)
 					raise
 	
 	return protseq,inverted,str(seq)
 	
-def loci_translation (genesList,listOfGenomes2):
+def loci_translation (genesList,listOfGenomes2,verbose):
 	
 	gene_fp = open( genesList, 'r')
 
@@ -151,8 +168,8 @@ def loci_translation (genesList,listOfGenomes2):
 				break
 			else:
 				try:
-					protseq,Inverted,seq=translateSeq(allele.seq)
-				except:
+					protseq,Inverted,seq=translateSeq(allele.seq,verbose)
+				except Exception as e:
 					multiple=False
 					print "allele "+str(k)+" is not translating : "+ str(gene)+" this gene is to be removed"
 					break
@@ -346,7 +363,7 @@ def main():
 				shutil.rmtree(basepath)
 		
 			#translate the loci
-			genepath,basepath,lGenesFiles,argumentsList, noShort=loci_translation (genes,listOfGenomes)
+			genepath,basepath,lGenesFiles,argumentsList, noShort=loci_translation (genes,listOfGenomes,verbose)
 			
 			
 			#starting a fresh allele call process, going to run prodigal for all genomes on the list
@@ -403,7 +420,7 @@ def main():
 			pool = multiprocessing.Pool(cpuToUse)
 			for genomeFile in listOfGenomes:
 				
-				pool.apply_async(prepGenomes,args=[str(genomeFile),basepath])
+				pool.apply_async(prepGenomes,args=[str(genomeFile),basepath,verbose])
 			pool.close()
 			pool.join()
 			

@@ -1,9 +1,6 @@
 import csv
-import numpy as np
 from numpy import array
 import argparse
-import collections
-import operator
 
 def main():
 

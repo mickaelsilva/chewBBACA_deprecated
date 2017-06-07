@@ -19,6 +19,10 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 ----------
 ## FAQ
 
+### Q: What is the fast way to run?  
+A: Check step 1.1
+
+
 ### Q: Step 2 is taking hours, will it ever end?  
 A: Depending on the variability of the strains you are using to create the schema and the number of cpu you are using. The more variable the strains, the more BLAST comparisons are made.
 
@@ -64,6 +68,44 @@ Python dependencies:
 Other dependencies:
 * BLAST 2.5.0+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.5.0/ or above
 * [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/) or above
+
+----------
+
+## 1.1 Fast run
+
+### Run all analysis in a single command**
+
+**if you have no schema**
+
+`cd` to the folder where you want to do the analysis, create folders for:
+folder 1 : genomes fasta files as base for schema creation
+folder 2 : genomes fasta files to call the alleles (genomes from folder 1 will already be used)
+
+`/home/user/chewBBACA/fullBBACA.py --cs genomes/cg/ 
+--cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
+
+**if you have a schema**
+
+`cd` to the folder where you want to do the analysis, create folders for:
+folder 1 : genomes fasta files to call the alleles
+folder 2 : target genes fasta files 
+
+
+`/home/user/chewBBACA/fullBBACA.py --genes schema_seed/ 
+--cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
+
+`--cs` path to folder with genomes to create schema
+
+`--genes` path to folder with target genes
+
+`--genes` path to folder with target genomes
+
+`--cpu` Number of cpus to use
+
+`-o` folder name with the analysis files
+
+`-t` (Optional) taxon to use for prodigal training input
+
 
 ----------
 
@@ -123,6 +165,7 @@ At the moment it can only run on a single node SLURM HPC by  srun
 ./< outPrefix >_< datestamp>/< outPrefix >/results_statistics.txt
 ./< outPrefix >_< datestamp>/< outPrefix >/results_contigsInfo.txt
 ./< outPrefix >_< datestamp>/< outPrefix >/results_Alleles.txt 
+./< outPrefix >_< datestamp>/< outPrefix >logging_info.txt 
 ```
 
 
@@ -144,7 +187,7 @@ Usage:
 
 The output consists in a set of plots per iteration and a removedGenomes.txt file where its informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
 
-Example of an output can be seen [here] (http://i.imgur.com/uQDNNkb.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
+Example of an output can be seen [here] (http://i.imgur.com/jlTV2vg.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
 ----------
 ## 5. Defining the cgMLST schema

@@ -10,8 +10,8 @@
 ----------
 ##FAQ
 
-###Q: How to do the quick and dirty?  
-A: Just follow the first 4 steps bellow.
+###Q: How to do the quick and dirty?   
+A: Just follow the first 4 steps bellow. (new: use step 1.1)
 
 ###Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
 A: Try to run step 5, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises from the ashes.
@@ -50,6 +50,43 @@ Other dependencies:
 
 ----------
 
+## 1.1 Fast run
+
+### Run all analysis in a single command**
+
+**if you have no schema**
+
+`cd` to the folder where you want to do the analysis, create folders for:
+folder 1 : genomes fasta files as base for schema creation
+folder 2 : genomes fasta files to call the alleles (genomes from folder 1 will already be used)
+
+`/home/user/chewBBACA/fullBBACA.py --cs genomes/cg/ 
+--cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
+
+**if you have a schema**
+
+`cd` to the folder where you want to do the analysis, create folders for:
+folder 1 : genomes fasta files to call the alleles
+folder 2 : target genes fasta files 
+
+
+`/home/user/chewBBACA/fullBBACA.py --genes schema_seed/ 
+--cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
+
+`--cs` path to folder with genomes to create schema
+
+`--genes` path to folder with target genes
+
+`--genes` path to folder with target genomes
+
+`--cpu` Number of cpus to use
+
+`-o` folder name with the analysis files
+
+`-t` (Optional) taxon to use for prodigal training input
+
+----------
+
 ## 2. wgMLST schema creation
 
 Create your own wgMLST schema based on a set of genomes fasta files. The command is the following:
@@ -65,6 +102,8 @@ Create your own wgMLST schema based on a set of genomes fasta files. The command
 `--cpu` Number of cpus to use
 
 `--bsr` (Optional) Minimum BSR for locus similarity. Default at 0.6. 
+
+`-t` (Optional) taxon to use for prodigal training input
 
 **Outputs:** 
 
@@ -94,6 +133,7 @@ Then run is the following:
 
 `-b` Blastp full path(optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
 
+`-t` (Optional) taxon to use for prodigal training input
 
 This will use by default, number of CPUs available minus 2 and can be called in a SLURM HPC by  srun  
 
@@ -148,6 +188,6 @@ Usage:
 
 The output consists in a set of plots per iteration and a removedGenomes.txt file where its informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
 
-Example of an output can be seen [here](http://i.imgur.com/jlTV2vg.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
+Example of an output can be seen [here] (http://i.imgur.com/jlTV2vg.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
 
 =============
