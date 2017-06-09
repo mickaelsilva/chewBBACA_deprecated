@@ -77,7 +77,6 @@ def main():
                         default=False)
     args = parser.parse_args()
 
-
     genomes2CreateSchema = args.cs
     genes2call = args.genes
     BSRTresh = args.bsr
@@ -168,10 +167,16 @@ def main():
         print("Starting the schema creation script")
 
         ppanScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'createschema/PPanGen.py')
-        proc = subprocess.Popen(
-            [ppanScriptPath, '-i', genomes2CreateSchema, '--cpu', str(cpuToUse), "-t", chosenTaxon, "-o", schemaSeedDir,
-             "--bsr", str(BSRTresh), "--v", verbose])
-        p_status = proc.wait()
+
+        args = [ppanScriptPath, '-i', genomes2CreateSchema, '--cpu', str(cpuToUse), "-t", chosenTaxon, "-o",
+                schemaSeedDir,
+                "--bsr", str(BSRTresh), "-b", "blastp"]
+
+        if verbose:
+            args.append('-v')
+
+        proc = subprocess.Popen(args)
+        proc.wait()
 
         # create list with genes to call and call bbaca
         genes2call = "listGenes2Call.txt"
@@ -207,7 +212,7 @@ def main():
         if not os.path.isdir(short_folder):
             ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utils/init_schema_4_bbaca.py')
             proc = subprocess.Popen([ScriptPath, '-i', genes2call])
-            p_status = proc.wait()
+            proc.wait()
 
     # create the list of genomes to use for the call, including the use on the schema creation
 
@@ -228,10 +233,15 @@ def main():
     # run allele call on the genomes
     print("Starting the allele call script")
     ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'allelecall/BBACA.py')
+    args = [ScriptPath, '-i', genomes2call, '-g', genes2call, '--cpu', str(cpuToUse), "-t",
+            chosenTaxon, "-o", "results", "--bsr", str(BSRTresh)]
+    if auto:
+        args.append('--fc')
+    if verbose:
+        args.append('-v')
 
-    proc = subprocess.Popen([ScriptPath, '-i', genomes2call, '-g', genes2call, '--cpu', str(cpuToUse), "-t",
-                             chosenTaxon, "-o", "results", "--bsr", str(BSRTresh)])
-    p_status = proc.wait()
+    proc = subprocess.Popen(args)
+    proc.wait()
 
     # select the last results folder created
     last_result_folder = max([os.path.join("results", d) for d in os.listdir("results")], key=os.path.getmtime)
@@ -244,16 +254,17 @@ def main():
 
     if not os.path.exists(gOutFile):
         os.makedirs(gOutFile)
-        ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utils/ParalogPrunning.py')
+
+    ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utils/ParalogPrunning.py')
     proc = subprocess.Popen(
         [ScriptPath, '-i', os.path.join(last_result_folder, "results_contigsInfo.tsv"), '-o', gOutFile])
-    p_status = proc.wait()
+    proc.wait()
 
     ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utils/RemoveGenes.py')
     proc = subprocess.Popen([ScriptPath, '-i', os.path.join(last_result_folder, "results_alleles.tsv"), '-o',
                              os.path.join(gOutFile, "results_alleles_no_paralog"), '-g',
                              os.path.join(gOutFile, "RepeatedLoci.txt")])
-    p_status = proc.wait()
+    proc.wait()
 
     # testqualitygenomes, show plot and ask for threshold to use for phyloviz, set default to 20
     print("Starting the test quality genomes script")
@@ -264,7 +275,7 @@ def main():
     proc = subprocess.Popen(
         [ScriptPath, '-i', os.path.join(gOutFile, "results_alleles_no_paralog.tsv"), '-n', str(max_iteration), '-t',
          str(max_thresh), '-s', str(step), '-o', gOutFile])
-    p_status = proc.wait()
+    proc.wait()
 
     # get the genomes to remove at specific threshold, 10 if number of genomes is low
     num_lines = sum(1 for line in open(genomes2call))
@@ -303,7 +314,7 @@ def main():
     ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utils/Extract_cgAlleles.py')
     proc = subprocess.Popen([ScriptPath, '-i', os.path.join(gOutFile, "results_alleles_no_paralog.tsv"),
                              '-o', gOutFile, '-g', 'listGenomes2Del.txt'])
-    p_status = proc.wait()
+    proc.wait()
 
     # send data to phyloviz online ????
 

@@ -298,7 +298,7 @@ def main():
         description="This program analyze an allele call raw output matrix, returning info on which genomes are responsible for cgMLST loci loss")
     parser.add_argument('-i', nargs='?', type=str, help='raw allele call matrix file', required=True)
     parser.add_argument('-n', nargs='?', type=int, help='maximum number of iterations', required=True)
-    parser.add_argument('-t', nargs='?', type=int, help='maximum threshold of bad calls above 99%', required=True)
+    parser.add_argument('-t', nargs='?', type=int, help='maximum threshold of bad calls above 95 percent', required=True)
     parser.add_argument('-s', nargs='?', type=int, help='step between each threshold analysis', required=True)
     parser.add_argument('-o', nargs='?', type=str, help="Folder for the analysis files", required=False, default=".")
     parser.add_argument("-v", "--verbose", help="increase output verbosity", dest='verbose', action="store_true",
@@ -320,6 +320,10 @@ def main():
             print
     else:
         verboseprint = lambda *a: None  # do-nothing function
+
+
+    if not os.path.exists(out_folder):
+        os.makedirs(out_folder)
 
 
     starttime = "\nStarting Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y")

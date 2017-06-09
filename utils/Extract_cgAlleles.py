@@ -165,6 +165,9 @@ def main():
     pathOutputfile = args.i
     newfile = args.o
 
+    if not os.path.exists(newfile):
+        os.makedirs(newfile)
+
     genesToRemove = []
     genomesToRemove = []
 

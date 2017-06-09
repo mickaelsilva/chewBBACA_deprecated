@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import CheckCDS
 import alleleSizeStats
 import os
@@ -10,89 +10,93 @@ import time
 
 
 def main():
-	
-	parser = argparse.ArgumentParser(description="This program analyses a set of gene files, analyzing the alleles CDS and the length of the alleles per gene")
-	parser.add_argument('-i', nargs='?', type=str, help='list genes, directory or .txt file with the full path', required=True)
-	parser.add_argument('-p', nargs='?', type=bool, help='One bad allele still makes gene conserved', required=False, default=False)
-	parser.add_argument('--log', dest='logScale', action='store_true')
-	parser.add_argument('-l', nargs='?', type=str, help='name/location main html file', required=True)
-	parser.add_argument('-ta', nargs='?', type=int, help='ncbi translation table', required=True)
-	parser.add_argument('-t', nargs='?', type=float, help='Threshold', required=False, default=0.05)
-	parser.add_argument('--title', nargs='?', type=str, help='title on the html', required=False, default="My Analyzed wg/cg MLST Schema - Rate My Schema")
-	parser.add_argument('--cpu', nargs='?', type=int, help='number of cpu to use', required=True)
-	parser.add_argument('-s', nargs='?', type=int, help='Threshold', required=False, default=500)
-	parser.set_defaults(logScale=False)
-	
-	args=parser.parse_args()
-	genes = args.i
-	transTable = args.ta
-	logScale=args.logScale
-	htmlFile=args.l
-	outputpath=os.path.dirname(htmlFile)
-	cpuToUse=args.cpu
-	threshold=float(args.t)
-	OneBadGeneNotConserved=bool(args.p)
-	splited=int(args.s)
-	title=str(args.title)
-	
-	starttime="\nStarting Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y")
-	print (starttime)
-	
-	try:
-		f=open( genes, 'r')
-		f.close()
-	except IOError:
-		listbasename=os.path.basename(os.path.normpath(genes))
-		
-		with open("listGenes"+listbasename+".txt", "wb") as f:
-			for gene in os.listdir(genes):
-				try:
-					genepath=os.path.join(genes,gene)
-					gene_fp2 = HTSeq.FastaReader(genepath)
-					for allele in gene_fp2:
-						break
-					f.write( genepath+"\n")
-				except Exception as e:
-					print e
-					pass
-					
-				
-		genes="listGenes"+listbasename+".txt"
-		
-	
-	genebasename=str(os.path.basename(genes))
-	genebasename=genebasename.split(".")
-	genebasename.pop()
-	genebasename=".".join(genebasename)
-	#genebasename=genebasename[0]
-	
-		
-	notConservedgenes,totalgenes,genesWOneAllele,boxplot,histplot,allelenumberplot,listgenesBoxOrdered,totalnumberofgenes,boxListLink,allAllelesStats=alleleSizeStats.getStats(genes,threshold,OneBadGeneNotConserved,True,logScale,outputpath,splited)
-	
-	#boxplot=str(json.dumps(boxplot))
-	histplot=str(json.dumps(histplot))
-	allelenumberplot=str(json.dumps(allelenumberplot))
-	allAllelesStats=str(json.dumps(allAllelesStats))
+    parser = argparse.ArgumentParser(
+        description="This program analyses a set of gene files, analyzing the alleles CDS and the length of the alleles per gene")
+    parser.add_argument('-i', nargs='?', type=str, help='list genes, directory or .txt file with the full path',
+                        required=True)
+    parser.add_argument('-p', nargs='?', type=bool, help='One bad allele still makes gene conserved', required=False,
+                        default=False)
+    parser.add_argument('--log', dest='logScale', action='store_true')
+    parser.add_argument('-l', nargs='?', type=str, help='name/location main html file', required=True)
+    parser.add_argument('-ta', nargs='?', type=int, help='ncbi translation table', required=True)
+    parser.add_argument('-t', nargs='?', type=float, help='Threshold', required=False, default=0.05)
+    parser.add_argument('--title', nargs='?', type=str, help='title on the html', required=False,
+                        default="My Analyzed wg/cg MLST Schema - Rate My Schema")
+    parser.add_argument('--cpu', nargs='?', type=int, help='number of cpu to use', required=True)
+    parser.add_argument('-s', nargs='?', type=int,
+                        help='number of boxplots per page (more than 500 can make the page very slow)', required=False,
+                        default=500)
+    parser.set_defaults(logScale=False)
+
+    args = parser.parse_args()
+    genes = args.i
+    transTable = args.ta
+    logScale = args.logScale
+    htmlFile = args.l
+    outputpath = os.path.dirname(htmlFile)
+    cpuToUse = args.cpu
+    threshold = float(args.t)
+    OneBadGeneNotConserved = bool(args.p)
+    splited = int(args.s)
+    title = str(args.title)
+
+    starttime = "\nStarting Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y")
+    print (starttime)
+
+    try:
+        f = open(genes, 'r')
+        f.close()
+    except IOError:
+        listbasename = os.path.basename(os.path.normpath(genes))
+
+        with open("listGenes" + listbasename + ".txt", "wb") as f:
+            for gene in os.listdir(genes):
+                try:
+                    genepath = os.path.join(genes, gene)
+                    gene_fp2 = HTSeq.FastaReader(genepath)
+                    for allele in gene_fp2:
+                        break
+                    f.write(genepath + "\n")
+                except Exception as e:
+                    print e
+                    pass
+
+        genes = "listGenes" + listbasename + ".txt"
+
+    genebasename = str(os.path.basename(genes))
+    genebasename = genebasename.split(".")
+    genebasename.pop()
+    genebasename = ".".join(genebasename)
+    # genebasename=genebasename[0]
 
 
-	statsPerGene=CheckCDS.analyzeCDS(genes,transTable,True,outputpath,cpuToUse)
-	
-	# stats values are ordered in a list allelesNotMultiple3,listStopcodonsInside,listnotStartCodon,numberOfAlleles
-	
-	htmlgenespath=os.path.join(outputpath,"genes_html/")
-	relpath=os.path.relpath(htmlgenespath,outputpath)
-	
-	if not os.path.exists(htmlgenespath):
-		os.makedirs(htmlgenespath)
-	
-	
-	with open(htmlFile, "wb") as f:
-		f.write("<!DOCTYPE html>\n<html>\n<head><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script>\n")
-		f.write("<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>")
-		f.write("""<!-- Latest compiled and minified JavaScript -->
+    notConservedgenes, totalgenes, genesWOneAllele, boxplot, histplot, allelenumberplot, listgenesBoxOrdered, totalnumberofgenes, boxListLink, allAllelesStats = alleleSizeStats.getStats(
+        genes, threshold, OneBadGeneNotConserved, True, logScale, outputpath, splited)
+
+    # boxplot=str(json.dumps(boxplot))
+    histplot = str(json.dumps(histplot))
+    allelenumberplot = str(json.dumps(allelenumberplot))
+    allAllelesStats = str(json.dumps(allAllelesStats))
+
+    statsPerGene = CheckCDS.analyzeCDS(genes, transTable, True, outputpath, cpuToUse)
+
+    # stats values are ordered in a list allelesNotMultiple3,listStopcodonsInside,listnotStartCodon,numberOfAlleles
+
+    htmlgenespath = os.path.join(outputpath, "genes_html/")
+    relpath = os.path.relpath(htmlgenespath, outputpath)
+
+    if not os.path.exists(htmlgenespath):
+        os.makedirs(htmlgenespath)
+
+    with open(htmlFile, "wb") as f:
+        f.write(
+            "<!DOCTYPE html>\n<html>\n<head><script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script>\n")
+        f.write(
+            "<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>")
+        f.write("""<!-- Latest compiled and minified JavaScript -->
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>""")
-		f.write("""<style type="text/css">
+        f.write("""<style type="text/css">
       body {
         padding-bottom: 60px;
         padding-left: 20px;
@@ -138,9 +142,8 @@ function openList1(documentid) {
     }
 }
 </script>""")
-		
-		
-		f.write("""<style type="text/css">
+
+        f.write("""<style type="text/css">
 		ul {
     /*min-height: 300px;*/
     -webkit-column-count: 4;
@@ -164,31 +167,35 @@ li a {
 .tg .tg-14d4{background-color:#91df0a;text-align:center;vertical-align:top}
 
 </style>\n</head>\n<body>""")
-		
-		f.write("""<div class="jumbotron">
-  <h2>"""+title+"""</h2>
-  <p>Explore the analysis by clicking the analysis buttons</p></div>""")
-		
 
-		f.write("<h2>Allele size analysis using a mode +/- "+str(threshold)+"</h2>")
-		f.write("<p> Genes are considered not conserved if >1 allele are outside the mode +/-0.05 size. Genes with only 1 allele outside the threshold are considered conserved</p>\n")
-		f.write("<h3>"+str(totalgenes)+" total loci</h3>")
-		f.write("\n<h3>"+str(len(notConservedgenes))+" loci with high length variability</h3>")
-		f.write("""<button onclick = "openList1('ollist1')">Show/hide list</button><ol id='ollist1' style='display: none;'>""")
-		
-		for elem in notConservedgenes:
-			f.write("<li><a href = '"+str(elem)+"' target='_blank'>"+(os.path.basename(elem)).replace(".html","")+"</a></li>")
-			
-		f.write("</ol>\n<h3>"+str(len(genesWOneAllele))+" loci with only one allele</h3>\n")
-		
-		f.write("""<button onclick = "openList1('ollist2')">Show/hide list</button><ol id='ollist2' style='display: none;'>""")
-		
-		for elem in genesWOneAllele:
-			f.write("<li><a href = '"+str(elem)+"' target='_blank'>"+(os.path.basename(elem)).replace(".html","")+"</a></li>\n")
-		
-		f.write("</ol>\n")
-		
-		f.write("""<div class='container'>
+        f.write("""<div class="jumbotron">
+  <h2>""" + title + """</h2>
+  <p>Explore the analysis by clicking the analysis buttons</p></div>""")
+
+        f.write("<h2>Allele size analysis using a mode +/- " + str(threshold) + "</h2>")
+        f.write(
+            "<p> Genes are considered not conserved if >1 allele are outside the mode +/-0.05 size. Genes with only 1 allele outside the threshold are considered conserved</p>\n")
+        f.write("<h3>" + str(totalgenes) + " total loci</h3>")
+        f.write("\n<h3>" + str(len(notConservedgenes)) + " loci with high length variability</h3>")
+        f.write(
+            """<button onclick = "openList1('ollist1')">Show/hide list</button><ol id='ollist1' style='display: none;'>""")
+
+        for elem in notConservedgenes:
+            f.write("<li><a href = '" + str(elem) + "' target='_blank'>" + (os.path.basename(elem)).replace(".html",
+                                                                                                            "") + "</a></li>")
+
+        f.write("</ol>\n<h3>" + str(len(genesWOneAllele)) + " loci with only one allele</h3>\n")
+
+        f.write(
+            """<button onclick = "openList1('ollist2')">Show/hide list</button><ol id='ollist2' style='display: none;'>""")
+
+        for elem in genesWOneAllele:
+            f.write("<li><a href = '" + str(elem) + "' target='_blank'>" + (os.path.basename(elem)).replace(".html",
+                                                                                                            "") + "</a></li>\n")
+
+        f.write("</ol>\n")
+
+        f.write("""<div class='container'>
 					<div class='row'>
 						<div class="col-sm-3">
 						<button id='button2' class="btn btn-success btn-block active">Allele length analysis</button>
@@ -204,8 +211,8 @@ li a {
 						</div>
 					</div>
 				</div>""")
-		
-		f.write("""<div id="fig03" ><div id="fig03b" style="width: 1000px; height: 600px;"></div><div id="fig03a" style="width: 1300px; height: 700px;"></div></div>
+
+        f.write("""<div id="fig03" ><div id="fig03b" style="width: 1000px; height: 600px;"></div><div id="fig03a" style="width: 1300px; height: 700px;"></div></div>
 		<div id="fig01" style="display:none; width: 100%;">
 		<h2>Size boxplot for all loci</h2><p>Box plot for each locus on a descending order of the median allele sizes</p>
 		<p>Use the zoom button and hover the mouse over a box/median to see the locus name and points data</p>
@@ -213,12 +220,13 @@ li a {
 		<button id='buttonbackward' > Previous 500 loci < </button>
 		<button id='buttonforward' > Next 500 loci > </button>
 		""")
-		
-		f.write("""<div id="figbox0" classe="container" style="display:none;width: 1500px; height: 1000px;"></div>""")
 
-		f.write("""</div><div id="fig02" classe="container" style="display:none;width: 1000px; height: 600px;"></div>""")
-		
-		f.write("""<script type="text/javascript">
+        f.write("""<div id="figbox0" classe="container" style="display:none;width: 1500px; height: 1000px;"></div>""")
+
+        f.write(
+            """</div><div id="fig02" classe="container" style="display:none;width: 1000px; height: 600px;"></div>""")
+
+        f.write("""<script type="text/javascript">
 					
 					$("#buttonforward").click(function(){
 					  boxplotPage=boxplotPage+1;
@@ -272,8 +280,8 @@ li a {
 					return false;
 					}); 
 					</script>""")
-		
-		f.write("""<script type="text/javascript">
+
+        f.write("""<script type="text/javascript">
 					$("#buttonbackward").click(function(){
 					  boxplotPage=boxplotPage-1;
 					  numberofgenes=numberofgenes-jsonboxList.length;
@@ -327,8 +335,8 @@ li a {
 					return false;
 					}); 
 					</script>""")
-		
-		f.write("""<script type="text/javascript">
+
+        f.write("""<script type="text/javascript">
 					$("#button3").click(function(){
 					  if ($("#fig03a").firstChild==undefined){
 					  $.ajax({
@@ -383,8 +391,8 @@ li a {
 					  $("#fig04").css({"display":"none"});
 					}); 
 					</script>""")
-		
-		f.write("""<script type="text/javascript">
+
+        f.write("""<script type="text/javascript">
 					$("#button2").click(function(){
 					 if ($("#fig02").firstChild==undefined){
 						$.ajax({
@@ -418,11 +426,11 @@ li a {
 					  $("#fig04").css({"display":"none"});
 					}); 
 					</script>""")
-		
-		f.write("""<script type="text/javascript">
+
+        f.write("""<script type="text/javascript">
 					var boxplotPage=0;
 					var numberofgenes=0
-					var totalGenes="""+str(totalnumberofgenes)+"""
+					var totalGenes=""" + str(totalnumberofgenes) + """
 					$("#button1").click(function(){
 					 if ($("#figbox0").firstChild==undefined){
 						$.ajax({
@@ -472,7 +480,7 @@ li a {
 					  $("#fig04").css({"display":"none"});
 					}); 
 					</script>""")
-		f.write("""<script type="text/javascript">
+        f.write("""<script type="text/javascript">
 					$("#button4").click(function(){
 					  $("#fig04").css({"display":"block"});
 					  $("#fig02").css({"display":"none"});
@@ -480,9 +488,8 @@ li a {
 					  $("#fig01").css({"display":"none"});
 					}); 
 					</script>""")
-		
-		
-		f.write("""<div id="fig04" classe="container" style="display:none">
+
+        f.write("""<div id="fig04" classe="container" style="display:none">
 		<title>Schema Validation Results</title>
 		<h3>Summary of problematic alleles per locus using the <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG11'>NCBI translation table 11</a></h3>
 		<div id="fig04B" classe="container" style="width: 1200px; height: 700px;"></div>
@@ -496,65 +503,74 @@ li a {
 			<th class="tg-031e">Number alleles wo/ Start/Stop Codon</th>
 			<th class="tg-qpvr" .background-color='#59b300'>Number of alleles (% alleles w/ issues) </th>
 		  </tr>""")
-		ordered=[]
-		orderedBySize=[]
-		for key, value in statsPerGene.iteritems():
-			numberMultip=float(len(value[0]))
-			numberStop=float(len(value[1]))
-			numberStart=float(len(value[2]))
-			total=float(value[3])
-			totalpercent=((numberMultip+numberStart+numberStop)/total)*100
-			ordered.append([key,totalpercent])
-			orderedBySize.append([key,total])
-		ordered=sorted(ordered, key=itemgetter(-1))
-		ordered.reverse()
-		orderedBySize=sorted(orderedBySize, key=itemgetter(-1))
-		
-		
-		newlist=[]
-		auxHistList=[[],[],[],[],[]]
-		i=0
-		while i<len(ordered):
-			item=ordered[i]
-			
-			aux=[]
-			aux.append(item[0])
-			
-			value=statsPerGene[item[0]]
-			numberMultip=float(len(value[0]))
-			numberStop=float(len(value[1]))
-			numberStart=float(len(value[2]))
-			total=float(value[3])
-			
-			aux.append(value)
-			newlist.append(aux)
-			name=os.path.basename(str(item[0]))
-			name=name.split(".")
-			name=name[0]
-			if (numberMultip>0 or numberStop>0 or numberStart>0):
-				locusHTML=os.path.join(relpath,(os.path.basename(str(item[0]))).replace(".fasta",".html"))
-				f.write("<tr id="+str(item[0])+""">\n<td class='tg-vn4c' onclick="window.open('"""+locusHTML+"""')" style='cursor:pointer'>"""+name+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberMultip))+" ("+str('{0:.2f}'.format((numberMultip/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStop))+" ("+str('{0:.2f}'.format((numberStop/total)*100))+"%)"+"</td>\n<td class='tg-vn4c' onclick='a(this);'>"+str(int(numberStart))+" ("+str('{0:.2f}'.format((numberStart/total)*100))+"%)"+"</td>\n<td class='tg-14d4' onclick='a(this);'>"+str(int(total))+" ("+str('{0:.2f}'.format(((numberMultip+numberStart+numberStop)/total)*100))+"%)"+"</td>\n</tr>")
-			i+=1
-		i=0
-		while i<len(orderedBySize):
-			item2=orderedBySize[i]
-			value2=statsPerGene[item2[0]]
-			
-			if (len(value2[0])>0 or len(value2[1])>0 or len(value2[2])>0):			
-				locusHTML=os.path.join(relpath,(os.path.basename(str(item2[0]))).replace(".fasta",".html"))
-				auxHistList[0].append(locusHTML)
-				auxHistList[1].append(float(len(value2[0])))
-				auxHistList[2].append(float(len(value2[1])))
-				auxHistList[3].append(float(len(value2[2])))
-				auxHistList[4].append(float(value2[3])-float(len(value2[2]))-float(len(value2[1]))-float(len(value2[0])))
-			i+=1
-			
-			
-		auxHistList=str(json.dumps(auxHistList))
-		f.write("</table>")
-		f.write("""<div id='AllelesWissues'></div><button onclick="$('#AllelesWissues').empty();">clean</button></div>""")
-		f.write("""\n<script type='text/javascript'>
-		var histCDSanalysis="""+auxHistList+""";
+        ordered = []
+        orderedBySize = []
+        for key, value in statsPerGene.iteritems():
+            numberMultip = float(len(value[0]))
+            numberStop = float(len(value[1]))
+            numberStart = float(len(value[2]))
+            total = float(value[3])
+            totalpercent = ((numberMultip + numberStart + numberStop) / total) * 100
+            ordered.append([key, totalpercent])
+            orderedBySize.append([key, total])
+        ordered = sorted(ordered, key=itemgetter(-1))
+        ordered.reverse()
+        orderedBySize = sorted(orderedBySize, key=itemgetter(-1))
+
+        newlist = []
+        auxHistList = [[], [], [], [], []]
+        i = 0
+        while i < len(ordered):
+            item = ordered[i]
+
+            aux = []
+            aux.append(item[0])
+
+            value = statsPerGene[item[0]]
+            numberMultip = float(len(value[0]))
+            numberStop = float(len(value[1]))
+            numberStart = float(len(value[2]))
+            total = float(value[3])
+
+            aux.append(value)
+            newlist.append(aux)
+            name = os.path.basename(str(item[0]))
+            name = name.split(".")
+            name = name[0]
+            if (numberMultip > 0 or numberStop > 0 or numberStart > 0):
+                locusHTML = os.path.join(relpath, (os.path.basename(str(item[0]))).replace(".fasta", ".html"))
+                f.write("<tr id=" + str(item[
+                                            0]) + """>\n<td class='tg-vn4c' onclick="window.open('""" + locusHTML + """')" style='cursor:pointer'>""" + name + "</td>\n<td class='tg-vn4c' onclick='a(this);'>" + str(
+                    int(numberMultip)) + " (" + str('{0:.2f}'.format(
+                    (numberMultip / total) * 100)) + "%)" + "</td>\n<td class='tg-vn4c' onclick='a(this);'>" + str(
+                    int(numberStop)) + " (" + str('{0:.2f}'.format(
+                    (numberStop / total) * 100)) + "%)" + "</td>\n<td class='tg-vn4c' onclick='a(this);'>" + str(
+                    int(numberStart)) + " (" + str('{0:.2f}'.format(
+                    (numberStart / total) * 100)) + "%)" + "</td>\n<td class='tg-14d4' onclick='a(this);'>" + str(
+                    int(total)) + " (" + str('{0:.2f}'.format(
+                    ((numberMultip + numberStart + numberStop) / total) * 100)) + "%)" + "</td>\n</tr>")
+            i += 1
+        i = 0
+        while i < len(orderedBySize):
+            item2 = orderedBySize[i]
+            value2 = statsPerGene[item2[0]]
+
+            if (len(value2[0]) > 0 or len(value2[1]) > 0 or len(value2[2]) > 0):
+                locusHTML = os.path.join(relpath, (os.path.basename(str(item2[0]))).replace(".fasta", ".html"))
+                auxHistList[0].append(locusHTML)
+                auxHistList[1].append(float(len(value2[0])))
+                auxHistList[2].append(float(len(value2[1])))
+                auxHistList[3].append(float(len(value2[2])))
+                auxHistList[4].append(
+                    float(value2[3]) - float(len(value2[2])) - float(len(value2[1])) - float(len(value2[0])))
+            i += 1
+
+        auxHistList = str(json.dumps(auxHistList))
+        f.write("</table>")
+        f.write(
+            """<div id='AllelesWissues'></div><button onclick="$('#AllelesWissues').empty();">clean</button></div>""")
+        f.write("""\n<script type='text/javascript'>
+		var histCDSanalysis=""" + auxHistList + """;
 		var listTraces=[];
 		var trace = {
 					  x: histCDSanalysis[1],
@@ -610,7 +626,7 @@ li a {
 		
 		</script>
 		""")
-		f.write("""\n<script type='text/javascript'>function a(element) {
+        f.write("""\n<script type='text/javascript'>function a(element) {
 	var id = $(element).closest("tr").attr("id");
 	var badalleles=[];
 	for (i = 0; i < alleles.length; i++) { 
@@ -632,41 +648,39 @@ li a {
 	
 	}
 	</script>""")
-		
-		f.write("\n<script type='text/javascript'>var alleles="+json.dumps(newlist)+"</script>")
-		f.write("</body>\n</html>")
-	
-	i=0
-		
-	filename="jsonbox0.js"
-	for elem in boxplot:
-		
-		boxplotElem=str(json.dumps(elem))
-		listGenesJson=str(json.dumps(listgenesBoxOrdered[i]))
-		listLinkGenesJson=str(json.dumps(boxListLink[i]))
-		filename="jsonbox"+str(i)+(".js")
-		with open((os.path.join(outputpath,filename)), "wb") as f:
-			
-			f.write("var jsonboxList ="+str(boxplotElem)+";var listgenes="+str(listGenesJson)+";var listlinks="+str(listLinkGenesJson))
-		i+=1
-		
-	with open((os.path.join(outputpath,"json2.js")), "wb") as f:
-		
-		f.write("var jsonHistPlot ="+str(histplot))
-	
-	with open((os.path.join(outputpath,"json3.js")), "wb") as f:
-		
-		f.write("var jsonsScatterPlot ="+str(allelenumberplot)+";var listNumberDifAlleles="+allAllelesStats)
+
+        f.write("\n<script type='text/javascript'>var alleles=" + json.dumps(newlist) + "</script>")
+        f.write("</body>\n</html>")
+
+    i = 0
+
+    filename = "jsonbox0.js"
+    for elem in boxplot:
+        boxplotElem = str(json.dumps(elem))
+        listGenesJson = str(json.dumps(listgenesBoxOrdered[i]))
+        listLinkGenesJson = str(json.dumps(boxListLink[i]))
+        filename = "jsonbox" + str(i) + (".js")
+        with open((os.path.join(outputpath, filename)), "wb") as f:
+            f.write("var jsonboxList =" + str(boxplotElem) + ";var listgenes=" + str(
+                listGenesJson) + ";var listlinks=" + str(listLinkGenesJson))
+        i += 1
+
+    with open((os.path.join(outputpath, "json2.js")), "wb") as f:
+
+        f.write("var jsonHistPlot =" + str(histplot))
+
+    with open((os.path.join(outputpath, "json3.js")), "wb") as f:
+
+        f.write("var jsonsScatterPlot =" + str(allelenumberplot) + ";var listNumberDifAlleles=" + allAllelesStats)
+
+    try:
+        os.remove("listGenes" + listbasename + ".txt")
+    except:
+        pass
+
+    print (starttime)
+    print ("Finished Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
 
 
-	try:
-		os.remove("listGenes"+listbasename+".txt")
-	except:
-		pass
-	
-	print (starttime)
-	print ("Finished Script at : "+time.strftime("%H:%M:%S-%d/%m/%Y"))
-	
 if __name__ == "__main__":
     main()
-
