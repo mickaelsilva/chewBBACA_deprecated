@@ -73,7 +73,7 @@ Other dependencies:
 
 ## 1.1 Fast run
 
-### Run all analysis in a single command
+### Run all analysis in a single command (less flexible, proceed to the next steps for a more controlled run)
 
 **if you have no schema**
 
