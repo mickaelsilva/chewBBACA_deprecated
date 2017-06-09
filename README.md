@@ -181,7 +181,7 @@ be hard to use a different one, use this option using the full path of the blast
 Usage:
 
 
-`/home/msilva/chewBBACA/chewBBACA.py TestGenomeQuality -i alleles.tsv -n 12 -t 200 -s 5 -o OutFolder`
+`/home/user/chewBBACA/chewBBACA.py TestGenomeQuality -i alleles.tsv -n 12 -t 200 -s 5 -o OutFolder`
 	
 `-i` raw output file from an allele calling
 
@@ -209,7 +209,7 @@ Clean a raw output file from an allele calling to a phyloviz readable file. Use 
 
 Basic usage:
 
-`/home/msilva/chewBBACA/chewBBACA.py ExtractCgMLST -i rawDataToClean.tsv -o output_folders`
+`/home/user/chewBBACA/chewBBACA.py ExtractCgMLST -i rawDataToClean.tsv -o output_folders`
 	
 `-i` raw output file from an allele calling
 
