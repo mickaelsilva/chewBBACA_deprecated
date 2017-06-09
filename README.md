@@ -113,13 +113,15 @@ folder 2 : target genes fasta files
 
 Create your own wgMLST schema based on a set of genomes fasta files. The command is the following:
 
-`PPanGen.py -i listGenomes -o OutputFolderName --cpu 4`
+`/home/user/chewBBACA/chewBBACA.py CreateSchema -i ./genomes/cg/ -o OutputFolderName --cpu 4`
 
 **Parameters**
 
-`-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
+`-i` Folder containing the genomes from which to create the schema. Alternatively a file
+ containing the path to the list of genomes. One file path (must be full path) 
+ to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
-`-o` prefix for the output folder for the schema, chewBBACA ready
+`-o` prefix for the output folder for the schema
 
 `--cpu` Number of cpus to use
 
@@ -139,13 +141,16 @@ Create two list of files with the full paths (one path per line), one list for g
 
 Then run is the following:
 
-	% BBACA.py -i listGenomes.txt -g listGenes.txt -o OutPrefix --cpu 3 
+`/home/user/chewBBACA/chewBBACA.py Allelecall -i ./genomes/other/ -g genes/ -o OutPrefix --cpu 3 `
 
 **Parameters** 
 
-`-i` file containing the path to the list of genomes. One file path (must be full path) to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
-
-`-g` file containing the path to the list of alleles
+`-i` Folder containing the genomes that you want to call the alleles. Alternatively a file
+ containing the path to the list of genomes. One file path (must be full path) 
+ to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
+`-g` Folder containing the genes that you want to call. Alternatively a file
+ containing the path to the list of genes. One file path (must be full path) 
+ to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
 `-o` prefix for the output files. ID for the allele call run
 
@@ -153,12 +158,10 @@ Then run is the following:
 
 `-t` (Optional) taxon to use for prodigal training input
 
-`-b` Blastp full path(optional). In case of slurm system BLAST version being outdated it may be hard to use a different one, use this option using the full path of the blastp executable
+`-b` (optional)Blastp full path. In case of slurm system BLAST version being outdated it may 
+be hard to use a different one, use this option using the full path of the blastp executable
 
 
-At the moment it can only run on a single node SLURM HPC by  srun  
-
-`srun -c 62 --mem 60G BBACA.py -i listgenomes.txt -g listgenes.txt -o OutPrefix --cpu 62`
 
 **Outputs files**:
 ```
@@ -166,6 +169,7 @@ At the moment it can only run on a single node SLURM HPC by  srun
 ./< outPrefix >_< datestamp>/< outPrefix >/results_contigsInfo.txt
 ./< outPrefix >_< datestamp>/< outPrefix >/results_Alleles.txt 
 ./< outPrefix >_< datestamp>/< outPrefix >logging_info.txt 
+./< outPrefix >_< datestamp>/< outPrefix >RepeatedLoci.txt
 ```
 
 
@@ -177,17 +181,23 @@ At the moment it can only run on a single node SLURM HPC by  srun
 Usage:
 
 
-	% TestGenomeQuality.py -i out.txt -n 12 -t 250
+`/home/msilva/chewBBACA/chewBBACA.py TestGenomeQuality -i alleles.tsv -n 12 -t 200 -s 5 -o OutFolder`
 	
 `-i` raw output file from an allele calling
 
 `-n` maximum number of iterations, each iteration removes a set of genomes over the threshold and recalculates all variables
 
-`-t` maximum threshold, will start at 5 increasing in a step of 5 until t
+`-t` maximum threshold, will start at 5
 
-The output consists in a set of plots per iteration and a removedGenomes.txt file where its informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
+`-s` step to add to each threshold (suggested 5)
 
-Example of an output can be seen [here] (http://i.imgur.com/jlTV2vg.png) . This examples uses an original set of 1042 genomes and a scheme of 5266 loci, using a parameter `-n` of 12 and `-t` of 300.
+`-o` Folder for the analysis files
+
+The output consists in a set of plots per iteration and a removedGenomes.txt file where its 
+informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
+
+Example of an output can be seen [here] (http://i.imgur.com/jlTV2vg.png) . This examples uses an 
+original set of 714 genomes and a scheme of 3266 loci, using a parameter `-n 12`,`-s 5` and `-t 300`.
 
 ----------
 ## 5. Defining the cgMLST schema
@@ -199,11 +209,11 @@ Clean a raw output file from an allele calling to a phyloviz readable file. Use 
 
 Basic usage:
 
-	% Extract_cgAlleles.py -i rawDataToClean.txt -o cleanedOutput.txt -r removeLocusList.txt -g removeGenomesList.txt
+`/home/msilva/chewBBACA/chewBBACA.py ExtractCgMLST -i rawDataToClean.tsv -o output_folders`
 	
 `-i` raw output file from an allele calling
 
-`-o` path/name of the clean file
+`-o` output folder (created by the script if non existant)
 
 `-r` (optional) list of genes to remove, one per line, advised to use the detected overrepresented genes from ParalogPrunning.py
 
