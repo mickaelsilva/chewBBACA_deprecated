@@ -310,6 +310,7 @@ def main():
                         required=True)
     parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False, default='blastp')
     parser.add_argument('--bsr', nargs='?', type=float, help="minimum BSR similarity", required=False, default=0.6)
+    parser.add_argument('-l', nargs='?', type=int, help="minimum bp locus lenght", required=False, default=200)
     parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False, default=False)
     parser.add_argument("-v", "--verbose", help="increase output verbosity", dest='verbose', action="store_true",
                         default=False)
@@ -323,6 +324,7 @@ def main():
     bsr = args.bsr
     chosenTaxon = args.t
     verbose = args.verbose
+    min_length = args.l
 
     if verbose:
         def verboseprint(*args):
@@ -489,7 +491,7 @@ def main():
             verboseprint( "___________________\nFinal step : creating the schema")
             lastFile = listOfGenomes.pop()
             proc = subprocess.Popen(
-                [createSchemaPath, '-i', lastFile, '-l', "200", '--cpu', str(cpuToUse), "-b", BlastpPath, "-o",
+                [createSchemaPath, '-i', lastFile, '-l', str(min_length), '--cpu', str(cpuToUse), "-b", BlastpPath, "-o",
                  outputFile, "--bsr", str(bsr)])
             p_status = proc.wait()
             verboseprint( "Schema Created sucessfully")

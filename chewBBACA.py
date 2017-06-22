@@ -42,6 +42,7 @@ def create_schema():
     parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False, default=False)
     parser.add_argument("-v", "--verbose", help="increase output verbosity", dest='verbose', action="store_true",
                         default=False)
+    parser.add_argument('-l', nargs='?', type=int, help="minimum bp locus lenght", required=False, default=200)
 
     args = parser.parse_args()
 
@@ -52,6 +53,7 @@ def create_schema():
     bsr = str(args.bsr)
     chosenTaxon = args.t
     verbose = args.verbose
+    min_length = str(args.l)
 
     genomeFiles = check_if_list_or_folder(genomeFiles)
     if isinstance(genomeFiles, list):
@@ -63,7 +65,7 @@ def create_schema():
     ppanScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'createschema/PPanGen.py')
 
     args = [ppanScriptPath, '-i', genomeFiles, '--cpu', cpuToUse, "-t", chosenTaxon, "-o", outputFile,
-            "--bsr", bsr, "-b", BlastpPath]
+            "--bsr", bsr, "-b", BlastpPath,"-l", min_length]]
 
     if verbose:
         args.append('-v')
@@ -131,10 +133,15 @@ def allele_call():
 
     proc = subprocess.Popen(args)
     proc.wait()
-
-    os.remove(genomes2call)
-    os.remove(genes2call)
-
+	
+    try:
+        os.remove("listGenes2Call.txt")
+    except:
+	    pass
+    try:
+        os.remove("listGenomes2Call.txt")
+    except:
+	    pass
 
 def evaluate_schema():
     parser = argparse.ArgumentParser(
