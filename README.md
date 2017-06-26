@@ -1,8 +1,8 @@
 # chewBBACA: Quick Usage
 
-**chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought as "Comprehensive and  Highly Efficient Workflow" but at this point still needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. BSR stands for BLAST Score Ratio as proposed by  [Rasko DA et al.](http://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-6-2) 
+**chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought of as "Comprehensive and  Highly Efficient Workflow" but at this point still it needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. BSR stands for BLAST Score Ratio as proposed by [Rasko DA et al.](http://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-6-2) 
 
-chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ration that can be run in multiprocessor settings and a set of functions to visualize and validate allele variation in the loci.
+chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ratio that can be run in multiprocessor settings and a set of functions to visualize and validate allele variation in the loci.
 
 ----------
 ## Check the [wiki pages](https://github.com/mickaelsilva/chewBBACA/wiki) for a much more thorough chewBBACA walktrough
@@ -12,9 +12,9 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 **Important Notes before starting:**
 
  - For **chewBBACA**, the definition of an allele is that each allele
-   must represent a complete Coding Domain Sequence, with starting codon and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automatically exclude any allele which DNA sequence that does not contain start or stop codon and that it's length is not multiple of three. The allele identification is performed using [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/). 
+   must represent a complete Coding DNA Sequence, with start and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automatically exclude any allele for which the DNA sequence does not contain start or stop codon and that the length is not multiple of three. The CDS identification is performed using [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/). 
  - All the referenced lists of files *must contain full path* for the files.
- - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems , you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
+ - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems, you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
 ----------
 ## FAQ
@@ -24,15 +24,15 @@ A: Check step 1.1
 
 
 ### Q: Step 2 is taking hours, will it ever end?  
-A: Depending on the variability of the strains you are using to create the schema and the number of cpu you are using. The more variable the strains, the more BLAST comparisons are made.
+A: Depending on the variability of the strains used to create the schema and the number of CPUs you are using time used will vary. The more variable the strains, the more BLAST comparisons will be made, taking more time.
 
 ### Q: Step 3 just crashed at 99% after 2 days running, do I need to start over :(?  
-A: chewBBACA shoul allow you to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
+A: chewBBACA should allow you to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
 
 ### Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
 A: Try to run step 4, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises.
 
-### Q: Which species have already a training file?  
+### Q: Which species already have a training file?  
 A: At the moment:
  - Campylobacter_Jejuni
  - Acinetobacter_Baumannii
