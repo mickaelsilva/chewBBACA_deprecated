@@ -65,7 +65,7 @@ def create_schema():
     ppanScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'createschema/PPanGen.py')
 
     args = [ppanScriptPath, '-i', genomeFiles, '--cpu', cpuToUse, "-t", chosenTaxon, "-o", outputFile,
-            "--bsr", bsr, "-b", BlastpPath,"-l", min_length]]
+            "--bsr", bsr, "-b", BlastpPath,"-l", min_length]
 
     if verbose:
         args.append('-v')
