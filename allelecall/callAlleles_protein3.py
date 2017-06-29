@@ -68,7 +68,7 @@ def getBlastScoreRatios(genefile, basepath, doAll, verbose, blastPath):
 
                 # --- get BLAST score ratio --- #
                 cline = NcbiblastpCommandline(cmd=blastPath, query=proteinfastaPath, db=Gene_Blast_DB_name,
-                                              evalue=0.001, out=blast_out_file, outfmt=5)
+                                              evalue=0.001, out=blast_out_file, outfmt=5, num_threads=1)
                 allelescore = 0
 
                 blast_records = runBlastParser(cline, blast_out_file)
@@ -125,7 +125,7 @@ def reDogetBlastScoreRatios(genefile, basepath, alleleI, allelescores2, newGene_
     blast_out_file2 = os.path.join(basepath, 'blastdbs/temp.xml')
 
     cline = NcbiblastpCommandline(cmd=blastPath, query=proteinfastaPath, db=newGene_Blast_DB_name, evalue=0.001,
-                                  out=blast_out_file2, outfmt=5)
+                                  out=blast_out_file2, outfmt=5,num_threads=1)
     allelescore = 0
     blast_records = runBlastParser(cline, blast_out_file2)
 
@@ -384,7 +384,7 @@ def main():
             # cline = NcbiblastpCommandline(query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001, out=blast_out_file, outfmt=5,max_target_seqs=10,max_hsps_per_subject=10)
             # 2.2.28 up
             cline = NcbiblastpCommandline(cmd=blastPath, query=proteinfastaPath, db=Gene_Blast_DB_name, evalue=0.001,
-                                          out=blast_out_file, outfmt=5, max_target_seqs=10, max_hsps=10)
+                                          out=blast_out_file, outfmt=5, max_target_seqs=10, max_hsps=10,num_threads=1)
 
             blast_records = runBlastParser(cline, blast_out_file)
             verboseprint("Blasted alleles on genome at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
