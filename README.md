@@ -5,9 +5,13 @@
 chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ratio that can be run in multiprocessor settings and a set of functions to visualize and validate allele variation in the loci.
 
 ----------
-## Check the [wiki pages](https://github.com/mickaelsilva/chewBBACA/wiki) for a much more thorough chewBBACA walktrough
+## Check the [wiki pages](https://github.com/mickaelsilva/chewBBACA/wiki) ...
+...for a much more thorough chewBBACA walktrough. 
+In this readme you can find a quick list of commands to be used bny experienced users 
 
-## Use [BBACA gitter](https://gitter.im/BBACA/Lobby) for direct chat interaction.
+## Use [BBACA gitter](https://gitter.im/BBACA/Lobby)...
+
+... if you have any pressing question. Chat can be faster and better than email for troubleshooting purposes 
 
 **Important Notes before starting:**
 
