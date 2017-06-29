@@ -47,45 +47,10 @@ Other dependencies:
 
 ----------
 
-## 1.1 Fast run
-
-### Run all analysis in a single command (less flexible, proceed to the next steps for a more controlled run)
-
-**if you have no schema**
-
-`cd` to the folder where you want to do the analysis, create folders for:
-folder 1 : genomes fasta files as base for schema creation
-folder 2 : genomes fasta files to call the alleles (genomes from folder 1 will already be used)
-
-`/home/user/chewBBACA/fullBBACA.py --cs genomes/cg/ 
---cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
-
-**if you have a schema**
-
-`cd` to the folder where you want to do the analysis, create folders for:
-folder 1 : genomes fasta files to call the alleles
-folder 2 : target genes fasta files 
-
-
-`/home/user/chewBBACA/fullBBACA.py --genes schema_seed/ 
---cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
-
-`--cs` path to folder with genomes to create schema
-
-`--genes` path to folder with target genes
-
-`--genomes` path to folder with target genomes
-
-`--cpu` Number of cpus to use (dont use all your cpu if using a laptop)
-
-`-o` folder name with the analysis files
-
-`-t` (Optional) taxon to use for prodigal training input
-
 
 ----------
 
-## 2. wgMLST schema creation
+## 1. wgMLST schema creation
 
 Create your own wgMLST schema based on a set of genomes fasta files. The command is the following:
 
@@ -111,7 +76,7 @@ One fasta file per gene in the `-o`directory that is created in the dir where th
 
 ----------
 
-## 3.  Allele call using the wgMLST schema 
+##2.  Allele call using the wgMLST schema 
 
 Create two list of files with the full paths (one path per line), one list for genomes and another for genes (genes are located on the schema seed created in the last step, ignore the short folder)
 
@@ -151,7 +116,7 @@ be hard to use a different one, use this option using the full path of the blast
 
 ----------
 
-## 4. Evaluate wgMLST call quality per genome
+## 3. Evaluate wgMLST call quality per genome
 
 
 Usage:
@@ -176,7 +141,7 @@ Example of an output can be seen [here] (http://i.imgur.com/jlTV2vg.png) . This 
 original set of 714 genomes and a scheme of 3266 loci, using a parameter `-n 12`,`-s 5` and `-t 300`.
 
 ----------
-## 5. Defining the cgMLST schema
+## 4. Defining the cgMLST schema
 
  **Creating a clean allelic profile for PHYLOViZ** 
  
@@ -195,6 +160,41 @@ Basic usage:
 
 `-g` (optional) list of genomes to remove, one per line, advised to use genomes that perform worst on statistics or use the result from the testGenomeQuality script
 
+----------
+## 5. All in one option 
+
+### Run all analysis in a single command (less flexible, proceed to the next steps for a more controlled run)
+
+**if you have no schema**
+
+`cd` to the folder where you want to do the analysis, create folders for:
+folder 1 : genomes fasta files as base for schema creation
+folder 2 : genomes fasta files to call the alleles (genomes from folder 1 will already be used)
+
+`/home/user/chewBBACA/fullBBACA.py --cs genomes/cg/ 
+--cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
+
+**if you have a schema**
+
+`cd` to the folder where you want to do the analysis, create folders for:
+folder 1 : genomes fasta files to call the alleles
+folder 2 : target genes fasta files 
+
+
+`/home/user/chewBBACA/fullBBACA.py --genes schema_seed/ 
+--cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
+
+`--cs` path to folder with genomes to create schema
+
+`--genes` path to folder with target genes
+
+`--genomes` path to folder with target genomes
+
+`--cpu` Number of cpus to use (dont use all your cpu if using a laptop)
+
+`-o` folder name with the analysis files
+
+`-t` (Optional) taxon to use for prodigal training input
 
 =============
 
