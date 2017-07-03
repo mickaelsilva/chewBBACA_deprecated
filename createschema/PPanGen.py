@@ -347,7 +347,8 @@ def main():
                  'Escherichia_Coli': 'trained_eColi.trn',
                  'Enterococcus_Faecium': 'trained_enteroFaecium.trn',
                  'Staphylococcus_Haemolyticus': 'trained_staphHaemolyticus.trn',
-                 'Salmonella_Enterica_enteritidis': 'trained_salmonellaEnterica_enteritidis.trn'
+                 'Salmonella_Enterica_enteritidis': 'trained_salmonellaEnterica_enteritidis.trn',
+                 'Staphylococcus_aureus': 'trained_StaphylococcusAureus.trn'
                  }
     if isinstance(chosenTaxon, basestring):
         trainingFolderPAth = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'TrainingFiles4Prodigal'))
@@ -386,6 +387,7 @@ def main():
         listOfGenomes.append(genomeFile)
 
     fp.close()
+    listOfGenomes.sort()
 
     # check if remnant files from previous run exist, prompt user if exists to know if it's his run and want to continue or start a new one
 

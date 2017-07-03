@@ -207,7 +207,7 @@ def main():
 
     except IndexError:
         print "Error starting the callAlleleles_protein3 script. usage: list_pickle_obj"
-
+	
     bsrTresh = float(bsrTresh)
 
     argumentList = []

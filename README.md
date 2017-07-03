@@ -21,7 +21,7 @@ In this readme you can find a quick list of commands to be used bny experienced 
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems, you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
 
-## 1. Setting up the analysis
+## 0. Setting up the analysis
 
 **Installing chewBBACA**
 
@@ -76,7 +76,7 @@ One fasta file per gene in the `-o`directory that is created in the dir where th
 
 ----------
 
-##2.  Allele call using the wgMLST schema 
+## 2.  Allele call using the wgMLST schema 
 
 Create two list of files with the full paths (one path per line), one list for genomes and another for genes (genes are located on the schema seed created in the last step, ignore the short folder)
 
@@ -224,6 +224,7 @@ A: At the moment:
  - *Enterococcus faecium* (Enterococcus_Faecium)
  - *Staphylococcus haemolyticus* (Staphylococcus_Haemolyticus)
  - *Salmonella enterica enteritidis* (Salmonella_Enterica_enteritidis)
+ - *Staphylococcus aureus* (Staphylococcus_aureus)
 
 ----------
 
