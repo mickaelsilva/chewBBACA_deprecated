@@ -186,6 +186,7 @@ def loci_translation(genesList, listOfGenomes2, verbose):
             argumentsList.append(filepath)
 
     gene_fp.close()
+    lGenesFiles.sort()
     return genepath, basepath, lGenesFiles, argumentsList, noshortgeneFile
 
 
@@ -321,8 +322,7 @@ def main():
     
     listOfGenomes.sort()
     lGenesFiles.sort()
-    
-    
+        
     # create temp folder inside the folder where the first gene is located
     first_gene = lGenesFiles[0]
     genepath = os.path.dirname(first_gene)
@@ -556,7 +556,7 @@ def main():
             phylovout2.append(alleleschema)
 
         genome = 0
-
+		
         genesHeader = "FILE" + "\t" + ('\t'.join(map(str, genesnames)))
         finalphylovinput = genesHeader
         finalphylovinput2 = genesHeader
