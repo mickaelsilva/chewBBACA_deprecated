@@ -348,7 +348,7 @@ def main():
                  'Enterococcus_Faecium': 'trained_enteroFaecium.trn',
                  'Staphylococcus_Haemolyticus': 'trained_staphHaemolyticus.trn',
                  'Salmonella_Enterica_enteritidis': 'trained_salmonellaEnterica_enteritidis.trn',
-                 'Staphylococcus_aureus': 'trained_StaphylococcusAureus.trn'
+                 'Staphylococcus_Aureus': 'trained_StaphylococcusAureus.trn'
                  }
     if isinstance(chosenTaxon, basestring):
         trainingFolderPAth = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'TrainingFiles4Prodigal'))

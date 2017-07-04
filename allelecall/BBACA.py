@@ -242,7 +242,7 @@ def main():
                  'Enterococcus_Faecium': 'trained_enteroFaecium.trn',
                  'Staphylococcus_Haemolyticus': 'trained_staphHaemolyticus.trn',
                  'Salmonella_Enterica_enteritidis': 'trained_salmonellaEnterica_enteritidis.trn',
-                 'Staphylococcus_aureus': 'trained_StaphylococcusAureus.trn'
+                 'Staphylococcus_Aureus': 'trained_StaphylococcusAureus.trn'
                  }
     if isinstance(chosenTaxon, basestring):
         trainingFolderPAth = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'TrainingFiles4Prodigal'))
@@ -320,7 +320,9 @@ def main():
     if len(lGenesFiles) == 0:
         raise ValueError('ERROR! No usable gene files in ' + str(genes))
     
+    #sort the genomes and genes list for an ordered output 
     listOfGenomes.sort()
+    listOfGenomesBasename.sort()
     lGenesFiles.sort()
         
     # create temp folder inside the folder where the first gene is located
