@@ -7,7 +7,7 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 ----------
 ## Check the [wiki pages](https://github.com/mickaelsilva/chewBBACA/wiki) ...
 ...for a much more thorough chewBBACA walktrough. 
-In this readme you can find a quick list of commands to be used bny experienced users 
+In this readme you can find a quick list of commands to be used by experienced users.
 
 ## Use [BBACA gitter](https://gitter.im/BBACA/Lobby)...
 
@@ -44,9 +44,6 @@ Python dependencies:
 Other dependencies:
 * BLAST 2.5.0+ ftp://ftp.ncbi.nih.gov/blast/executables/blast+/2.5.0/ or above
 * [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/) or above
-
-----------
-
 
 ----------
 
@@ -163,7 +160,7 @@ Basic usage:
 ----------
 ## 5. All in one option 
 
-### Run all analysis in a single command (less flexible, proceed to the next steps for a more controlled run)
+### Run all chewBBACA analyses in a single command: 
 
 **if you have no schema**
 
