@@ -213,6 +213,7 @@ def main():
                         default=False)
     parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False, default=False)
     parser.add_argument("--fc", help="force continue", required=False, action="store_true", default=False)
+    parser.add_argument("--fr", help="force reset", required=False, action="store_true", default=False)
     parser.add_argument("--json", help="report in json file", required=False, action="store_true", default=False)
 
     args = parser.parse_args()
@@ -227,6 +228,7 @@ def main():
     gOutFile = args.o
     chosenTaxon = args.t
     forceContinue = args.fc
+    forceReset = args.fr
     jsonReport = args.json
 
     # avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
@@ -330,7 +332,7 @@ def main():
     genepath = os.path.dirname(first_gene)
     basepath = os.path.join(genepath, "temp")
     testVar = ""
-    if os.path.isdir(basepath) and not forceContinue:
+    if os.path.isdir(basepath) and not forceContinue and not forceReset:
         testVar = raw_input(
             "We found files belonging to a previous run not finished, If they are yours and want to continue were it stopped type Y or yes")
     continueRun = False
@@ -338,7 +340,10 @@ def main():
     if testVar.lower() == "yes" or testVar.lower() == "y" or forceContinue:
         if os.path.isdir(basepath):
             continueRun = True
-
+	
+	if forceReset:
+		continueRun = True
+		
     if continueRun:
         print ("You chose to continue the allele call")
         argumentsList = []

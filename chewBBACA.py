@@ -89,6 +89,7 @@ def allele_call():
     parser.add_argument('--bsr', nargs='?', type=str, help="minimum BSR score", required=False, default='0.6')
     parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False, default='False')
     parser.add_argument("--fc", help="force continue", required=False, action="store_true", default=False)
+    parser.add_argument("--fr", help="force reset", required=False, action="store_true", default=False)
     parser.add_argument("--json", help="report in json file", required=False, action="store_true", default=False)
 
     args = parser.parse_args()
@@ -102,6 +103,7 @@ def allele_call():
     gOutFile = args.o
     chosenTaxon = args.t
     forceContinue = args.fc
+    forceReset = args.fr
     jsonReport = args.json
 
     genes2call = check_if_list_or_folder(genes)
@@ -130,6 +132,8 @@ def allele_call():
         args.append('--json')
     if verbose:
         args.append('-v')
+    if forceReset:
+        args.append('--fs')
 
     proc = subprocess.Popen(args)
     proc.wait()
