@@ -387,7 +387,7 @@ def main():
         listOfGenomes.append(genomeFile)
 
     fp.close()
-    listOfGenomes.sort()
+    listOfGenomes.sort(key=lambda y: y.lower())
 
     # check if remnant files from previous run exist, prompt user if exists to know if it's his run and want to continue or start a new one
 

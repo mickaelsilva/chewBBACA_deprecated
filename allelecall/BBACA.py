@@ -186,7 +186,7 @@ def loci_translation(genesList, listOfGenomes2, verbose):
             argumentsList.append(filepath)
 
     gene_fp.close()
-    lGenesFiles.sort()
+    lGenesFiles.sort(key=lambda y: y.lower())
     return genepath, basepath, lGenesFiles, argumentsList, noshortgeneFile
 
 
@@ -321,9 +321,9 @@ def main():
         raise ValueError('ERROR! No usable gene files in ' + str(genes))
     
     #sort the genomes and genes list for an ordered output 
-    listOfGenomes.sort()
-    listOfGenomesBasename.sort()
-    lGenesFiles.sort()
+    listOfGenomes.sort(key=lambda y: y.lower())
+    listOfGenomesBasename.sort(key=lambda y: y.lower())
+    lGenesFiles.sort(key=lambda y: y.lower())
         
     # create temp folder inside the folder where the first gene is located
     first_gene = lGenesFiles[0]
