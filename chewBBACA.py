@@ -133,7 +133,7 @@ def allele_call():
     if verbose:
         args.append('-v')
     if forceReset:
-        args.append('--fs')
+        args.append('--fr')
 
     proc = subprocess.Popen(args)
     proc.wait()
