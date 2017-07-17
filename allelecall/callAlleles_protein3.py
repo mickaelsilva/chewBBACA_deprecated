@@ -425,7 +425,7 @@ def main():
 
                             cdsStrName = (alignment.title.split(" "))[1]
 
-                            DNAstr = str(currentCDSDict[">" + cdsStrName])
+                            #DNAstr = str(currentCDSDict[">" + cdsStrName])
 
                             AlleleDNAstr = alleleList[int(alleleMatchid) - 1]
 
@@ -654,12 +654,10 @@ def main():
                                 geneTransalatedPath = os.path.join(basepath, str(
                                     os.path.basename(shortgeneFile) + '_protein.fasta'))
 
-                                fG = open(geneTransalatedPath2, 'w')
-                                fG.write('>' + str(alleleI) + '\n' + str(protSeq) + '\n')
-                                fG.close()
-                                fG = open(geneTransalatedPath, 'a')
-                                fG.write('>' + str(alleleI) + '\n' + str(protSeq) + '\n')
-                                fG.close()
+                                with open(geneTransalatedPath2, 'w') as fG:
+                                    fG.write('>' + str(alleleI) + '\n' + str(protSeq) + '\n')
+                                with open(geneTransalatedPath, 'a') as fG:
+                                    fG.write('>' + str(alleleI) + '\n' + str(protSeq) + '\n')
 
                                 match = bestmatch[5]
 

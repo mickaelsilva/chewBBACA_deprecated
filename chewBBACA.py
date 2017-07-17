@@ -252,10 +252,37 @@ def extract_cgmlst():
     proc = subprocess.Popen(args)
     proc.wait()
 
+def remove_genes():
+    parser = argparse.ArgumentParser(description="This program removes gens from a tab separated allele profile file")
+    parser.add_argument('RemoveGenes', nargs='+', help='evaluation of a schema')
+    parser.add_argument('-i', nargs='?', type=str, help='main matrix file from which to remove', required=True)
+    parser.add_argument('-g', nargs='?', type=str, help='list of genes to remove', required=True)
+    parser.add_argument('-o', nargs='?', type=str, help='output file name', required=True)
+    parser.add_argument("--inverse", help="list to remove is actually the one to keep", dest='inverse',
+                        action="store_true", default=False)
+
+    args = parser.parse_args()
+
+    args = parser.parse_args()
+    mainListFile = args.i
+    toRemoveListFile = args.g
+    outputfileName = args.o
+    inverse = args.inverse
+    
+
+    ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utils/RemoveGenes.py')
+    args = [ScriptPath, '-i', mainListFile, '-g', toRemoveListFile, '-o', outputfileName]
+
+    if inverse:
+        args.append('--inverse')
+
+    proc = subprocess.Popen(args)
+    proc.wait()
+
 
 if __name__ == "__main__":
 
-    functions_list = ['CreateSchema', 'Allelecall', 'SchemaValidation', 'TestGenomeQuality', 'ExtractCgMLST']
+    functions_list = ['CreateSchema', 'Allelecall', 'SchemaValidation', 'TestGenomeQuality', 'ExtractCgMLST','RemoveGenes']
 
     if sys.argv[1] == functions_list[0]:
         create_schema()
@@ -267,6 +294,8 @@ if __name__ == "__main__":
         test_schema()
     elif sys.argv[1] == functions_list[4]:
         extract_cgmlst()
+    elif sys.argv[1] == functions_list[5]:
+        remove_genes()
     else:
         print('function doesnt exist : ')
         for p in functions_list:
