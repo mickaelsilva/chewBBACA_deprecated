@@ -45,4 +45,29 @@ The optional parameters refer to the analysis of the alleles size. This analysis
 
 `-t` (optional) threshold used to calculate the range at which the allele is considered good (default=0.05)
 
+Two extra tab separated output files:
 
+An abridged example `locus_stats.tsv` file:
+
+```
+Locus	Mode_value	number_alleles
+b0002.fasta	2463	1493
+b0019.fasta	1167	906
+b0007.fasta	1431	1198
+b0009.fasta	588	524
+b0006.fasta	777	711
+b0020.fasta	906	672
+b0010.fasta	567	529
+b0008.fasta	954	752
+
+```
+
+An abridged example `non_cds_alleles.tsv` file:
+
+```
+Locus	Frameshift	No Start	More than 1 Stop	 Other
+b0002.fasta	9	-	-	-
+b0009.fasta	-	81,91	-	-
+b0008.fasta	36	-	-	-
+
+```

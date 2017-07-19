@@ -49,7 +49,6 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 	notconservedlengthgenes=[]
 	genesWoneAllele=[]
 	z=0
-	conservedgenes=[]
 	print "Genes with only 1 allele:"
 	modaStats=[]
 	allsizes=[]
@@ -58,6 +57,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 	allNumberAlleles=[]
 	allNumberAllelesMean=[]
 	allNumberAllelesMedian=[]
+	genesList=[]
 	
 	htmlgenespath=os.path.join(outputpath,"genes_html/")
 	relpath=os.path.relpath(htmlgenespath,outputpath)
@@ -67,7 +67,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 
 		gene = gene.rstrip('\n')
 		
-		conservedgenes.append(gene)
+		genesList.append(gene)
 		gene_fp2 = HTSeq.FastaReader(gene)
 		maxsize=0
 		minsize=99999999999
@@ -235,7 +235,11 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 		
 		print "Creating the allele size histogram"
 		
-		
+		with open('locus_stats.tsv', "wb") as f:
+			f.write("Locus\tMode_value\tnumber_alleles\n")
+			for elem2 in list(zip(genesList, modaStats,allAllelesStats)):
+				f.write(os.path.basename(elem2[0])+"\t"+str(elem2[1])+"\t"+str(elem2[2])+"\n")
+
 		histplothtml=modaStats
 
 		finalList=[]
@@ -274,7 +278,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 		orderedlistgene=finalNameList
 		boxplothtml=finalList
 
-		return notconservedlengthgenes,len(conservedgenes),genesWoneAllele,boxplothtml,histplothtml,numberallelesplotMedianhtml,orderedlistgene,j,finalLinkList,allAllelesStats
+		return notconservedlengthgenes,len(genesList),genesWoneAllele,boxplothtml,histplothtml,numberallelesplotMedianhtml,orderedlistgene,j,finalLinkList,allAllelesStats
 
 if __name__ == "__main__":
     main()

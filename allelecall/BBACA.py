@@ -10,6 +10,7 @@ import shutil
 import multiprocessing
 import subprocess
 import json
+import sys
 
 
 def which(program):
@@ -28,6 +29,8 @@ def which(program):
             if is_exe(exe_file):
                 return True
 
+    print program+" not found"
+    sys.exit()
     return "Not found"
 
 

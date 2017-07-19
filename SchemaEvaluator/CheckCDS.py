@@ -144,7 +144,8 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 	
 	pool.close()
 	pool.join()	
-
+	
+	toPrintCDSStats="Locus\tFrameshift\tNo Start\tMore than 1 Stop\t Other\n"
 	for gene in listgenes:
 		
 		gene = gene.rstrip('\n')
@@ -156,10 +157,9 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 		listStopc=[]
 		listnotStart=[]
 		listnotMultiple=[]
+		listOther=[]
 		
-		
-		print "####################"
-		print str(os.path.basename(gene))
+		print "processing : "+str(os.path.basename(gene))
 		
 		k=0
 		
@@ -183,7 +183,6 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 				listnotMultiple.append(str(k))
 				alleleSizesNotMultipleNames.append(k)
 				alleleSizesNotMultiple.append(len(allele.seq))
-				print "allele "+str(k)+" is not multiple of 3"
 				pass
 			else:
 				try:
@@ -202,11 +201,12 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 						notStart+=1
 						listnotStart.append(str(k))
 					else:
+						listOther.append(str(k))
 						print err
 					
 					alleleSizesTransErrorNames.append(k)
 					alleleSizesTransError.append(len(allele.seq))
-					print "allele "+str(k)+" is not translating"
+					#print "allele "+str(k)+" is not translating"
 					pass
 		
 		
@@ -300,22 +300,8 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
             </div>
 			
 			</div><div id='histdiv'></div>\n""")
-			#~ fig, ax = plt.subplots(figsize=(20,10))
-			#~ points=ax.scatter(list(range(1,len(alleleSizes)+1,1)),alleleSizes)
-#~ 
-			#~ plt.grid(True)
-			#~ 
-			#~ mpld3.plugins.connect(fig, plugins.PointLabelTooltip(points,labels=alleleNames))
-			#~ 
-			#~ plt.ylabel('DNA bp allele length ')
-			#~ plt.xlabel('Allele number')
-			#~ plt.title('Allele size scatter plot')
-			#~ ax.yaxis.labelpad = 40
-			#~ 
-			#~ 
-			#~ histplothtml=mpld3.fig_to_dict(fig)
-			
-			
+
+					
 			f.write("""
 			
 			<script type="application/javascript">
@@ -541,22 +527,26 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 			
 					</script>"""+"</body></html>")
 			
-	print str(stopc) + " alleles have stop codons inside"
-	print str(notStart) + " alleles don't have start codons"
+		
+		if not(not listnotMultiple and not listnotStart and not listStopc and not listOther):
+			if not listnotMultiple:
+				listnotMultiple.append("-")
+			if not listnotStart:
+				listnotStart.append("-")
+			if not listStopc:
+				listStopc.append("-")
+			if not listOther:
+				listOther.append("-")
+			toPrintCDSStats+= os.path.basename(gene)+"\t"+','.join(listnotMultiple)+"\t"+','.join(listnotStart)+"\t"+','.join(listStopc)+"\t"+','.join(listOther)+"\n"
+	#print str(stopc) + " alleles have stop codons inside"
+	#print str(notStart) + " alleles don't have start codons"
 	print "total of alleles : " + str(totalalleles)
 	
-	if not ReturnValues:
-		with open("CheckCDSResults.txt", "wb") as f:
-			f.write("Alleles with stop codons inside: \n")
-			for item in listStopc:
-				f.write(item)
-				f.write("\n")
-			f.write("\nAlleles without start/stop codon: \n")
-			for item in listnotStart:
-				f.write(item)
-				f.write("\n")
-	else:
-		return statsPerGene
+	with open('non_cds_alleles.tsv', "wb") as f:
+		f.write(toPrintCDSStats)
+	print toPrintCDSStats
+	
+	return statsPerGene
 	
 if __name__ == "__main__":
     main()

@@ -7,7 +7,26 @@ import json
 from operator import itemgetter
 import HTSeq
 import time
+import sys
 
+def which(program):
+    import os
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return True
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return True
+    print program+" not found"
+    sys.exit()
+    return "Not found"
 
 def main():
     parser = argparse.ArgumentParser(
@@ -42,7 +61,12 @@ def main():
 
     starttime = "\nStarting Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y")
     print (starttime)
-
+	
+    print ("Checking all programs are installed")
+    print ("Checking mafft installed... " + str(which('mafft')))
+    print ("Checking clustalw2 installed... " + str(which('clustalw2')))
+	
+	
     try:
         f = open(genes, 'r')
         f.close()
