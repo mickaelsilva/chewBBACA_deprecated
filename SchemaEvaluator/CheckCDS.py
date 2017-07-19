@@ -95,7 +95,7 @@ def main():
 		
 	analyzeCDS(genes,ReturnValues)
 
-def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
+def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu,skipClustalMafft):
 	
 	gene_fp = open( genes, 'r')
 	
@@ -117,33 +117,35 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu):
 		listgenes.append(gene)
 	statsPerGene={}
 	
-	pool = multiprocessing.Pool(cpu)
 	
-	for gene in listgenes:
+	if not skipClustalMafft:
+		pool = multiprocessing.Pool(cpu)
 		
-		gene = gene.rstrip('\n')
-		gene = gene.rstrip('\r')
-		
-		alignFileName=os.path.join(htmlgenespath,(os.path.basename(gene)).replace(".fasta","_aligned.fasta"))
-		
-		pool.apply_async(call_mafft,args=[alignFileName,gene])
-		
-	pool.close()
-	pool.join()
+		for gene in listgenes:
+			
+			gene = gene.rstrip('\n')
+			gene = gene.rstrip('\r')
+			
+			alignFileName=os.path.join(htmlgenespath,(os.path.basename(gene)).replace(".fasta","_aligned.fasta"))
+			
+			pool.apply_async(call_mafft,args=[alignFileName,gene])
+			
+		pool.close()
+		pool.join()
 
-	pool = multiprocessing.Pool(cpu)
+		pool = multiprocessing.Pool(cpu)
 
-	for gene in listgenes:
+		for gene in listgenes:
+			
+			gene = gene.rstrip('\n')
+			gene = gene.rstrip('\r')
+			
+			alignFileName=os.path.join(htmlgenespath,(os.path.basename(gene)).replace(".fasta","_aligned.fasta"))
+			
+			pool.apply_async(call_clustalw,args=[gene,htmlgenespath])
 		
-		gene = gene.rstrip('\n')
-		gene = gene.rstrip('\r')
-		
-		alignFileName=os.path.join(htmlgenespath,(os.path.basename(gene)).replace(".fasta","_aligned.fasta"))
-		
-		pool.apply_async(call_clustalw,args=[gene,htmlgenespath])
-	
-	pool.close()
-	pool.join()	
+		pool.close()
+		pool.join()	
 	
 	toPrintCDSStats="Locus\tFrameshift\tNo Start\tMore than 1 Stop\t Other\n"
 	for gene in listgenes:

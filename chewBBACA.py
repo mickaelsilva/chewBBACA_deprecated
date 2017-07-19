@@ -166,7 +166,8 @@ def evaluate_schema():
     parser.add_argument('-s', nargs='?', type=int,
                         help='number of boxplots per page (more than 500 can make the page very slow)', required=False,
                         default=500)
-
+    parser.add_argument('--light', help="skip clustal and mafft run", required=False, action="store_true", default=False)
+    
     args = parser.parse_args()
     genes = args.i
     transTable = str(args.ta)
@@ -177,6 +178,7 @@ def evaluate_schema():
     threshold = str(args.t)
     OneBadGeneNotConserved = args.conserved
     splited = str(args.s)
+    light = str(args.light)
     title = str(args.title)
 
     ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'SchemaEvaluator/ValidateSchema.py')
@@ -187,6 +189,8 @@ def evaluate_schema():
         args.append('--log')
     if OneBadGeneNotConserved:
         args.append('-p')
+    if light:
+        args.append('--light')
 
     proc = subprocess.Popen(args)
     proc.wait()

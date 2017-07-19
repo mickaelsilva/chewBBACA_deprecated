@@ -45,6 +45,7 @@ def main():
     parser.add_argument('-s', nargs='?', type=int,
                         help='number of boxplots per page (more than 500 can make the page very slow)', required=False,
                         default=500)
+    parser.add_argument('--light', help="skip clustal and mafft run", required=False, action="store_true", default=False)
     parser.set_defaults(logScale=False)
 
     args = parser.parse_args()
@@ -58,6 +59,7 @@ def main():
     OneBadGeneNotConserved = bool(args.p)
     splited = int(args.s)
     title = str(args.title)
+    skipHeavy = args.light
 
     starttime = "\nStarting Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y")
     print (starttime)
@@ -102,7 +104,7 @@ def main():
     allelenumberplot = str(json.dumps(allelenumberplot))
     allAllelesStats = str(json.dumps(allAllelesStats))
 
-    statsPerGene = CheckCDS.analyzeCDS(genes, transTable, True, outputpath, cpuToUse)
+    statsPerGene = CheckCDS.analyzeCDS(genes, transTable, True, outputpath, cpuToUse,skipHeavy)
 
     # stats values are ordered in a list allelesNotMultiple3,listStopcodonsInside,listnotStartCodon,numberOfAlleles
 
