@@ -51,7 +51,7 @@ Other dependencies:
 
 Create your own wgMLST schema based on a set of genomes fasta files. The command is the following:
 
-`/home/user/chewBBACA/chewBBACA.py CreateSchema -i ./genomes/cg/ -o OutputFolderName --cpu 4`
+`chewBBACA.py CreateSchema -i ./genomes/cg/ -o OutputFolderName --cpu 4`
 
 **Parameters**
 
@@ -79,7 +79,7 @@ Create two list of files with the full paths (one path per line), one list for g
 
 Then run is the following:
 
-`/home/user/chewBBACA/chewBBACA.py Allelecall -i ./genomes/other/ -g genes/ -o OutPrefix --cpu 3 `
+`chewBBACA.py Allelecall -i ./genomes/other/ -g genes/ -o OutPrefix --cpu 3 `
 
 **Parameters** 
 
@@ -94,10 +94,10 @@ Then run is the following:
 
 `--cpu` Number of cpus to use 
 
-`-t` (Optional) taxon to use for prodigal training input
+`-t` (Optional but recommended, contact for new species) taxon to use for prodigal training input
 
 `-b` (optional)Blastp full path. In case of slurm system BLAST version being outdated it may 
-be hard to use a different one, use this option using the full path of the blastp executable
+be hard to use a different one, use this option using the full path of the updated blastp executable
 
 
 
@@ -119,7 +119,7 @@ be hard to use a different one, use this option using the full path of the blast
 Usage:
 
 
-`/home/user/chewBBACA/chewBBACA.py TestGenomeQuality -i alleles.tsv -n 12 -t 200 -s 5 -o OutFolder`
+`chewBBACA.py TestGenomeQuality -i alleles.tsv -n 12 -t 200 -s 5 -o OutFolder`
 	
 `-i` raw output file from an allele calling
 
@@ -147,7 +147,7 @@ Clean a raw output file from an allele calling to a phyloviz readable file. Use 
 
 Basic usage:
 
-`/home/user/chewBBACA/chewBBACA.py ExtractCgMLST -i rawDataToClean.tsv -o output_folders`
+`chewBBACA.py ExtractCgMLST -i rawDataToClean.tsv -o output_folders`
 	
 `-i` raw output file from an allele calling
 
