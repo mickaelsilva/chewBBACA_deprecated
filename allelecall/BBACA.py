@@ -29,7 +29,7 @@ def which(program):
             if is_exe(exe_file):
                 return True
 
-    print program+" not found"
+    print (program+" not found")
     sys.exit()
     return "Not found"
 
@@ -38,7 +38,7 @@ def prepGenomes(genomeFile, basepath, verbose):
     if verbose:
         def verboseprint(*args):
             for arg in args:
-                print arg,
+                print (arg),
             print
     else:
         verboseprint = lambda *a: None  # do-nothing function
@@ -105,7 +105,7 @@ def translateSeq(DNASeq, verbose):
     if verbose:
         def verboseprint(*args):
             for arg in args:
-                print arg,
+                print (arg),
             print
     else:
         verboseprint = lambda *a: None  # do-nothing function
@@ -167,14 +167,14 @@ def loci_translation(genesList, listOfGenomes2, verbose):
             k += 1
             if len(allele.seq) % 3 != 0:
                 multiple = False
-                print "allele " + str(k) + " is not multiple of 3: " + str(gene) + " this gene is to be removed"
+                print ("allele " + str(k) + " is not multiple of 3: " + str(gene) + " this gene is to be removed")
                 break
             else:
                 try:
                     protseq, Inverted, seq = translateSeq(allele.seq, verbose)
                 except:
                     multiple = False
-                    print "allele " + str(k) + " is not translating : " + str(gene) + " this gene is to be removed"
+                    print ("allele " + str(k) + " is not translating : " + str(gene) + " this gene is to be removed")
                     break
         if multiple:
             lGenesFiles.append(gene)
@@ -236,7 +236,7 @@ def main():
 
     # avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
     if cpuToUse > multiprocessing.cpu_count() - 2:
-        print "Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action"
+        print ("Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action")
 
     taxonList = {'Campylobacter_Jejuni': 'trained_campyJejuni.trn',
                  'Acinetobacter_Baumannii': 'trained_acinetoBaumannii.trn',
@@ -255,15 +255,14 @@ def main():
             chosenTaxon = os.path.join(trainingFolderPAth, taxonList[chosenTaxon])
 
             if os.path.isfile(chosenTaxon):
-                print "will use this training file : " + chosenTaxon
+                print ("will use this training file : " + chosenTaxon)
             else:
-                print "training file don't exist"
-                print chosenTaxon
+                print ("training file don't exist "+chosenTaxon)
                 return "retry"
         except:
             print "Your chosen taxon is not attributed, select one from:"
             for elem in taxonList.keys():
-                print elem
+                print (elem)
             return "retry"
 
     print BlastpPath
@@ -281,11 +280,11 @@ def main():
     proc = subprocess.Popen([BlastpPath, '-version'], stdout=subprocess.PIPE)
     line = proc.stdout.readline()
     if not "blastp: 2.5." in str(line) and not "blastp: 2.6." in str(line):
-        print "your blast version is " + str(line)
-        print "update your blast to 2.5.0 or above, will exit program"
+        print ("your blast version is " + str(line))
+        print ("update your blast to 2.5.0 or above, will exit program")
         sys.exit()
     else:
-        print "blast version is up to date, the program will continue"
+        print ("blast version is up to date, the program will continue")
 
     starttime = "\nStarting Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y")
     print (starttime)
@@ -293,7 +292,7 @@ def main():
     listOfGenomes = []
     listOfGenomesBasename = []
 
-    print "checking if genome files exist.."
+    print ("checking if genome files exist..")
     with open(genomeFiles, 'r') as fp:
         for genomeFile in fp:
 
@@ -303,7 +302,7 @@ def main():
                 listOfGenomes.append(genomeFile)
                 listOfGenomesBasename.append(os.path.basename(genomeFile))
             else:
-                print "File does not exist, will not be used : " + str(genomeFile)
+                print ("File does not exist, will not be used : " + str(genomeFile))
 
     if len(listOfGenomes) == 0:
         raise ValueError('ERROR! No usable genome files in ' + str(genomeFiles))
@@ -312,7 +311,7 @@ def main():
 
     lGenesFiles = []
 
-    print "checking if gene files exist.."
+    print ("checking if gene files exist..")
     with open(genes, 'r') as gene_fp:
         for gene in gene_fp:
             gene = gene.rstrip('\n')
@@ -320,7 +319,7 @@ def main():
             if os.path.isfile(gene):
                 lGenesFiles.append(gene)
             else:
-                print "File does not exist, will not be used : " + str(gene)
+                print ("File does not exist, will not be used : " + str(gene))
 
     if len(lGenesFiles) == 0:
         raise ValueError('ERROR! No usable gene files in ' + str(genes))
@@ -404,7 +403,7 @@ def main():
             pool.close()
             pool.join()
 
-            print "\nChecking all prodigal processes created the necessary files..."
+            print ("\nChecking all prodigal processes created the necessary files...")
 
             listOfORFCreated = []
             for orffile in os.listdir(basepath):
@@ -417,7 +416,7 @@ def main():
                 shutil.rmtree(basepath)
                 raise ValueError(message)
             else:
-                print "All prodigal files necessary were created\n"
+                print ("All prodigal files necessary were created\n")
 
             print ("Finishing Prodigal at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
 
@@ -425,7 +424,7 @@ def main():
 
             # translate the genome CDSs, load them into dictionaries and fasta files to be used further ahead
 
-            print "Translating genomes"
+            print ("Translating genomes")
             pool = multiprocessing.Pool(cpuToUse)
             for genomeFile in listOfGenomes:
                 pool.apply_async(prepGenomes, args=[str(genomeFile), basepath, verbose])
@@ -451,14 +450,14 @@ def main():
         except Exception as e:
             exc_type, exc_obj, tb = sys.exc_info()
             lineno = tb.tb_lineno
-            print lineno
+            print (lineno)
 
             if jsonReport:
                 runReport = {'finalStatus': 'error : ' + str(e)}
                 with open('reportStatus.txt', 'w') as outfile:
                     json.dump(runReport, outfile)
             else:
-                print e
+                print (e)
             raise ValueError(e)
     else:
 
@@ -503,8 +502,7 @@ def main():
 
     numberOfLoci = len(output[0][1])
 
-    print "##################################################\n %s genomes used for %s loci" % (
-        numberOfLoci, len(output))
+    print ("##################################################\n "+str(numberOfLoci)+" genomes used for "+str(len(output))+"loci" )
     numberexactmatches = 0
     for gene in output:
         for gAllele in gene[1]:
@@ -514,12 +512,10 @@ def main():
             except:
                 pass
 
-    print "\n used a bsr of : " + str(BSRTresh)
-    print "\n %s exact matches found out of %s" % (numberexactmatches, (len(output[0][1]) * len(lGenesFiles)))
-    print "\n %s percent of exact matches \n##################################################" % (
-        float((numberexactmatches * 100) / (numberOfLoci * len(lGenesFiles))))
-
-    print "\nWriting output files\n"
+    print ("\n used a bsr of : " + str(BSRTresh))
+    print ("\n"+str(numberexactmatches)+" exact matches found out of "+ str (len(output[0][1]) * len(lGenesFiles)))
+    print ("\n"+str(float((numberexactmatches * 100) / (numberOfLoci * len(lGenesFiles))))+" percent of exact matches \n##################################################")
+    print ("\nWriting output files\n")
 
     # wrapping up the results into a matrix and save in a file
     try:
@@ -640,7 +636,7 @@ def main():
         # outputpath=os.path.dirname(gOutFile)
         outputfolder = os.path.join(gOutFile, "results_" + str(time.strftime("%Y%m%dT%H%M%S")))
         os.makedirs(outputfolder)
-        print statswrite
+        print (statswrite)
         # ~ print
         # ~ print containedOutpWrite
 
@@ -722,18 +718,18 @@ def main():
                     f.write(allelesDict[genome])
 
     except Exception as e:
-        print e
+        print (e)
 
         exc_type, exc_obj, tb = sys.exc_info()
         lineno = tb.tb_lineno
-        print lineno
+        print (lineno)
         if jsonReport:
             runReport = {'finalStatus': 'error : ' + str(e) + ' at line: ' + str(lineno)}
             with open(os.path.join(outputfolder, 'reportStatus.json'), 'w') as outfile:
                 json.dump(runReport, outfile)
         else:
-            print e
-            print lineno
+            print (e)
+            print (lineno)
 
     print (starttime)
     print ("Finished Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))

@@ -16,7 +16,7 @@ def getBlastScoreRatios(genefile, basepath, doAll, verbose, blastPath):
     if verbose:
         def verboseprint(*args):
             for arg in args:
-                print arg,
+                print (arg),
             print
     else:
         verboseprint = lambda *a: None  # do-nothing function
@@ -46,7 +46,7 @@ def getBlastScoreRatios(genefile, basepath, doAll, verbose, blastPath):
         translatedSequence, x, y = translateSeq(allele.seq)
 
         if translatedSequence == '':
-            print "cannot translate allele on bsr calculation"
+            print ("cannot translate allele on bsr calculation")
             pass
 
         # calculate BSR for the allele
@@ -109,7 +109,7 @@ def reDogetBlastScoreRatios(genefile, basepath, alleleI, allelescores2, newGene_
     if verbose:
         def verboseprint(*args):
             for arg in args:
-                print arg,
+                print (arg),
             print
     else:
         verboseprint = lambda *a: None  # do-nothing function
@@ -183,8 +183,8 @@ def translateSeq(DNASeq):
                     myseq = Seq(seq)
                     protseq = Seq.translate(myseq, table=tableid, cds=True)
                 except Exception as e:
-                    print "translation error"
-                    print e
+                    print ("translation error")
+                    print (e)
                     protseq = ""
     return protseq, seq, reversedSeq
 
@@ -206,7 +206,7 @@ def main():
             verbose = False
 
     except IndexError:
-        print "Error starting the callAlleleles_protein3 script. usage: list_pickle_obj"
+        print ("Error starting the callAlleleles_protein3 script. usage: list_pickle_obj")
 	
     bsrTresh = float(bsrTresh)
 
@@ -218,7 +218,7 @@ def main():
         def verboseprint(*args):
 
             for arg in args:
-                print arg,
+                print (arg),
             print
     else:
         verboseprint = lambda *a: None
@@ -631,7 +631,6 @@ def main():
                             # --- add the new allele to the gene fasta --- #
 
                             alleleI += 1
-                            # appendAllele='>'+str((((os.path.basename(geneFile)).split("."))[0]).replace("_","-"))+"_" + str(alleleI) + "_" + str(os.path.basename(genomeFile)) + '\n'
                             appendAllele = '>' + str((((os.path.basename(geneFile)).split("."))[0]).replace("_",
                                                                                                             "-")) + "_" + tagAuxC + "_" + (
                                            str(os.path.basename(genomeFile))).replace("_", "-") + "_" + str(
@@ -683,9 +682,9 @@ def main():
 
 
             except Exception as e:
-                print "some error occurred"
-                print e
-                print 'Error on line {}'.format(sys.exc_info()[-1].tb_lineno)
+                print ("some error occurred")
+                print (e)
+                print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
                 perfectMatchIdAllele2.append("ERROR")
                 perfectMatchIdAllele.append("ERROR")
 

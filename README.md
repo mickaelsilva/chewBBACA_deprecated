@@ -134,7 +134,7 @@ Usage:
 The output consists in a set of plots per iteration and a removedGenomes.txt file where its 
 informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
 
-Example of an output can be seen [here] (http://i.imgur.com/jlTV2vg.png) . This examples uses an 
+Example of an output can be seen [here](http://i.imgur.com/jlTV2vg.png) . This examples uses an 
 original set of 714 genomes and a scheme of 3266 loci, using a parameter `-n 12`,`-s 5` and `-t 300`.
 
 ----------
