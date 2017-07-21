@@ -27,8 +27,8 @@ Main script that calls alleSizeStats.py and CheckCDS.py creating an html file fo
 
 The optional parameters refer to the analysis of the alleles size. This analysis will calculate the mode size per gene and using that value -/+ a threshold (0.05 default) it will consider the allele as being a good allele if it is still considered within the threshold. It is given to the user the choice of the threshold and the choice to consider that a gene is considered "Conserved" if only one of the alleles is outside the threshold (default) or all the alleles must be within the threshold to be considered a "Conserved allele.
 
-	% ValidateSchema.py -i /home/Pneumoniae_Genes/ -ta 11 -l /home/user/results/ratemyschema.html
-	
+	% chewBBACA.py SchemaValidation -i /home/Pneumoniae_Genes/ -ta 11 -l /home/user/results/ratemyschema.html --cpu 3
+		
 `-i` directory where the genes .fasta files are located or alternatively a .txt file containing the full path for each gene .fasta file per line
 
 `-ta` which translation table to use ( 11 in case of bacteria)
@@ -45,7 +45,9 @@ The optional parameters refer to the analysis of the alleles size. This analysis
 
 `-t` (optional) threshold used to calculate the range at which the allele is considered good (default=0.05)
 
-Two extra tab separated output files:
+`--light` (optional) skip mafft and clustal run, faster but less information on individual loci pages
+
+### Two extra tab separated output files
 
 An abridged example `locus_stats.tsv` file:
 
