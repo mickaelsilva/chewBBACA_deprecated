@@ -178,7 +178,7 @@ def evaluate_schema():
     threshold = str(args.t)
     OneBadGeneNotConserved = args.conserved
     splited = str(args.s)
-    light = str(args.light)
+    light = args.light
     title = str(args.title)
 
     ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'SchemaEvaluator/ValidateSchema.py')
