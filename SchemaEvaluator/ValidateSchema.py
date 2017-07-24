@@ -667,7 +667,7 @@ li a {
 	var name=(id.split("/")).slice(-1)[0]
 	name=(name.split("."))[0]
 	$('#AllelesWissues').append('<h2> Locus: '+name+'</h2>');
-	$('#AllelesWissues').append('<p> Alleles not multiple of 3: '+notmulti+'</p><p> Alleles with >1 stop codon: '+stopcodon+'</p><p>Alleles without start codon: '+startcodon+'</p>');
+	$('#AllelesWissues').append('<p> Alleles not multiple of 3: '+notmulti+'</p><p> Alleles with >1 stop codon: '+stopcodon+'</p><p>Alleles without start or stop codon: '+startcodon+'</p>');
 
 	$('html,body').animate({
         scrollTop: $('#AllelesWissues').offset().top},'slow');

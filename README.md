@@ -6,8 +6,8 @@ chewBBACA is a comprehensive pipeline for the creation and validation of whole g
 
 ----------
 ## Check the [wiki pages](https://github.com/mickaelsilva/chewBBACA/wiki) ...
-...for a much more thorough chewBBACA walktrough. 
-In this readme you can find a quick list of commands to be used by experienced users.
+...for a much more thorough chewBBACA walkthrough. 
+Below you can find a list of commands for a quick usage of the software.
 
 ## Use [BBACA gitter](https://gitter.im/BBACA/Lobby)...
 
@@ -15,8 +15,9 @@ In this readme you can find a quick list of commands to be used by experienced u
 
 **Important Notes before starting:**
 
- - For **chewBBACA**, the definition of an allele is that each allele
-   must represent a complete Coding DNA Sequence, with start and stop codon according to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi). It will automatically exclude any allele for which the DNA sequence does not contain start or stop codons and for which the length is not multiple of three. The CDS identification is performed using [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/). 
+ - **chewBBACA** define an allele as a complete Coding DNA Sequence, with start and stop codon according 
+ to the [NCBI genetic code table 11](http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi) identified using [Prodigal 2.6.0 ](https://github.com/hyattpd/prodigal/releases/). It will 
+ automatically exclude any allele for which the DNA sequence does not contain start or stop codons and for which the length is not multiple of three. 
  - All the referenced lists of files *must contain full path* for the files.
  - Make sure that your fasta files are UNIX format. If they were created in Linux or MacOS systems they should be in the correct format, but if they were created in Windows systems, you should do a a quick conversion using for example [dos2unix](http://linuxcommand.org/man_pages/dos2unix1.html).
 
@@ -29,7 +30,7 @@ Git clone the whole repository.
 
 You need to install the following dependencies. Prodigal and BLAST must be added to the PATH variables.
 
-You may use this pip command to install the python dependencies automatically :
+You may use this pip command to install the python dependencies automatically:
 
 ```
 pip install -r requirements.txt
@@ -51,11 +52,11 @@ Other dependencies:
 
 Create your own wgMLST schema based on a set of genomes fasta files. The command is the following:
 
-`chewBBACA.py CreateSchema -i ./genomes/cg/ -o OutputFolderName --cpu 4`
+`chewBBACA.py CreateSchema -i ./genomes/ -o OutputFolderName --cpu 4`
 
 **Parameters**
 
-`-i` Folder containing the genomes from which to create the schema. Alternatively a file
+`-i` Folder containing the genomes from which schema will be created. Alternatively a file 
  containing the path to the list of genomes. One file path (must be full path) 
  to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
 
@@ -63,38 +64,36 @@ Create your own wgMLST schema based on a set of genomes fasta files. The command
 
 `--cpu` Number of cpus to use
 
-`-t` (Optional) taxon to use for prodigal training input
+`-t` (Optional but recommended, contact for new species) taxon name (e.g. Streptococcus agalactiae). It will call the taxon-specific file to be used for training prodigal
 
-`--bsr` (Optional) Minimum BSR for locus similarity. Default at 0.6. 
+`--bsr` (Optional) Minimum BSR for defining locus similarity. Default at 0.6. 
 
 **Outputs:** 
 
-One fasta file per gene in the `-o`directory that is created in the dir where the files are found. The fasta file names are the given according the FASTA annotation for each coding sequence. 
+One fasta file per gene in the `-o`directory that is created. 
+The fasta file names are the given according the FASTA annotation for each coding sequence. 
 
 ----------
 
 ## 2.  Allele call using the wgMLST schema 
 
-Create two list of files with the full paths (one path per line), one list for genomes and another for genes (genes are located on the schema seed created in the last step, ignore the short folder)
 
 Then run is the following:
 
-`chewBBACA.py Allelecall -i ./genomes/other/ -g genes/ -o OutPrefix --cpu 3 `
+`chewBBACA.py Allelecall -i ./genomes/ -g genes/ -o OutPrefix --cpu 3 `
 
 **Parameters** 
 
-`-i` Folder containing the genomes that you want to call the alleles. Alternatively a file
- containing the path to the list of genomes. One file path (must be full path) 
- to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
-`-g` Folder containing the genes that you want to call. Alternatively a file
- containing the path to the list of genes. One file path (must be full path) 
- to any fasta/multifasta file containing all the complete or draft genomes you want to call alleles for.
+`-i` Folder containing the query genomes. Alternatively a file
+ containing the list with the full path of the location of the query genomes.
+`-g` Folder containing the reference genes of the schema. Alternatively a file
+ containing the list with the full path of the location of the reference genes.  
 
-`-o` prefix for the output files. ID for the allele call run
+`-o` prefix for the output directory. ID for the allele call run.
 
 `--cpu` Number of cpus to use 
 
-`-t` (Optional but recommended, contact for new species) taxon to use for prodigal training input
+`-t` (Optional but recommended, contact for new species) taxon name (e.g. Streptococcus agalactiae). It will call the taxon-specific file to be used for training prodigal
 
 `-b` (optional)Blastp full path. In case of slurm system BLAST version being outdated it may 
 be hard to use a different one, use this option using the full path of the updated blastp executable
@@ -119,13 +118,13 @@ be hard to use a different one, use this option using the full path of the updat
 Usage:
 
 
-`chewBBACA.py TestGenomeQuality -i alleles.tsv -n 12 -t 200 -s 5 -o OutFolder`
+`chewBBACA.py TestGenomeQuality -i alleles.tsv -n 12 -t 200 -s 5 -o OutFolder`  
 	
-`-i` raw output file from an allele calling
+`-i` raw output file from an allele calling (i.e. results_Alleles.txt)
 
-`-n` maximum number of iterations, each iteration removes a set of genomes over the threshold and recalculates all variables
+`-n` maximum number of iterations. Each iteration removes a set of genomes over the defined threshold (-t) and recalculates all loci presence percentages.
 
-`-t` maximum threshold, will start at 5
+`-t` maximum threshold, will start at 5. This threshold represents the maximum number of missing loci allowed before removing it.
 
 `-s` step to add to each threshold (suggested 5)
 

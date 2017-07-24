@@ -31,7 +31,12 @@ def check_if_list_or_folder(folder_or_list):
 
 
 def create_schema():
-    parser = argparse.ArgumentParser(description="This program creates a schema provided the genomes")
+	
+	def msg(name=None):                                                            
+        return '''CreateSchema [CreateSchema ...] [-h] -i [I] -o [O] --cpu [CPU] [-b [B]] [--bsr [BSR]] [-t [T]] [-v] [-l [L]]
+                    '''
+	
+    parser = argparse.ArgumentParser(description="This program creates a schema provided the genomes",usage=msg())
     parser.add_argument('CreateSchema', nargs='+', help='create a schema')
     parser.add_argument('-i', nargs='?', type=str, help='List of genome files (list of fasta files)', required=True)
     parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
@@ -76,7 +81,12 @@ def create_schema():
 
 
 def allele_call():
-    parser = argparse.ArgumentParser(description="This program call alleles for a set of genomes provided a schema")
+	
+    def msg(name=None):                                                            
+        return '''Allelecall [Allelecall ...][-h] -i [I] -g [G] -o [O] --cpu [CPU] [-v] [-b [B]][--bsr [BSR]] [-t [T]] [--fc] [--fr] [--json]
+			'''
+	
+    parser = argparse.ArgumentParser(description="This program call alleles for a set of genomes provided a schema",usage=msg())
     parser.add_argument('Allelecall', nargs='+', help='do allele call')
     parser.add_argument('-i', nargs='?', type=str, help='List of genome files (list of fasta files)', required=True)
     parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
@@ -148,8 +158,13 @@ def allele_call():
 	    pass
 
 def evaluate_schema():
+	
+	def msg(name=None):                                                            
+        return '''SchemaValidation [SchemaValidation ...] [-h] -i [I] [-p] [--log] -l [L] -ta [TA] [-t [T]] [--title [TITLE]] --cpu [CPU] [-s [S]] [--light]
+			'''
+	
     parser = argparse.ArgumentParser(
-        description="This program analyses a set of gene files, analyzing the alleles CDS and the length of the alleles per gene")
+        description="This program analyses a set of gene files, analyzing the alleles CDS and the length of the alleles per gene",usage=msg())
     parser.add_argument('SchemaValidation', nargs='+', help='evaluation of a schema')
     parser.add_argument('-i', nargs='?', type=str, help='list genes, directory or .txt file with the full path',
                         required=True)
@@ -197,8 +212,13 @@ def evaluate_schema():
 
 
 def test_schema():
+	
+	def msg(name=None):                                                            
+        return '''TestGenomeQuality [TestGenomeQuality ...] [-h] -i [I] -n [N] -t [T] -s [S] [-o [O]] [-v]
+                    '''
+	
     parser = argparse.ArgumentParser(
-        description="This program analyze an allele call raw output matrix, returning info on which genomes are responsible for cgMLST loci loss")
+        description="This program analyze an allele call raw output matrix, returning info on which genomes are responsible for cgMLST loci loss",usage=msg())
     parser.add_argument('TestGenomeQuality', nargs='+', help='test the quality of the genomes on the allele call')
     parser.add_argument('-i', nargs='?', type=str, help='raw allele call matrix file', required=True)
     parser.add_argument('-n', nargs='?', type=int, help='maximum number of iterations', required=True)
@@ -229,7 +249,12 @@ def test_schema():
 
 
 def extract_cgmlst():
-    parser = argparse.ArgumentParser(description="This program cleans an output file for phyloviz")
+	
+	def msg(name=None):                                                            
+        return '''ExtractCgMLST [ExtractCgMLST ...] [-h] -i [I] -o [O] [-r [R]] [-g [G]]
+                    '''
+	
+    parser = argparse.ArgumentParser(description="This program cleans an output file for phyloviz",usage=msg())
     parser.add_argument('ExtractCgMLST', nargs='+', help='evaluation of a schema')
     parser.add_argument('-i', nargs='?', type=str, help='input file to clean', required=True)
     parser.add_argument('-o', nargs='?', type=str, help='output folder', required=True)
@@ -257,7 +282,12 @@ def extract_cgmlst():
     proc.wait()
 
 def remove_genes():
-    parser = argparse.ArgumentParser(description="This program removes gens from a tab separated allele profile file")
+	
+	def msg(name=None):                                                            
+        return '''RemoveGenes [RemoveGenes ...][-h] -i [I] -g [G] -o [O] [--inverse]
+                    '''
+	
+    parser = argparse.ArgumentParser(description="This program removes gens from a tab separated allele profile file",usage=msg())
     parser.add_argument('RemoveGenes', nargs='+', help='evaluation of a schema')
     parser.add_argument('-i', nargs='?', type=str, help='main matrix file from which to remove', required=True)
     parser.add_argument('-g', nargs='?', type=str, help='list of genes to remove', required=True)
