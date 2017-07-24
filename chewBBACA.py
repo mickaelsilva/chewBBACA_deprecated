@@ -287,6 +287,7 @@ def remove_genes():
 if __name__ == "__main__":
 
     functions_list = ['CreateSchema', 'Allelecall', 'SchemaValidation', 'TestGenomeQuality', 'ExtractCgMLST','RemoveGenes']
+    desc_list = ['Create a schema based on genomes', 'Call alleles for genomes', 'Tool that builds an html to better navigate/bisualize your schema', 'Analyze your allele call output', 'Clean your allele call to use as a phyloviz input','Remove a list of loci from your allele call output']
 
     if sys.argv[1] == functions_list[0]:
         create_schema()
@@ -301,6 +302,9 @@ if __name__ == "__main__":
     elif sys.argv[1] == functions_list[5]:
         remove_genes()
     else:
-        print('function doesnt exist : ')
-        for p in functions_list:
-            print (p)
+        print('Select one of the following functions :\n')
+        i=0
+        while i<len(functions_list):
+            print functions_list[i] +" : "+desc_list[i]
+            i+=1
+        print('\nType chewBBACA.py [module] -h for specific module help')

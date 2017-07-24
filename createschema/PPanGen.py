@@ -339,16 +339,16 @@ def main():
     if cpuToUse > multiprocessing.cpu_count() - 2:
         print "Warning, you are close to use all your cpus, if you are using a laptop you may be uncapable to perform any action"
 
-    taxonList = {'Campylobacter_Jejuni': 'trained_campyJejuni.trn',
-                 'Acinetobacter_Baumannii': 'trained_acinetoBaumannii.trn',
-                 'Streptococcus_Agalactiae': 'trained_strepAgalactiae.trn',
-                 'Haemophilus_Influenzae': 'trained_haemoInfluenzae_A.trn',
-                 'Yersinia_Enterocolitica': 'trained_yersiniaEnterocolitica.trn',
-                 'Escherichia_Coli': 'trained_eColi.trn',
-                 'Enterococcus_Faecium': 'trained_enteroFaecium.trn',
-                 'Staphylococcus_Haemolyticus': 'trained_staphHaemolyticus.trn',
-                 'Salmonella_Enterica_enteritidis': 'trained_salmonellaEnterica_enteritidis.trn',
-                 'Staphylococcus_Aureus': 'trained_StaphylococcusAureus.trn'
+    taxonList = {'Campylobacter jejuni': 'trained_campyJejuni.trn',
+                 'Acinetobacter baumannii': 'trained_acinetoBaumannii.trn',
+                 'Streptococcus agalactiae': 'trained_strepAgalactiae.trn',
+                 'Haemophilus influenzae': 'trained_haemoInfluenzae_A.trn',
+                 'Yersinia enterocolitica': 'trained_yersiniaEnterocolitica.trn',
+                 'Escherichia coli': 'trained_eColi.trn',
+                 'Enterococcus faecium': 'trained_enteroFaecium.trn',
+                 'Staphylococcus haemolyticus': 'trained_staphHaemolyticus.trn',
+                 'Salmonella enterica enteritidis': 'trained_salmonellaEnterica_enteritidis.trn',
+                 'Staphylococcus aureus': 'trained_StaphylococcusAureus.trn'
                  }
     if isinstance(chosenTaxon, basestring):
         trainingFolderPAth = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'TrainingFiles4Prodigal'))
