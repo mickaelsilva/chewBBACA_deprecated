@@ -7,6 +7,7 @@ import json
 from Bio.Align.Applications import MafftCommandline
 from Bio.Align.Applications import ClustalwCommandline
 import multiprocessing
+import copy
 
 def reverseComplement(strDNA):
 
@@ -147,7 +148,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu,skipClustalMafft):
 		pool.close()
 		pool.join()	
 	
-	toPrintCDSStats="Locus\tFrameshift\tNo Start\tMore than 1 Stop\t Other\n"
+	toPrintCDSStats="Locus\tFrameshift\tNo Start or Stop\tMore than 1 Stop\t Other\n"
 	for gene in listgenes:
 		
 		gene = gene.rstrip('\n')
@@ -213,7 +214,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu,skipClustalMafft):
 		
 		
 		relpath=os.path.relpath(gene,outputpath)
-		statsPerGene[relpath]=listnotMultiple,listStopc,listnotStart,k
+		statsPerGene[relpath]=copy.deepcopy([listnotMultiple,listStopc,listnotStart,k])
 		totalalleles+=k
 		
 		#create html per gene
