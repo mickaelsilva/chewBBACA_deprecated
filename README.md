@@ -169,7 +169,7 @@ folder 1 : genomes fasta files as base for schema creation
 folder 2 : genomes fasta files to call the alleles (genomes from folder 1 will already be used)
 
 `/home/user/chewBBACA/fullBBACA.py --cs genomes/cg/ 
---cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
+--cpu 6 -o myAnalysis -t Streptococcus agalactiae --genomes ./genomes/other/`
 
 **if you have a schema**
 
@@ -179,7 +179,7 @@ folder 2 : target genes fasta files
 
 
 `/home/user/chewBBACA/fullBBACA.py --genes schema_seed/ 
---cpu 6 -o myAnalysis -t Streptococcus_Agalactiae --genomes ./genomes/other/`
+--cpu 6 -o myAnalysis -t Streptococcus agalactiae --genomes ./genomes/other/`
 
 `--cs` path to folder with genomes to create schema
 
@@ -213,15 +213,15 @@ A: Try to run step 4, your analysis may contain some genomes responsible for a c
 
 ### Q: Which species already have a training file?  
 A: At the moment:
- - *Campylobacter jejuni* (Campylobacter_Jejuni)
- - *Acinetobacter baumannii* (Acinetobacter_Baumannii)
- - *Haemophilus influenzae* (Haemophilus_Influenzae)
- - *Streptococcus agalactiae* (Streptococcus_Agalactiae)
- - *Yersinia enterocolitica* (Yersinia_Enterocolitica)
- - *Enterococcus faecium* (Enterococcus_Faecium)
- - *Staphylococcus haemolyticus* (Staphylococcus_Haemolyticus)
- - *Salmonella enterica enteritidis* (Salmonella_Enterica_enteritidis)
- - *Staphylococcus aureus* (Staphylococcus_aureus)
+ - *Campylobacter jejuni*
+ - *Acinetobacter baumannii*
+ - *Haemophilus influenzae*
+ - *Streptococcus agalactiae*
+ - *Yersinia enterocolitica*
+ - *Enterococcus faecium*
+ - *Staphylococcus haemolyticus*
+ - *Salmonella enterica enteritidis*
+ - *Staphylococcus aureus*
 
 ----------
 
