@@ -1,8 +1,12 @@
 # chewBBACA: Quick Usage
 
-**chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought of as "Comprehensive and  Highly Efficient Workflow" but at this point still it needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. BSR stands for BLAST Score Ratio as proposed by [Rasko DA et al.](http://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-6-2) 
+**chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought of as "Comprehensive and  Highly Efficient Workflow" 
+but at this point still it needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. BSR stands for 
+BLAST Score Ratio as proposed by [Rasko DA et al.](http://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-6-2) 
 
-chewBBACA is a comprehensive pipeline for the creation and validation of whole genome and core genome MultiLocus Sequence Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ratio that can be run in multiprocessor settings and a set of functions to visualize and validate allele variation in the loci.
+chewBBACA is a comprehensive pipeline including a set of functions for the creation and validation of whole genome and core genome MultiLocus Sequence 
+Typing (wg/cgMLST) schemas, providing an allele calling algorithm based on Blast Score Ratio that can be run in multiprocessor 
+settings and a set of functions to visualize and validate allele variation in the loci.
 
 ----------
 ## Check the [wiki pages](https://github.com/mickaelsilva/chewBBACA/wiki) ...
@@ -130,18 +134,18 @@ Usage:
 
 `-o` Folder for the analysis files
 
-The output consists in a set of plots per iteration and a removedGenomes.txt file where its 
-informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed)
+The output consists in a plot with all thresholds and a removedGenomes.txt file where its 
+informed of which genomes are removed per threshold when it reaches a stable point (no more genomes are removed).
 
-Example of an output can be seen [here](http://i.imgur.com/jlTV2vg.png) . This examples uses an 
-original set of 714 genomes and a scheme of 3266 loci, using a parameter `-n 12`,`-s 5` and `-t 300`.
+Example of an output can be seen [here](http://i.imgur.com/jlTV2vg.png) . This example uses an 
+original set of 714 genomes and a scheme consisting of 3266 loci, using a parameter `-n 12`,`-s 5` and `-t 300`.
 
 ----------
 ## 4. Defining the cgMLST schema
 
  **Creating a clean allelic profile for PHYLOViZ** 
  
-Clean a raw output file from an allele calling to a phyloviz readable file. Use the Alleles.txt output file.
+Clean a raw output file from an allele calling to a phyloviz readable file.
 
 
 Basic usage:
@@ -150,11 +154,11 @@ Basic usage:
 	
 `-i` raw output file from an allele calling
 
-`-o` output folder (created by the script if non existant)
+`-o` output folder (created by the script if not existant yet)
 
-`-r` (optional) list of genes to remove, one per line, advised to use the detected overrepresented genes from ParalogPrunning.py
+`-r` (optional) list of genes to remove, one per line (e.g. the list of gene detected by ParalogPrunning.py)
 
-`-g` (optional) list of genomes to remove, one per line, advised to use genomes that perform worst on statistics or use the result from the testGenomeQuality script
+`-g` (optional) list of genomes to remove, one per line (e.g. list of genomes to be removed selected based on testGenomeQuality results) 
 
 ----------
 ## 5. All in one option 
@@ -197,18 +201,21 @@ folder 2 : target genes fasta files
 ----------
 ## FAQ
 
-### Q: What is the fast way to run?  
+### Q: Which is the fast way to run?  
 A: Check step 1.1
 
 
 ### Q: Step 2 is taking hours, will it ever end?  
-A: Depending on the variability of the strains used to create the schema and the number of CPUs you are using time used will vary. The more variable the strains, the more BLAST comparisons will be made, taking more time.
+A: Depending on the variability of the strains used to create the schema and the number 
+of CPUs you have selected, the computing time used will vary. The more variable the strains, the more BLAST 
+comparisons will be made, meaning more time will be needed for finishing the analysis.
 
-### Q: Step 3 just crashed at 99% after 2 days running, do I need to start over :(?  
-A: chewBBACA should allow you to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call.
+### Q: Step 3 just crashed at 99% after 2 days running, do I need to start over?  
+A: chewBBACA should allow you to continue where you stopped, just re-run the same command and you should be prompted to continue the allele call or use the flag --fc.
 
 ### Q: I ran all the steps and my cgMLST loci size is smaller than traditional MLST, does this even work?  
-A: Try to run step 4, your analysis may contain some genomes responsible for a considerable loss of loci. Remove some of those genomes and check if the cgMLST loci number rises.
+A: You probably forgot to eliminate from the analysis genomes responsible for a considerable loss of loci. 
+Try to run again step 4, remove some of those genomes and check if the cgMLST loci number rises.
 
 ### Q: Which species already have a training file?  
 A: At the moment:
