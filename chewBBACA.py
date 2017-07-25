@@ -32,9 +32,8 @@ def check_if_list_or_folder(folder_or_list):
 
 def create_schema():
 	
-	def msg(name=None):                                                            
-        return '''CreateSchema [CreateSchema ...] [-h] -i [I] -o [O] --cpu [CPU] [-b [B]] [--bsr [BSR]] [-t [T]] [-v] [-l [L]]
-                    '''
+    def msg(name=None):                                                            
+        return '''CreateSchema [CreateSchema ...] [-h] -i [I] -o [O] --cpu [CPU] [-b [B]] [--bsr [BSR]] [-t [T]] [-v] [-l [L]]'''
 	
     parser = argparse.ArgumentParser(description="This program creates a schema provided the genomes",usage=msg())
     parser.add_argument('CreateSchema', nargs='+', help='create a schema')
@@ -159,7 +158,7 @@ def allele_call():
 
 def evaluate_schema():
 	
-	def msg(name=None):                                                            
+    def msg(name=None):                                                            
         return '''SchemaValidation [SchemaValidation ...] [-h] -i [I] [-p] [--log] -l [L] -ta [TA] [-t [T]] [--title [TITLE]] --cpu [CPU] [-s [S]] [--light]
 			'''
 	
@@ -213,7 +212,7 @@ def evaluate_schema():
 
 def test_schema():
 	
-	def msg(name=None):                                                            
+    def msg(name=None):                                                            
         return '''TestGenomeQuality [TestGenomeQuality ...] [-h] -i [I] -n [N] -t [T] -s [S] [-o [O]] [-v]
                     '''
 	
@@ -250,7 +249,7 @@ def test_schema():
 
 def extract_cgmlst():
 	
-	def msg(name=None):                                                            
+    def msg(name=None):                                                            
         return '''ExtractCgMLST [ExtractCgMLST ...] [-h] -i [I] -o [O] [-r [R]] [-g [G]]
                     '''
 	
@@ -283,7 +282,7 @@ def extract_cgmlst():
 
 def remove_genes():
 	
-	def msg(name=None):                                                            
+    def msg(name=None):                                                            
         return '''RemoveGenes [RemoveGenes ...][-h] -i [I] -g [G] -o [O] [--inverse]
                     '''
 	

@@ -196,7 +196,6 @@ folder 2 : target genes fasta files
 
 `-t` (Optional) taxon to use for prodigal training input
 
-=============
 
 ----------
 ## FAQ
