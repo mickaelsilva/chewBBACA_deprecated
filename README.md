@@ -42,8 +42,7 @@ pip install -r requirements.txt
 
 
 Python dependencies:
-* [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
-* [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
+* [Biopython 1.70 ](http://biopython.org/wiki/Main_Page)
 
 
 Other dependencies:
@@ -202,7 +201,6 @@ folder 2 : target genes fasta files
 
 ### Q: Which is the fast way to run?  
 A: Check step 1.1
-
 
 ### Q: Step 2 is taking hours, will it ever end?  
 A: Depending on the variability of the strains used to create the schema and the number 
