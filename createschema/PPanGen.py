@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import HTSeq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 from Bio.Seq import Seq
 import os
 import argparse
@@ -69,10 +70,10 @@ def checkGeneStrings(genome1, genome2, newName, basepath, cpu, blastp, createSch
             filepath = os.path.join(basepath, str(os.path.basename(genomeFile)) + "_ORF.txt")
             newfilepath = os.path.join(basepath, str(newName))
 
-            g_fp = HTSeq.FastaReader(genomeFile)
-            for contig in g_fp:
+            #g_fp = HTSeq.FastaReader(genomeFile)
+            for contig in SeqIO.parse(genomeFile, "fasta", generic_dna):
                 sequence = str(contig.seq)
-                currentGenomeDict[contig.name] = sequence
+                currentGenomeDict[contig.id] = sequence
 
             # after the first iteration, genomes are already defined by their cds and no longer have a cds dictionary pickle file
             try:

@@ -3,7 +3,8 @@
 import sys
 import os
 import argparse
-import HTSeq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 import subprocess
 
 
@@ -19,8 +20,7 @@ def check_if_list_or_folder(folder_or_list):
         for gene in os.listdir(folder_or_list):
             try:
                 genepath = os.path.join(folder_or_list, gene)
-                gene_fp2 = HTSeq.FastaReader(genepath)
-                for allele in gene_fp2:
+                for allele in SeqIO.parse(genepath, "fasta", generic_dna):
                     break
                 list_files.append(os.path.abspath(genepath))
             except Exception as e:

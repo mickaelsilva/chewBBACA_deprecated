@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import HTSeq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 import sys
 import os
 import argparse
@@ -45,8 +46,7 @@ def check_if_list_or_folder(folder_or_list):
         for gene in os.listdir(folder_or_list):
             try:
                 genepath = os.path.join(folder_or_list, gene)
-                gene_fp2 = HTSeq.FastaReader(genepath)
-                for allele in gene_fp2:
+                for allele in SeqIO.parse(genepath, "fasta", generic_dna):
                     break
                 list_files.append(os.path.abspath(genepath))
             except Exception as e:
@@ -185,8 +185,8 @@ def main():
             for gene in os.listdir(schemaSeedDir):
                 try:
                     genepath = os.path.join(schemaSeedDir, gene)
-                    gene_fp2 = HTSeq.FastaReader(genepath)
-                    for allele in gene_fp2:
+                    #gene_fp2 = HTSeq.FastaReader(genepath)
+                    for allele in SeqIO.parse(genepath, "fasta", generic_dna):
                         break
                     f.write(os.path.abspath(genepath) + "\n")
                 except Exception as e:

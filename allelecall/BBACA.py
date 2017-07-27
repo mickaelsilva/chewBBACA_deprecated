@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-import HTSeq
 import sys
 from Bio.Seq import Seq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 import os
 import argparse
 import time
@@ -10,8 +11,6 @@ import shutil
 import multiprocessing
 import subprocess
 import json
-import sys
-
 
 def which(program):
     import os
@@ -51,10 +50,9 @@ def prepGenomes(genomeFile, basepath, verbose):
     with open(filepath, 'rb') as f:
         currentCDSDict = pickle.load(f)
 
-    g_fp = HTSeq.FastaReader(genomeFile)
-    for contig in g_fp:
+    for contig in SeqIO.parse(genomeFile, "fasta", generic_dna):
         sequence = str(contig.seq)
-        currentGenomeDict[contig.name] = sequence
+        currentGenomeDict[contig.id] = sequence
 
     j = 0
     for contigTag, value in currentCDSDict.iteritems():
@@ -162,16 +160,17 @@ def loci_translation(genesList, listOfGenomes2, verbose):
             noshortgeneFile.append(gene)
             break
 
-        gene_fp2 = HTSeq.FastaReader(shortgene)
-        for allele in gene_fp2:
+        #gene_fp2 = HTSeq.FastaReader(shortgene)
+        for allele in SeqIO.parse(shortgene, "fasta", generic_dna):
+            sequence=allele.seq
             k += 1
-            if len(allele.seq) % 3 != 0:
+            if len(sequence) % 3 != 0:
                 multiple = False
                 print ("allele " + str(k) + " is not multiple of 3: " + str(gene) + " this gene is to be removed")
                 break
             else:
                 try:
-                    protseq, Inverted, seq = translateSeq(allele.seq, verbose)
+                    protseq, Inverted, seq = translateSeq(sequence, verbose)
                 except:
                     multiple = False
                     print ("allele " + str(k) + " is not translating : " + str(gene) + " this gene is to be removed")

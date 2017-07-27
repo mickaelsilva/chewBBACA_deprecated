@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import HTSeq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 import sys
 from Bio.Seq import Seq
 from Bio.Blast.Applications import NcbiblastpCommandline
@@ -10,6 +11,9 @@ from CommonFastaFunctions import runBlastParser
 import time
 import pickle
 import shutil
+import warnings
+from Bio import BiopythonWarning
+warnings.simplefilter('ignore', BiopythonWarning)
 
 
 def getBlastScoreRatios(genefile, basepath, doAll, verbose, blastPath):
@@ -21,7 +25,7 @@ def getBlastScoreRatios(genefile, basepath, doAll, verbose, blastPath):
     else:
         verboseprint = lambda *a: None  # do-nothing function
 
-    gene_fp = HTSeq.FastaReader(genefile)
+    #gene_fp = HTSeq.FastaReader(genefile)
     allelescores = []
     alleleProt = ''
     alleleAllProt = ''
@@ -30,10 +34,10 @@ def getBlastScoreRatios(genefile, basepath, doAll, verbose, blastPath):
     alleleIlist = []
     listAllelesNames = []
     # calculate bsr for each allele
-    for allele in gene_fp:
+    for allele in SeqIO.parse(genefile, "fasta", generic_dna):
 
         # usually first allele name is just >1 and after that it has >gene_id_genome
-        aux = allele.name.split("_")
+        aux = allele.id.split("_")
         if len(aux) < 2:
             alleleI = int(aux[0])
         else:
@@ -41,8 +45,8 @@ def getBlastScoreRatios(genefile, basepath, doAll, verbose, blastPath):
 
         # try to translate the allele
         alleleIlist.append(alleleI)
-        alleleList.append(allele.seq)
-        listAllelesNames.append(allele.name)
+        alleleList.append(str(allele.seq))
+        listAllelesNames.append(allele.id)
         translatedSequence, x, y = translateSeq(allele.seq)
 
         if translatedSequence == '':
@@ -114,7 +118,7 @@ def reDogetBlastScoreRatios(genefile, basepath, alleleI, allelescores2, newGene_
     else:
         verboseprint = lambda *a: None  # do-nothing function
 
-    gene_fp = HTSeq.FastaReader(genefile)
+    #gene_fp = HTSeq.FastaReader(genefile)
 
     alleleProt = ''
 
@@ -250,20 +254,20 @@ def main():
     if not os.path.exists(basepath):
         os.makedirs(basepath)
 
-    gene_fp = HTSeq.FastaReader(geneFile)
+    #gene_fp = HTSeq.FastaReader(geneFile)
 
     fullAlleleList = []
     fullAlleleNameList = []
     alleleI = 0
     # get full list of alleles from main gene file and last allele number id
-    for allele in gene_fp:
-        aux = allele.name.split("_")
+    for allele in SeqIO.parse(geneFile, "fasta", generic_dna):
+        aux = allele.id.split("_")
         if len(aux) < 2:
             alleleI = int(aux[0])
         else:
             alleleI = int(aux[-1])
-        fullAlleleList.append(allele.seq)
-        fullAlleleNameList.append(allele.name)
+        fullAlleleList.append(str(allele.seq))
+        fullAlleleNameList.append(allele.id)
 
     resultsList = []
     i = 0
@@ -482,9 +486,9 @@ def main():
                 else:
 
                     # load the contig info of the genome to a dictionary
-                    g_fp = HTSeq.FastaReader(genomeFile)
-                    for contig in g_fp:
-                        currentGenomeDict[contig.name] = len(str(contig.seq))
+                    #g_fp = HTSeq.FastaReader(genomeFile)
+                    for contig in SeqIO.parse(genomeFile, "fasta", generic_dna):
+                        currentGenomeDict[contig.id] = len(str(contig.seq))
 
                     match = bestmatch[5]
                     geneLen = bestmatch[6]

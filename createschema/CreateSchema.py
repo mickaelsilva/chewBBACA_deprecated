@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-import HTSeq
+from Bio.Seq import Seq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 import argparse
 import os.path
 from Bio.Seq import Seq
@@ -118,11 +120,11 @@ def main():
     if not proteinFIlePath:
         # print "not passing steps"
         with open(proteinfile, "wb") as f:
-            g_fp = HTSeq.FastaReader(genes)
+            #g_fp = HTSeq.FastaReader(genes)
 
-            for gene in g_fp:
+            for gene in SeqIO.parse(genes, "fasta", generic_dna):
                 dnaseq = str(gene.seq)
-                protseq, x, y = translateSeq(dnaseq, gene.name)
+                protseq, x, y = translateSeq(dnaseq, gene.id)
                 totalgenes += 1
                 if len(protseq) > 1:
 
@@ -134,11 +136,11 @@ def main():
 
                     else:
                         alreadyIn.append(str(protseq))
-                        protname = ">" + str(gene.name) + "\n"
+                        protname = ">" + str(gene.id) + "\n"
 
                         f.write(protname + str(protseq) + "\n")
                         protDict[protname] = str(protseq)
-                        geneDict[str(gene.name)] = gene.seq
+                        geneDict[str(gene.name)] = dnaseq
                 else:
                     nottranslatable += 1
                     continue
@@ -167,7 +169,7 @@ def main():
         resultsList = []
 
         auxDict = {}
-        g_fp = HTSeq.FastaReader(proteinfile)
+        #g_fp = HTSeq.FastaReader(proteinfile)
         g = 0
         j = 0
 
@@ -206,14 +208,15 @@ def main():
         proteinfile = proteinFIlePath
         totalgenes = 0
         smallgenes = 0
-        g_fp = HTSeq.FastaReader(genes)
+        #g_fp = HTSeq.FastaReader(genes)
         proteinfile = proteinFIlePath
-        for gene in g_fp:
+        for gene in SeqIO.parse(genes, "fasta", generic_dna):
+        #for gene in g_fp:
             dnaseq = str(gene.seq)
 
-            protname = ">" + str(gene.name) + "\n"
+            protname = ">" + str(gene.id) + "\n"
             # protDict[protname] = str(protseq)
-            geneDict[str(gene.name)] = gene.seq
+            geneDict[str(gene.name)] = dnaseq
 
     print "Starting Blast"
     # print "Blasting the total of "+ str(len(auxDict.keys())) + " loci"
@@ -337,7 +340,7 @@ def main():
     pathfiles = pathfiles + "/"
     listfiles = []
 
-    g_fp = HTSeq.FastaReader(genes)
+    #g_fp = HTSeq.FastaReader(genes)
     removedparalogs = 0
     removedsize = 0
     totalgenes = 0
@@ -350,10 +353,10 @@ def main():
     elif not proteinFIlePath and outputFIlePath:
         os.makedirs(outputFIlePath)
 
-    for contig in g_fp:
+    for contig in SeqIO.parse(genes, "fasta", generic_dna):
         totalgenes += 1
-        name = contig.name + " " + contig.descr
-        name2 = contig.name
+        #name = contig.name + " " + contig.descr
+        name2 = contig.id
 
         # print name2
         if name2 not in toRemove and name2 in genesToKeep:
