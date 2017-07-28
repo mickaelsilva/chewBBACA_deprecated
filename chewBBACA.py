@@ -68,11 +68,14 @@ def create_schema():
 
     ppanScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'createschema/PPanGen.py')
 
-    args = [ppanScriptPath, '-i', genomeFiles, '--cpu', cpuToUse, "-t", chosenTaxon, "-o", outputFile,
+    args = [ppanScriptPath, '-i', genomeFiles, '--cpu', cpuToUse, "-o", outputFile,
             "--bsr", bsr, "-b", BlastpPath,"-l", min_length]
 
     if verbose:
         args.append('-v')
+    if chosenTaxon:
+		args.append('-t')
+		args.append(chosenTaxon)
 
     proc = subprocess.Popen(args)
 
@@ -132,8 +135,8 @@ def allele_call():
         genomes2call = "listGenomes2Call.txt"
 
     ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'allelecall/BBACA.py')
-    args = [ScriptPath, '-i', genomes2call, '-g', genes2call, '--cpu', cpuToUse, "-t",
-            chosenTaxon, "-o", gOutFile, "--bsr", BSRTresh,
+    args = [ScriptPath, '-i', genomes2call, '-g', genes2call, '--cpu', cpuToUse,
+            "-o", gOutFile, "--bsr", BSRTresh,
             '-b', BlastpPath]
     if forceContinue:
         args.append('--fc')
@@ -144,6 +147,10 @@ def allele_call():
     if forceReset:
         args.append('--fr')
 
+    if chosenTaxon:
+		args.append('-t')
+		args.append(chosenTaxon)
+		
     proc = subprocess.Popen(args)
     proc.wait()
 	
