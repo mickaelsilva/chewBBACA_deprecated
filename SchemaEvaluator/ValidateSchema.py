@@ -5,7 +5,8 @@ import os
 import argparse
 import json
 from operator import itemgetter
-import HTSeq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 import time
 import sys
 
@@ -79,8 +80,8 @@ def main():
             for gene in os.listdir(genes):
                 try:
                     genepath = os.path.join(genes, gene)
-                    gene_fp2 = HTSeq.FastaReader(genepath)
-                    for allele in gene_fp2:
+                    #gene_fp2 = HTSeq.FastaReader(genepath)
+                    for allele in SeqIO.parse(genepath, "fasta", generic_dna):
                         break
                     f.write(genepath + "\n")
                 except Exception as e:

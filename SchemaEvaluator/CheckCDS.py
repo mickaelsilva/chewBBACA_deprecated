@@ -1,5 +1,6 @@
-#!/usr/bin/python
-import HTSeq
+#!/usr/bin/env python
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 from Bio.Seq import Seq
 import os
 import argparse
@@ -167,7 +168,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu,skipClustalMafft):
 		k=0
 		
 		multiple=True
-		gene_fp2 = HTSeq.FastaReader(gene)
+		#gene_fp2 = HTSeq.FastaReader(gene)
 		
 		alleleSizes=[]
 		alleleNames=[]
@@ -176,22 +177,22 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu,skipClustalMafft):
 		alleleSizesTransError=[]
 		alleleSizesTransErrorNames=[]		
 		# translate each allele and report the error if unable to translate
-		for allele in gene_fp2: 
+		for allele in SeqIO.parse(gene, "fasta", generic_dna):
 			
 			k+=1
 			
 			# if allele is not multiple of 3 it's useless to try to translate
-			if (len(allele.seq) % 3 != 0):
+			if (len(str(allele.seq)) % 3 != 0):
 				multiple=False
 				listnotMultiple.append(str(k))
 				alleleSizesNotMultipleNames.append(k)
-				alleleSizesNotMultiple.append(len(allele.seq))
+				alleleSizesNotMultiple.append(len(str(allele.seq)))
 				pass
 			else:
 				try:
 					protseq,seq,reversedSeq=translateSeq(allele.seq, transTable)
 					alleleNames.append(str(k))
-					alleleSizes.append(len(allele.seq))
+					alleleSizes.append(len(str(allele.seq)))
 					
 				except Exception, err:
 					if "Extra in frame stop codon found" in str(err):
@@ -208,7 +209,7 @@ def analyzeCDS(genes,transTable,ReturnValues,outputpath,cpu,skipClustalMafft):
 						print err
 					
 					alleleSizesTransErrorNames.append(k)
-					alleleSizesTransError.append(len(allele.seq))
+					alleleSizesTransError.append(len(str(allele.seq)))
 					#print "allele "+str(k)+" is not translating"
 					pass
 		

@@ -1,6 +1,8 @@
+#!/usr/bin/env python
 import os
 import argparse
-import HTSeq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 from operator import itemgetter
 import numpy
 import math
@@ -68,7 +70,7 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 		gene = gene.rstrip('\n')
 		
 		genesList.append(gene)
-		gene_fp2 = HTSeq.FastaReader(gene)
+		#gene_fp2 = HTSeq.FastaReader(gene)
 		maxsize=0
 		minsize=99999999999
 		sizesum=0
@@ -78,9 +80,9 @@ def getStats(genes,threshold,OneNotConserved,ReturnValues,logScale,outputpath,sp
 
 
 		#per gene get all sizes, minimin size, maximum size, media and mode
-		for allele in gene_fp2: 
+		for allele in SeqIO.parse(gene, "fasta", generic_dna):
 			
-			allelesize=len(allele.seq)
+			allelesize=len(str(allele.seq))
 			sizes.append(allelesize)
 			if 	allelesize>=maxsize or allelesize<=minsize:
 				if allelesize>maxsize:
