@@ -2,16 +2,9 @@
 
 Analyze your alleles for a set of parameters, taking special consideration on the allele CDS and the allele sizes per gene/locus
 
-install python dependencies with:
-
-```
-pip install -r requirements.txt
-```
-
 Python dependencies:
 * numpy
 * [Biopython 1.66 ](http://biopython.org/wiki/Main_Page)
-* [HTSeq 0.6.1p1](http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html)
 
 Other dependencies:
 * [mafft](http://mafft.cbrc.jp/alignment/software/linux.html)
