@@ -31,6 +31,8 @@ Below you can find a list of commands for a quick usage of the software.
 ## A ready to use [docker image](https://hub.docker.com/r/mickaelsilva/chewbbaca/) ...
 ...automatically built from the latest version of chewBBACA in Ubuntu 16.04. 
 
+----------
+
 ## 0. Setting up the analysis
 
 **Installing chewBBACA**
