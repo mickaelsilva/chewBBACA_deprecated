@@ -127,7 +127,7 @@ Usage:
 
 `-n` maximum number of iterations. Each iteration removes a set of genomes over the defined threshold (-t) and recalculates all loci presence percentages.
 
-`-t` maximum threshold, will start at 5. This threshold represents the maximum number of missing loci allowed before removing it.
+`-t` maximum threshold, will start at 5. This threshold represents the maximum number of missing loci allowed, for each genome independently, before removing it (genome).
 
 `-s` step to add to each threshold (suggested 5)
 

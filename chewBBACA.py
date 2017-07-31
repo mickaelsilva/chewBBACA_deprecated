@@ -80,7 +80,12 @@ def create_schema():
     proc = subprocess.Popen(args)
 
     proc.wait()
-
+    
+    try:
+        os.remove("listGenomes2Call.txt")
+    except:
+	    pass
+		
 
 def allele_call():
 	
