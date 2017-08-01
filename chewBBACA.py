@@ -327,25 +327,33 @@ def remove_genes():
 
 if __name__ == "__main__":
 
-    functions_list = ['CreateSchema', 'Allelecall', 'SchemaValidation', 'TestGenomeQuality', 'ExtractCgMLST','RemoveGenes']
-    desc_list = ['Create a schema based on genomes', 'Call alleles for genomes', 'Tool that builds an html to better navigate/bisualize your schema', 'Analyze your allele call output', 'Clean your allele call to use as a phyloviz input','Remove a list of loci from your allele call output']
+	functions_list = ['CreateSchema', 'Allelecall', 'SchemaValidation', 'TestGenomeQuality', 'ExtractCgMLST','RemoveGenes']
+	desc_list = ['Create a gene by gene schema based on genomes', 'Perform allele call for target genomes', 'Tool that builds an html output to better navigate/visualize your schema', 'Analyze your allele call output to refine schemas', 'Select a subset of loci without missing data (to be used as PHYLOViZ input)','Remove a provided list of loci from your allele call output']
 
-    if sys.argv[1] == functions_list[0]:
-        create_schema()
-    elif sys.argv[1] == functions_list[1]:
-        allele_call()
-    elif sys.argv[1] == functions_list[2]:
-        evaluate_schema()
-    elif sys.argv[1] == functions_list[3]:
-        test_schema()
-    elif sys.argv[1] == functions_list[4]:
-        extract_cgmlst()
-    elif sys.argv[1] == functions_list[5]:
-        remove_genes()
-    else:
-        print('Select one of the following functions :\n')
-        i=0
-        while i<len(functions_list):
-            print functions_list[i] +" : "+desc_list[i]
-            i+=1
-        print('\nType chewBBACA.py [module] -h for specific module help')
+	try:
+		if sys.argv[1] == functions_list[0]:
+			create_schema()
+		elif sys.argv[1] == functions_list[1]:
+			allele_call()
+		elif sys.argv[1] == functions_list[2]:
+			evaluate_schema()
+		elif sys.argv[1] == functions_list[3]:
+			test_schema()
+		elif sys.argv[1] == functions_list[4]:
+			extract_cgmlst()
+		elif sys.argv[1] == functions_list[5]:
+			remove_genes()
+		else:
+			print('\n\tUSAGE : chewBBACA.py [module] -h \n')
+			print('Select one of the following functions :\n')
+			i=0
+			while i<len(functions_list):
+				print functions_list[i] +" : "+desc_list[i]
+				i+=1
+	except:
+		print('\n\tUSAGE : chewBBACA.py [module] -h \n')
+		print('Select one of the following functions :\n')
+		i=0
+		while i<len(functions_list):
+			print functions_list[i] +" : "+desc_list[i]
+			i+=1
