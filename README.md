@@ -206,8 +206,8 @@ folder 2 : target genes fasta files
 ----------
 ## FAQ
 
-### Q: Which is the fast way to run?  
-A: Check step 1.1
+### Q: Which is the fastest way to run?  
+A: Check step 1
 
 ### Q: Step 2 is taking hours, will it ever end?  
 A: Depending on the variability of the strains used to create the schema and the number 
