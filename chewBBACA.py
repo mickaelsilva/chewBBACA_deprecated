@@ -33,7 +33,7 @@ def check_if_list_or_folder(folder_or_list):
 def create_schema():
 	
     def msg(name=None):                                                            
-        return '''CreateSchema [CreateSchema ...] [-h] -i [I] -o [O] --cpu [CPU] [-b [B]] [--bsr [BSR]] [-t [T]] [-v] [-l [L]]'''
+        return ''' chewBBACA.py CreateSchema [CreateSchema ...] [-h] -i [I] -o [O] --cpu [CPU] [-b [B]] [--bsr [BSR]] [-t [T]] [-v] [-l [L]]'''
 	
     parser = argparse.ArgumentParser(description="This program creates a schema provided the genomes",usage=msg())
     parser.add_argument('CreateSchema', nargs='+', help='create a schema')
@@ -90,7 +90,7 @@ def create_schema():
 def allele_call():
 	
     def msg(name=None):                                                            
-        return '''Allelecall [Allelecall ...][-h] -i [I] -g [G] -o [O] --cpu [CPU] [-v] [-b [B]][--bsr [BSR]] [-t [T]] [--fc] [--fr] [--json]
+        return ''' chewBBACA.py Allelecall [Allelecall ...][-h] -i [I] -g [G] -o [O] --cpu [CPU] [-v] [-b [B]][--bsr [BSR]] [-t [T]] [--fc] [--fr] [--json]
 			'''
 	
     parser = argparse.ArgumentParser(description="This program call alleles for a set of genomes provided a schema",usage=msg())
@@ -171,7 +171,7 @@ def allele_call():
 def evaluate_schema():
 	
     def msg(name=None):                                                            
-        return '''SchemaValidation [SchemaValidation ...] [-h] -i [I] [-p] [--log] -l [L] -ta [TA] [-t [T]] [--title [TITLE]] --cpu [CPU] [-s [S]] [--light]
+        return ''' chewBBACA.py SchemaValidation [SchemaValidation ...] [-h] -i [I] [-p] [--log] -l [L] -ta [TA] [-t [T]] [--title [TITLE]] --cpu [CPU] [-s [S]] [--light]
 			'''
 	
     parser = argparse.ArgumentParser(
@@ -225,7 +225,7 @@ def evaluate_schema():
 def test_schema():
 	
     def msg(name=None):                                                            
-        return '''TestGenomeQuality [TestGenomeQuality ...] [-h] -i [I] -n [N] -t [T] -s [S] [-o [O]] [-v]
+        return ''' chewBBACA.py TestGenomeQuality [TestGenomeQuality ...] [-h] -i [I] -n [N] -t [T] -s [S] [-o [O]] [-v]
                     '''
 	
     parser = argparse.ArgumentParser(
@@ -262,7 +262,7 @@ def test_schema():
 def extract_cgmlst():
 	
     def msg(name=None):                                                            
-        return '''ExtractCgMLST [ExtractCgMLST ...] [-h] -i [I] -o [O] [-r [R]] [-g [G]]
+        return ''' chewBBACA.py ExtractCgMLST [ExtractCgMLST ...] [-h] -i [I] -o [O] [-r [R]] [-g [G]]
                     '''
 	
     parser = argparse.ArgumentParser(description="This program cleans an output file for phyloviz",usage=msg())
@@ -271,6 +271,7 @@ def extract_cgmlst():
     parser.add_argument('-o', nargs='?', type=str, help='output folder', required=True)
     parser.add_argument('-r', nargs='?', type=str, help='listgenes to remove', required=False, default=False)
     parser.add_argument('-g', nargs='?', type=str, help='listgenomes to remove', required=False, default=False)
+    parser.add_argument('-p', nargs='?', type=float, help='maximum presence', required=False, default=1)
 
     args = parser.parse_args()
 
@@ -278,9 +279,10 @@ def extract_cgmlst():
     newfile = args.o
     genes2remove = args.r
     genomes2remove = args.g
+    cgMLSTpercent=str(args.p)
 
     ScriptPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'utils/Extract_cgAlleles.py')
-    args = [ScriptPath, '-i', pathOutputfile, '-o', newfile]
+    args = [ScriptPath, '-i', pathOutputfile, '-o', newfile,'-p', cgMLSTpercent]
 
     if genes2remove:
         args.append('-r')
@@ -295,7 +297,7 @@ def extract_cgmlst():
 def remove_genes():
 	
     def msg(name=None):                                                            
-        return '''RemoveGenes [RemoveGenes ...][-h] -i [I] -g [G] -o [O] [--inverse]
+        return ''' chewBBACA.py RemoveGenes [RemoveGenes ...][-h] -i [I] -g [G] -o [O] [--inverse]
                     '''
 	
     parser = argparse.ArgumentParser(description="This program removes gens from a tab separated allele profile file",usage=msg())
@@ -331,6 +333,7 @@ if __name__ == "__main__":
 	desc_list = ['Create a gene by gene schema based on genomes', 'Perform allele call for target genomes', 'Tool that builds an html output to better navigate/visualize your schema', 'Analyze your allele call output to refine schemas', 'Select a subset of loci without missing data (to be used as PHYLOViZ input)','Remove a provided list of loci from your allele call output']
 
 	try:
+		print ("\n")
 		if sys.argv[1] == functions_list[0]:
 			create_schema()
 		elif sys.argv[1] == functions_list[1]:
@@ -350,7 +353,8 @@ if __name__ == "__main__":
 			while i<len(functions_list):
 				print functions_list[i] +" : "+desc_list[i]
 				i+=1
-	except:
+	except Exception as e:
+		print e
 		print('\n\tUSAGE : chewBBACA.py [module] -h \n')
 		print('Select one of the following functions :\n')
 		i=0

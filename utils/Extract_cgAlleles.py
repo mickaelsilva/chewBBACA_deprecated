@@ -7,7 +7,7 @@ import argparse
 import os
 
 
-def presAbs(d3, listgenomesRemove,outputfile):
+def presAbs(d3, listgenomesRemove,outputfile,cgPercent):
     d2c = np.copy(d3)
 
     geneslist = d2c[:1, :]
@@ -59,8 +59,21 @@ def presAbs(d3, listgenomesRemove,outputfile):
                     row2Del.append(int(column))
 
             column += 1
+        
         row += 1
+        
 
+    if cgPercent <float(1):
+		column = 1
+		row2Del=[]
+		total=int(d2c.shape[0])-1
+		while column < d2c.shape[1]:
+			L=d2c[:,column][1:].astype(np.int)
+			present=np.count_nonzero(L==1)
+			percentPresence=(float(present)/float(total))
+			if percentPresence <cgPercent:
+				row2Del.append(int(column))
+			column += 1
     print "presence and abscence matrix built"
 
     d2d = d2c.tolist()
@@ -70,13 +83,12 @@ def presAbs(d3, listgenomesRemove,outputfile):
         writer = csv.writer(f, delimiter='	')
         writer.writerows(d2d)
 
-    row2Del = set(row2Del)
-    row2Del = list(row2Del)
+    row2Del = list(set(row2Del))
 
     return d2c, d3, row2Del
 
 
-def clean(inputfile, outputfile, totaldeletedgenes, rangeFloat, toremovegenes, toremovegenomes):
+def clean(inputfile, outputfile, totaldeletedgenes, rangeFloat, toremovegenes, toremovegenomes,cgPercent):
     # open the raw file to be clean
 
     with open(inputfile) as f:
@@ -86,7 +98,7 @@ def clean(inputfile, outputfile, totaldeletedgenes, rangeFloat, toremovegenes, t
     originald2 = array(d)
 
     # get presence abscence matrix
-    d2, originald2, del2CG = presAbs(originald2, toremovegenomes,outputfile)
+    d2, originald2, del2CG = presAbs(originald2, toremovegenomes,outputfile,cgPercent)
 
     genomeslist = d2[1:, :1]
     geneslist = (d2[:1, 1:])[0]
@@ -159,11 +171,13 @@ def main():
     parser.add_argument('-o', nargs='?', type=str, help='name of the clean file', required=True)
     parser.add_argument('-r', nargs='?', type=str, help='listgenes to remove', required=False)
     parser.add_argument('-g', nargs='?', type=str, help='listgenomes to remove', required=False)
+    parser.add_argument('-p', nargs='?', type=float, help='maximum presence', required=False, default=1)
 
     args = parser.parse_args()
 
     pathOutputfile = args.i
     newfile = args.o
+    percent = args.p
 
     if not os.path.exists(newfile):
         os.makedirs(newfile)
@@ -197,7 +211,7 @@ def main():
     except:
         pass
 
-    clean(pathOutputfile, newfile, 0, 0.2, genesToRemove, genomesToRemove)
+    clean(pathOutputfile, newfile, 0, 0.2, genesToRemove, genomesToRemove,percent)
 
 
 if __name__ == "__main__":
