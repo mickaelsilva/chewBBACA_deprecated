@@ -90,11 +90,11 @@ def create_schema():
 def allele_call():
 	
     def msg(name=None):                                                            
-        return ''' chewBBACA.py Allelecall [Allelecall ...][-h] -i [I] -g [G] -o [O] --cpu [CPU] [-v] [-b [B]][--bsr [BSR]] [-t [T]] [--fc] [--fr] [--json]
+        return ''' chewBBACA.py AlleleCall [AlleleCall ...][-h] -i [I] -g [G] -o [O] --cpu [CPU] [-v] [-b [B]][--bsr [BSR]] [-t [T]] [--fc] [--fr] [--json]
 			'''
 	
     parser = argparse.ArgumentParser(description="This program call alleles for a set of genomes when provided a schema",usage=msg())
-    parser.add_argument('Allelecall', nargs='+', help='do allele call')
+    parser.add_argument('AlleleCall', nargs='+', help='do allele call')
     parser.add_argument('-i', nargs='?', type=str, help='List of genome files (list of fasta files)', required=True)
     parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
     parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
@@ -171,12 +171,12 @@ def allele_call():
 def evaluate_schema():
 	
     def msg(name=None):                                                            
-        return ''' chewBBACA.py SchemaValidation [SchemaValidation ...] [-h] -i [I] [-p] [--log] -l [L] -ta [TA] [-t [T]] [--title [TITLE]] --cpu [CPU] [-s [S]] [--light]
+        return ''' chewBBACA.py SchemaEvaluator [SchemaEvaluator ...] [-h] -i [I] [-p] [--log] -l [L] -ta [TA] [-t [T]] [--title [TITLE]] --cpu [CPU] [-s [S]] [--light]
 			'''
 	
     parser = argparse.ArgumentParser(
         description="This program analyses a set of gene files, analyzing the alleles CDS and the length of the alleles per gene",usage=msg())
-    parser.add_argument('SchemaValidation', nargs='+', help='evaluation of a schema')
+    parser.add_argument('SchemaEvaluator', nargs='+', help='evaluation of a schema')
     parser.add_argument('-i', nargs='?', type=str, help='list genes, directory or .txt file with the full path',
                         required=True)
     parser.add_argument('-p', dest='conserved', action='store_true', help='One bad allele still makes gene conserved',
@@ -329,7 +329,7 @@ def remove_genes():
 
 if __name__ == "__main__":
 
-	functions_list = ['CreateSchema', 'Allelecall', 'SchemaValidation', 'TestGenomeQuality', 'ExtractCgMLST','RemoveGenes']
+	functions_list = ['CreateSchema', 'AlleleCall', 'SchemaEvaluator', 'TestGenomeQuality', 'ExtractCgMLST','RemoveGenes']
 	desc_list = ['Create a gene by gene schema based on genomes', 'Perform allele call for target genomes', 'Tool that builds an html output to better navigate/visualize your schema', 'Analyze your allele call output to refine schemas', 'Select a subset of loci without missing data (to be used as PHYLOViZ input)','Remove a provided list of loci from your allele call output']
 
 	try:
@@ -354,7 +354,7 @@ if __name__ == "__main__":
 				print functions_list[i] +" : "+desc_list[i]
 				i+=1
 	except Exception as e:
-		print e
+		#print e
 		print('\n\tUSAGE : chewBBACA.py [module] -h \n')
 		print('Select one of the following functions :\n')
 		i=0

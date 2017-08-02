@@ -245,7 +245,7 @@ def main():
                  'Escherichia coli': 'trained_eColi.trn',
                  'Enterococcus faecium': 'trained_enteroFaecium.trn',
                  'Staphylococcus haemolyticus': 'trained_staphHaemolyticus.trn',
-                 'Salmonella enterica enteritidis': 'trained_salmonellaEnterica_enteritidis.trn',
+                 'Salmonella enterica': 'trained_salmonellaEnterica_enteritidis.trn',
                  'Staphylococcus aureus': 'trained_StaphylococcusAureus.trn'
                  }
     if isinstance(chosenTaxon, basestring):
