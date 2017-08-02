@@ -404,7 +404,7 @@ def main():
     print ("\nStarting Prodigal at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
 
     # Prodigal run on the genomes, one genome per core using n-2 cores (n number of cores)
-    print chosenTaxon
+    print ("chosen taxon :" + str(chosenTaxon))
     pool = multiprocessing.Pool(cpuToUse)
     for genome in listOfGenomes:
         pool.apply_async(call_proc, args=(

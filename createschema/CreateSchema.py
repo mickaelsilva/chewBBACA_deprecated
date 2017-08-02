@@ -85,6 +85,8 @@ def main():
     parser.add_argument('-o', nargs='?', type=str, help="output filename", required=False, default=False)
     parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False, default='blastp')
     parser.add_argument('--bsr', nargs='?', type=float, help="minimum BSR similarity", required=False, default=0.6)
+    parser.add_argument("-v", "--verbose", help="increase output verbosity", dest='verbose', action="store_true",
+                        default=False)
 
     args = parser.parse_args()
     genes = args.i
@@ -94,11 +96,21 @@ def main():
     outputFIlePath = args.o
     BlastpPath = args.b
     bsr = args.bsr
+    verbose = args.verbose
 
+    if verbose:
+        def verboseprint(*args):
+
+            for arg in args:
+                print (arg),
+            print
+    else:
+        verboseprint = lambda *a: None
+    
     starttime = "\nStarting Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y")
-    print ("\nStarting Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
+    verboseprint ("\nStarting Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
 
-    print ("Checking Blast installed... " + str(which(BlastpPath)))
+    verboseprint ("Checking Blast installed... " + str(which(BlastpPath)))
 
     # translate to protein and create new file
     abspath = os.path.abspath(genes)
@@ -115,7 +127,7 @@ def main():
     smallgenes = 0
     nottranslatable = 0
 
-    print "Checking translatability of the loci:\n"
+    verboseprint ("Checking translatability of the loci:\n")
 
     if not proteinFIlePath:
         # print "not passing steps"
@@ -145,10 +157,9 @@ def main():
                     nottranslatable += 1
                     continue
 
-            print (str(nottranslatable) + " not translatable out of " + str(totalgenes))
+            verboseprint (str(nottranslatable) + " not translatable out of " + str(totalgenes))
 
-            print
-            print "Checking if repeated protein sequences:\n"
+            verboseprint ( "\nChecking if repeated protein sequences:\n")
 
             orderedprotList = []
             orderedprotList = sorted(protDict.items(), key=lambda x: len(x[1]), reverse=True)
@@ -159,9 +170,9 @@ def main():
                 orderedprotDict[elem[0]] = elem[1]
                 i += 1
 
-        print (str(repeatedgenes) + " repeated loci out of " + str(totalgenes))
-        print (str(smallgenes) + " loci out of " + str(totalgenes) + " smaller than " + str(sizethresh) + "bp")
-        print "\nprotein file created\n"
+        verboseprint (str(repeatedgenes) + " repeated loci out of " + str(totalgenes))
+        verboseprint (str(smallgenes) + " loci out of " + str(totalgenes) + " smaller than " + str(sizethresh) + "bp")
+        verboseprint ("\nprotein file created\n")
 
         # first step -  remove genes contained in other genes or 100% equal genes
 
@@ -173,7 +184,7 @@ def main():
         g = 0
         j = 0
 
-        print "Checking if protein sequences are contained in others..."
+        verboseprint ( "Checking if protein sequences are contained in others...")
 
         # for each gene from all the annotated genes - starting with an empty dictionary, only add a new gene if the "to be added gene" is not contained or equal to a gene already added to the dictionary
         auxprot = []
@@ -192,7 +203,7 @@ def main():
                 auxprot.append(str(elem[1]))
 
             j += 1
-        print "%s loci are contained in other genes\n" % g
+        verboseprint ( str(g)+" loci are contained in other genes\n")
 
         # overwrite the original file, obtaining a new file with unique genes
 
@@ -218,7 +229,7 @@ def main():
             # protDict[protname] = str(protseq)
             geneDict[str(gene.name)] = dnaseq
 
-    print "Starting Blast"
+    verboseprint ( "Starting Blast")
     # print "Blasting the total of "+ str(len(auxDict.keys())) + " loci"
 
     geneFile = os.path.abspath(proteinfile)
@@ -232,9 +243,9 @@ def main():
                                       out=blast_out_file, outfmt=5, num_threads=int(cpuToUse))
     else:
         cline = NcbiblastpCommandline(cmd=BlastpPath, query=geneFile, db=Gene_Blast_DB_name, evalue=0.001,
-                                      out=blast_out_file, outfmt=5)
+                                      out=blast_out_file, outfmt=5, num_threads=1)
     blast_records = runBlastParser(cline, blast_out_file)
-    print "Finished blast"
+    verboseprint ( "Finished blast")
 
     toRemove = []
     genesToKeep = []
@@ -396,8 +407,8 @@ def main():
             f.write(concatenatedFile)
     elif not proteinFIlePath and outputFIlePath:
         get_Short(listfiles)
-        print "\nRemoved %s with a high similarity (BSR>%s)" % (str(removedparalogs), str(bsr))
-        print "Total of %s loci that constitute the schema" % str(rest)
+        verboseprint ( "\nRemoved "+str(removedparalogs)+" with a high similarity (BSR>"+str(bsr)+")")
+        print ("Total of "+str(rest)+" loci that constitute the schema")
         os.remove(proteinfile)
 
     # create short folder
@@ -406,16 +417,16 @@ def main():
         # ~ for elem in log:
         # ~ f.write(str(elem)+"\n")
         get_Short(listfiles)
-        print "\nRemoved %s with a high similarity (BSR>%s)" % (str(removedparalogs), str(bsr))
-        print "Total of %s loci that constitute the schema" % str(rest)
+        verboseprint ( "\nRemoved "+str(removedparalogs)+" with a high similarity (BSR>"+str(bsr)+")")
+        print ("Total of "+str(rest)+" loci that constitute the schema")
         os.remove(proteinfile)
 
     shutil.rmtree(os.path.join(pathfiles, 'blastdbs'))
 
     os.remove(blast_out_file)
 
-    print (starttime)
-    print ("Finished Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
+    verboseprint (starttime)
+    verboseprint ("Finished Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
 
 
 if __name__ == "__main__":
