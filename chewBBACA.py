@@ -35,7 +35,7 @@ def create_schema():
     def msg(name=None):                                                            
         return ''' chewBBACA.py CreateSchema [CreateSchema ...] [-h] -i [I] -o [O] --cpu [CPU] [-b [B]] [--bsr [BSR]] [-t [T]] [-v] [-l [L]]'''
 	
-    parser = argparse.ArgumentParser(description="This program creates a schema provided the genomes",usage=msg())
+    parser = argparse.ArgumentParser(description="This program creates a schema when provided the genomes",usage=msg())
     parser.add_argument('CreateSchema', nargs='+', help='create a schema')
     parser.add_argument('-i', nargs='?', type=str, help='List of genome files (list of fasta files)', required=True)
     parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
@@ -93,7 +93,7 @@ def allele_call():
         return ''' chewBBACA.py Allelecall [Allelecall ...][-h] -i [I] -g [G] -o [O] --cpu [CPU] [-v] [-b [B]][--bsr [BSR]] [-t [T]] [--fc] [--fr] [--json]
 			'''
 	
-    parser = argparse.ArgumentParser(description="This program call alleles for a set of genomes provided a schema",usage=msg())
+    parser = argparse.ArgumentParser(description="This program call alleles for a set of genomes when provided a schema",usage=msg())
     parser.add_argument('Allelecall', nargs='+', help='do allele call')
     parser.add_argument('-i', nargs='?', type=str, help='List of genome files (list of fasta files)', required=True)
     parser.add_argument('-g', nargs='?', type=str, help='List of genes (fasta)', required=True)
@@ -266,12 +266,12 @@ def extract_cgmlst():
                     '''
 	
     parser = argparse.ArgumentParser(description="This program cleans an output file for phyloviz",usage=msg())
-    parser.add_argument('ExtractCgMLST', nargs='+', help='evaluation of a schema')
+    parser.add_argument('ExtractCgMLST', nargs='+', help='clean chewBBACA output')
     parser.add_argument('-i', nargs='?', type=str, help='input file to clean', required=True)
     parser.add_argument('-o', nargs='?', type=str, help='output folder', required=True)
     parser.add_argument('-r', nargs='?', type=str, help='listgenes to remove', required=False, default=False)
     parser.add_argument('-g', nargs='?', type=str, help='listgenomes to remove', required=False, default=False)
-    parser.add_argument('-p', nargs='?', type=float, help='maximum presence', required=False, default=1)
+    parser.add_argument('-p', nargs='?', type=float, help='maximum presence (e.g 0.95)', required=False, default=1)
 
     args = parser.parse_args()
 
@@ -301,7 +301,7 @@ def remove_genes():
                     '''
 	
     parser = argparse.ArgumentParser(description="This program removes gens from a tab separated allele profile file",usage=msg())
-    parser.add_argument('RemoveGenes', nargs='+', help='evaluation of a schema')
+    parser.add_argument('RemoveGenes', nargs='+', help='remove loci from a chewBBACA profile')
     parser.add_argument('-i', nargs='?', type=str, help='main matrix file from which to remove', required=True)
     parser.add_argument('-g', nargs='?', type=str, help='list of genes to remove', required=True)
     parser.add_argument('-o', nargs='?', type=str, help='output file name', required=True)

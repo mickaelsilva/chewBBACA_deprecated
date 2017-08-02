@@ -71,6 +71,7 @@ def presAbs(d3, listgenomesRemove,outputfile,cgPercent):
 			L=d2c[:,column][1:].astype(np.int)
 			present=np.count_nonzero(L==1)
 			percentPresence=(float(present)/float(total))
+			print percentPresence
 			if percentPresence <cgPercent:
 				row2Del.append(int(column))
 			column += 1
@@ -157,6 +158,17 @@ def clean(inputfile, outputfile, totaldeletedgenes, rangeFloat, toremovegenes, t
     myfile = open(os.path.join(outputfile,"cgMLST.tsv"))
     contents = myfile.read()
     contents = contents.replace('INF-', '')
+    
+    #change all missing data to 0
+    if cgPercent <float(1):
+		contents = contents.replace('LNF', '0')
+		contents = contents.replace('PLOT3', '0')
+		contents = contents.replace('PLOT5', '0')
+		contents = contents.replace('ASM', '0')
+		contents = contents.replace('ALM', '0')
+		contents = contents.replace('NIPH', '0')
+		contents = contents.replace('NIPHEM', '0')
+		contents = contents.replace('LOTSC', '0')
 
     with open(os.path.join(outputfile,"cgMLST.tsv"), 'w') as f:
         f.write(contents)
