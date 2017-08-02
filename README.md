@@ -166,6 +166,8 @@ Basic usage:
 
 `-g` (optional) list of genomes to remove, one per line (e.g. list of genomes to be removed selected based on testGenomeQuality results) 
 
+`-p` (optional) minimum percentage of loci presence (e.g 0.95 to get a matrix with the loci that are present in at least 95% of the genomes)
+
 ----------
 ## 5. All in one option 
 
