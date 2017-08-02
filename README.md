@@ -37,7 +37,11 @@ Below you can find a list of commands for a quick usage of the software.
 
 **Installing chewBBACA**
 
-Git clone the whole repository.
+Git clone the whole repository
+
+```
+git clone https://github.com/mickaelsilva/chewBBACA.git
+```
 
 You need to install the following dependencies. Prodigal and BLAST must be added to the PATH variables.
 
