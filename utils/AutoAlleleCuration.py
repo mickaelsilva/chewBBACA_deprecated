@@ -1,6 +1,8 @@
+#!/usr/bin/env python
 import os
 import argparse
-import HTSeq
+from Bio import SeqIO
+from Bio.Alphabet import generic_dna
 
 
 def main():
@@ -25,15 +27,10 @@ def main():
 	for gene in gene_fp:
 		listSeqTokeep=[]
 		gene = gene.rstrip('\n')
-
-		gene_fp2 = HTSeq.FastaReader(gene)
-		
-
 		
 		#per gene remove the alleles that belong to the genomes to be removed
 		firstallele=False
-		for allele in gene_fp2: 
-			
+		for allele in SeqIO.parse(gene, "fasta", generic_dna):			
 
 			
 			alleleGenomeName=((str(allele.name)).split("_"))[-1]
