@@ -20,10 +20,9 @@ def presAbs(d3, listgenomesRemove,outputfile,cgPercent):
 
     # remove genomes
     listidstoremove = []
-    print "removing the following genomes..."
     for genome in geneslistaux:
         if genome in listgenomesRemove:
-            print genome
+            print ("removed genome : "+genome)
             rowid = geneslistaux.index(genome)
             listidstoremove.append(rowid)
         # geneslistaux.pop(rowid)
@@ -32,8 +31,6 @@ def presAbs(d3, listgenomesRemove,outputfile,cgPercent):
     for idtoremove in listidstoremove:
         d3 = np.delete(d3, idtoremove, 0)
         d2c = np.delete(d2c, idtoremove, 0)
-
-    print "all genomes removed"
 
     print "building the presence and abscence matrix..."
     row = 1
