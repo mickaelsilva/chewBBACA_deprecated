@@ -105,7 +105,7 @@ def allele_call():
                         default=False)
     parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False, default='blastp')
     parser.add_argument('--bsr', nargs='?', type=str, help="minimum BSR score", required=False, default='0.6')
-    parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False, default='False')
+    parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False, default=False)
     parser.add_argument("--fc", help="force continue", required=False, action="store_true", default=False)
     parser.add_argument("--fr", help="force reset", required=False, action="store_true", default=False)
     parser.add_argument("--json", help="report in json file", required=False, action="store_true", default=False)
