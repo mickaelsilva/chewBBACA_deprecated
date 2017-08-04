@@ -117,7 +117,7 @@ def main():
 	except:
 		pass
 	
-	pool = multiprocessing.Pool(6)
+	pool = multiprocessing.Pool(2)
 	for gene in listGenes:
 		
 		pool.apply_async(get_Short,args=[str(gene)])
