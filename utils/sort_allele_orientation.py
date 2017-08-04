@@ -113,7 +113,7 @@ def main():
 	gene_fp.close()	
 	
 	try:
-		os.remove("listGenomes2Call.txt")
+		os.remove("listGenes.txt")
 	except:
 		pass
 	
