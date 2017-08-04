@@ -100,6 +100,7 @@ def allele_call():
     parser.add_argument('-o', nargs='?', type=str, help="Name of the output files", required=True)
     parser.add_argument('--cpu', nargs='?', type=str, help="Number of cpus, if over the maximum uses maximum -2",
                         required=True)
+    parser.add_argument("--contained", help=argparse.SUPPRESS, required=False, action="store_true", default=False)
     parser.add_argument("-v", "--verbose", help="increase output verbosity", dest='verbose', action="store_true",
                         default=False)
     parser.add_argument('-b', nargs='?', type=str, help="BLAST full path", required=False, default='blastp')
@@ -121,7 +122,9 @@ def allele_call():
     chosenTaxon = args.t
     forceContinue = args.fc
     forceReset = args.fr
+    contained = args.contained
     jsonReport = args.json
+    
 
     genes2call = check_if_list_or_folder(genes)
 
@@ -151,6 +154,8 @@ def allele_call():
         args.append('-v')
     if forceReset:
         args.append('--fr')
+    if contained:
+        args.append('--contained')
 
     if chosenTaxon:
 		args.append('-t')

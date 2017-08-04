@@ -216,6 +216,7 @@ def main():
     parser.add_argument('-t', nargs='?', type=str, help="taxon", required=False, default=False)
     parser.add_argument("--fc", help="force continue", required=False, action="store_true", default=False)
     parser.add_argument("--fr", help="force reset", required=False, action="store_true", default=False)
+    parser.add_argument("--contained", help=argparse.SUPPRESS, required=False, action="store_true", default=False)
     parser.add_argument("--json", help="report in json file", required=False, action="store_true", default=False)
 
     args = parser.parse_args()
@@ -232,6 +233,7 @@ def main():
     forceContinue = args.fc
     forceReset = args.fr
     jsonReport = args.json
+    contained = args.contained
 
     # avoid user to run the script with all cores available, could impossibilitate any usage when running on a laptop
     if cpuToUse > multiprocessing.cpu_count() - 2:
@@ -681,8 +683,9 @@ def main():
 
             with open(os.path.join(outputfolder, "results_contigsInfo.tsv"), 'wb') as f:
                 f.write(str(finalphylovinput2))
-            with open(os.path.join(outputfolder, "results_contained.txt"), 'wb') as f:
-                f.write(str(containedOutpWrite))
+            if contained:
+                with open(os.path.join(outputfolder, "results_contained.txt"), 'wb') as f:
+                    f.write(str(containedOutpWrite))
             with open(os.path.join(outputfolder, "logging_info.txt"), 'wb') as f:
                 f.write(starttime)
                 f.write("\nFinished Script at : " + time.strftime("%H:%M:%S-%d/%m/%Y"))
