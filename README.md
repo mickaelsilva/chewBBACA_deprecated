@@ -1,4 +1,7 @@
-# chewBBACA: Quick Usage
+# DEPRECATED - UPDATED REPO AT https://github.com/B-UMMI/chewBBACA/
+
+
+## chewBBACA: Quick Usage
 
 **chewBBACA** stands for "BSR-Based Allele Calling Algorithm". The "chew" part could be thought of as "Comprehensive and  Highly Efficient Workflow" 
 but at this point still it needs a bit of work to make that claim so we just add "chew" to add extra coolness to the software name. BSR stands for 
